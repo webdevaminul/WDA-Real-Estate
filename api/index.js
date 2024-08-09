@@ -1,8 +1,11 @@
-const express = require("express");
+import express from "express";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+dotenv.config();
 const app = express();
-require("dotenv").config();
-const mongoose = require("mongoose");
 const PORT = process.env.PORT || 5000;
+
+import userRoutes from "./routes/user.route.js";
 
 app.use(express.json());
 
@@ -18,3 +21,5 @@ mongoose
 app.listen(PORT, () => {
   console.log(`Server is running at ${PORT}`);
 });
+
+app.use("/api/users", userRoutes);
