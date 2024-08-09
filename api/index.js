@@ -6,6 +6,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 import userRoutes from "./routes/user.route.js";
+import authRoutes from "./routes/auth.route.js";
 
 app.use(express.json());
 
@@ -23,3 +24,4 @@ app.listen(PORT, () => {
 });
 
 app.use("/api/users", userRoutes);
+app.use("/api/auth", authRoutes);

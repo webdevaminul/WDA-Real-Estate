@@ -14,13 +14,13 @@ export default function Header() {
     <>
       <NavLink
         to="/about"
-        className="bg-slate-100 p-2 rounded-md font-semibold w-full sm:w-fit text-center sm:text-start"
+        className="bg-slate-100 hover:bg-slate-400 p-2 rounded-md font-semibold w-full sm:w-fit text-center sm:text-start"
       >
         About
       </NavLink>
       <NavLink
         to="sign-in"
-        className="bg-slate-100 p-2 rounded-md font-semibold w-full sm:w-fit text-center sm:text-start"
+        className="bg-slate-100 hover:bg-slate-400 p-2 rounded-md font-semibold w-full sm:w-fit text-center sm:text-start"
       >
         Sign-In
       </NavLink>
@@ -59,7 +59,7 @@ export default function Header() {
             </button>
           </div>
         </div>
-        {isOpen && <div className="flex flex-col gap-2 items-center basis-full">{navLinks}</div>}
+        {isOpen && <div className="flex flex-col gap-1 items-center basis-full">{navLinks}</div>}
       </nav>
     </header>
   );
