@@ -14,22 +14,22 @@ export default function Header() {
     <>
       <NavLink
         to="/about"
-        className="bg-slate-100 hover:bg-slate-400 p-2 rounded-md font-semibold w-full sm:w-fit text-center sm:text-start"
+        className="bg-slate-100 hover:bg-slate-400 p-2 rounded-md font-semibold w-full sm:w-fit text-slate-800 text-center sm:text-start"
       >
         About
       </NavLink>
       <NavLink
         to="sign-in"
-        className="bg-slate-100 hover:bg-slate-400 p-2 rounded-md font-semibold w-full sm:w-fit text-center sm:text-start"
+        className="bg-slate-100 hover:bg-slate-400 p-2 rounded-md font-semibold w-full sm:w-fit text-slate-800 text-center sm:text-start"
       >
-        Sign-In
+        Sign In
       </NavLink>
     </>
   );
 
   return (
     <header className="bg-slate-200 shadow-md">
-      <nav className="flex flex-wrap gap-1 justify-between items-center  mx-auto p-2 sm:p-0">
+      <nav className="flex flex-wrap gap-1 justify-between items-center container mx-auto p-2 sm:p-0">
         {/* Logo */}
         <Link to="/">
           <h1 className="font-bold text-sm sm:text-xl flex-wrap p-2 sm:p-3">
