@@ -1,6 +1,16 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
 export default function SignUp() {
+  const [formData, setFormData] = useState({});
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.id]: e.target.value,
+    });
+  };
+
   return (
     <div className="flex items-center justify-center min-h-[90vh] container mx-auto">
       <div className="w-full max-w-4xl mx-auto sm:bg-slate-100 sm:shadow-md sm:border sm:rounded-3xl flex flex-col gap-4 sm:flex-row-reverse h-[80vh]">
@@ -15,21 +25,27 @@ export default function SignUp() {
               placeholder="User Name"
               className="border p-2 sm:p-3 rounded-lg outline-slate-500"
               id="userName"
+              onChange={handleChange}
             />
             <input
               type="email"
               placeholder="Email"
               className="border p-2 sm:p-3 rounded-lg outline-slate-500"
               id="userEmail"
+              onChange={handleChange}
             />
             <input
               type="password"
               placeholder="Password"
               className="border p-2 sm:p-3 rounded-lg outline-slate-500"
               id="userPassword"
+              onChange={handleChange}
             />
 
-            <button className="bg-slate-500 hover:bg-slate-400 text-white p-2 sm:p-3 rounded-lg disabled:bg-slate-300 disabled:cursor-not-allowed">
+            <button
+              type="submit"
+              className="bg-slate-500 hover:bg-slate-400 text-white p-2 sm:p-3 rounded-lg disabled:bg-slate-300 disabled:cursor-not-allowed"
+            >
               SIGN UP
             </button>
           </form>
