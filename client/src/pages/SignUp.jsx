@@ -3,12 +3,36 @@ import { Link } from "react-router-dom";
 
 export default function SignUp() {
   const [formData, setFormData] = useState({});
+  const [errors, setErrors] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.id]: e.target.value,
     });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (data.success === false) {
+        setErrors(data.message);
+        setLoading(false);
+      }
+    } catch (error) {
+      setLoading(false);
+      setErrors(error.message);
+    }
   };
 
   return (
@@ -19,7 +43,7 @@ export default function SignUp() {
             Register
           </h1>
 
-          <form className="flex flex-col gap-4">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <input
               type="text"
               placeholder="User Name"
@@ -43,10 +67,11 @@ export default function SignUp() {
             />
 
             <button
+              disabled={loading}
               type="submit"
               className="bg-slate-500 hover:bg-slate-400 text-white p-2 sm:p-3 rounded-lg disabled:bg-slate-300 disabled:cursor-not-allowed"
             >
-              SIGN UP
+              {loading ? "Loading..." : "SIGN UP"}
             </button>
           </form>
 
