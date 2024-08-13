@@ -12,6 +12,8 @@ export const signup = async (req, res, next) => {
       userPassword: hashedPassword,
     });
 
+    console.log(newUser);
+
     // Save the new user to the database
     await newUser.save();
 

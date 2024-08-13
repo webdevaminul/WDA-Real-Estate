@@ -1,39 +1,52 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useForm } from "react-hook-form";
 
 export default function SignUp() {
-  const [formData, setFormData] = useState({});
-  const [errors, setErrors] = useState(null);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
+  const onSubmit = (data) => {
+    console.log(data);
+  };
+
+  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.id]: e.target.value,
-    });
-  };
+  // const handleChange = (e) => {
+  //   setFormData({
+  //     ...formData,
+  //     [e.target.id]: e.target.value,
+  //   });
+  // };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      setLoading(true);
-      const res = await fetch("/api/auth/signup", {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-      const data = await res.json();
-      if (data.success === false) {
-        setErrors(data.message);
-        setLoading(false);
-      }
-    } catch (error) {
-      setLoading(false);
-      setErrors(error.message);
-    }
-  };
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setError(null);
+  //   setLoading(true);
+  //   try {
+  //     const res = await fetch("/api/auth/signup", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(formData),
+  //     });
+
+  //     const data = await res.json();
+  //     console.log(data);
+  //     if (!data.success) {
+  //       setError(data.message);
+  //     }
+  //   } catch (error) {
+  //     setError(error.message);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   return (
     <div className="flex items-center justify-center min-h-[90vh] container mx-auto">
@@ -43,28 +56,67 @@ export default function SignUp() {
             Register
           </h1>
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
             <input
               type="text"
-              placeholder="User Name"
-              className="border p-2 sm:p-3 rounded-lg outline-slate-500"
-              id="userName"
-              onChange={handleChange}
+              placeholder="User Name*"
+              className={`border p-2 sm:p-3 rounded-lg outline-slate-500 ${
+                errors.userName ? "border-red-500 outline-red-500" : ""
+              } `}
+              {...register("userName", { required: "User name is required" })}
+              aria-invalid={errors.userName ? "true" : "false"}
             />
+            {errors.userName && (
+              <p role="alert" className="text-red-500">
+                {errors.userName.message}
+              </p>
+            )}
+
             <input
               type="email"
-              placeholder="Email"
-              className="border p-2 sm:p-3 rounded-lg outline-slate-500"
-              id="userEmail"
-              onChange={handleChange}
+              placeholder="Email Address*"
+              className={`border p-2 sm:p-3 rounded-lg outline-slate-500 ${
+                errors.userEmail ? "border-red-500 outline-red-500" : ""
+              }`}
+              {...register("userEmail", {
+                required: "Email address is required",
+                pattern: {
+                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message: "Please enter a valid email address",
+                },
+              })}
+              aria-invalid={errors.userEmail ? "true" : "false"}
             />
+            {errors.userEmail && (
+              <p role="alert" className="text-red-500">
+                {errors.userEmail.message}
+              </p>
+            )}
+
             <input
               type="password"
               placeholder="Password"
-              className="border p-2 sm:p-3 rounded-lg outline-slate-500"
-              id="userPassword"
-              onChange={handleChange}
+              className={`border p-2 sm:p-3 rounded-lg outline-slate-500 ${
+                errors.userPassword ? "border-red-500 outline-red-500" : ""
+              }`}
+              {...register("userPassword", {
+                required: "Password is required",
+                minLength: {
+                  value: 8,
+                  message: "Password must be at least 8 characters long",
+                },
+                pattern: {
+                  value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/,
+                  message: "Password must contain at least one letter and one number",
+                },
+              })}
+              aria-invalid={errors.userPassword ? "true" : "false"}
             />
+            {errors.userPassword && (
+              <p role="alert" className="text-red-500">
+                {errors.userPassword.message}
+              </p>
+            )}
 
             <button
               disabled={loading}
@@ -75,7 +127,7 @@ export default function SignUp() {
             </button>
           </form>
 
-          <div className="flex gap-2 mt-3">
+          <div className="flex flex-col gap-2 mt-3">
             <p>Already have an account?</p>
             <Link to="/sign-in" className="text-blue-500 hover:underline font-semibold">
               SIGN IN
