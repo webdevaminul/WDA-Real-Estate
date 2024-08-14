@@ -3,54 +3,42 @@ import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 
 export default function SignUp() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = async (formData) => {
+    setError(null); // Clear any previous error
+    setLoading(true); // Start loading state
+
+    try {
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+
+      if (!data.success) {
+        setError(data.message);
+      }
+    } catch (error) {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false); // Reset loading state
+    }
   };
 
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
-
-  // const handleChange = (e) => {
-  //   setFormData({
-  //     ...formData,
-  //     [e.target.id]: e.target.value,
-  //   });
-  // };
-
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   setError(null);
-  //   setLoading(true);
-  //   try {
-  //     const res = await fetch("/api/auth/signup", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify(formData),
-  //     });
-
-  //     const data = await res.json();
-  //     console.log(data);
-  //     if (!data.success) {
-  //       setError(data.message);
-  //     }
-  //   } catch (error) {
-  //     setError(error.message);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   return (
-    <div className="flex items-center justify-center min-h-[90vh] container mx-auto">
-      <div className="w-full max-w-4xl mx-auto sm:bg-slate-100 sm:shadow-md sm:border sm:rounded-3xl flex flex-col gap-4 sm:flex-row-reverse h-[80vh]">
+    <div className="flex items-center justify-center min-h-[90vh] container mx-auto p-0 sm:p-3">
+      <div className="w-full max-w-4xl mx-auto sm:bg-slate-100 sm:shadow-md sm:border sm:rounded-3xl flex flex-col gap-4 sm:flex-row-reverse h-fit">
         <div className="h-full w-full sm:w-1/2 md:w-[55%] p-3 sm:p-5 md:p-7 flex flex-col justify-center">
           <h1 className="text-slate-700 text-2xl lg:text-3xl text-center font-semibold lg:font-bold mb-4">
             Register
@@ -95,7 +83,7 @@ export default function SignUp() {
 
             <input
               type="password"
-              placeholder="Password"
+              placeholder="Password*"
               className={`border p-2 sm:p-3 rounded-lg outline-slate-500 ${
                 errors.userPassword ? "border-red-500 outline-red-500" : ""
               }`}
@@ -127,6 +115,8 @@ export default function SignUp() {
             </button>
           </form>
 
+          {error && <p className="text-red-500">{error}</p>}
+
           <div className="flex flex-col gap-2 mt-3">
             <p>Already have an account?</p>
             <Link to="/sign-in" className="text-blue-500 hover:underline font-semibold">
@@ -135,7 +125,7 @@ export default function SignUp() {
           </div>
         </div>
 
-        <div className="registration-bg min-h-full w-full sm:w-1/2 md:w-[45%] flex flex-col justify-between sm:rounded-r-none sm:rounded-3xl ">
+        <div className="registration-bg min-h-[70vh] sm:min-h-full w-full sm:w-1/2 md:w-[45%] flex flex-col justify-between sm:rounded-r-none sm:rounded-3xl ">
           <h3 className="font-semibold lg:font-bold text-slate-500 text-2xl lg:text-3xl p-2 sm:p-3">
             Connecting <br /> People & Property
           </h3>
