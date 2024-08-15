@@ -40,7 +40,7 @@ export default function SignUp() {
     <div className="flex items-center justify-center min-h-[90vh] container mx-auto p-0 sm:p-3">
       <div className="w-full max-w-4xl mx-auto sm:bg-slate-100 sm:shadow-md sm:border sm:rounded-3xl flex flex-col gap-4 sm:flex-row-reverse h-fit">
         <div className="h-full w-full sm:w-1/2 md:w-[55%] p-3 sm:p-5 md:p-7 flex flex-col justify-center">
-          <h1 className="text-slate-700 text-2xl lg:text-3xl text-center font-semibold lg:font-bold mb-4">
+          <h1 className="text-2xl lg:text-3xl text-center font-semibold lg:font-bold mb-4">
             Register
           </h1>
 

@@ -2,21 +2,32 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  :root {
+    --text-primary: 40, 40, 43;
+    --text-highlight: 255, 95, 31;
+    --text-highlight-gray: 128, 139, 150;
+    --primary-bg: 251, 252, 252;
+    --primary-bg-shade-1: 240, 243, 244;
+    --primary-btn-bg: 255, 95, 31;
+  }
+
+  :root[data-theme="dark"] {
+    --text-primary: 251, 252, 252;
+    --text-highlight: 255, 95, 31;
+    --text-highlight-gray: 128, 139, 150;
+    --primary-bg: 40, 40, 43;
+    --primary-bg-shade-1: 50, 50, 56;
+    --primary-btn-bg: 255, 95, 31;
+  }
+}
+
 body {
-  background-color: whitesmoke;
+  background-color: rgba(var(--primary-bg));
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
     Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 
 .active {
-  background-color: slategrey;
-  color: whitesmoke;
-}
-
-.registration-bg {
-  background-image: url(../src/assets/registration.avif),
-    linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 50%, rgba(0, 0, 0, 0.2) 50%);
-  background-size: cover;
-  background-position: center;
-  background-blend-mode: multiply;
+  border-bottom: 2px solid rgba(var(--text-highlight));
 }
