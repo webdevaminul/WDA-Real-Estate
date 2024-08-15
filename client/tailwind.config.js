@@ -11,7 +11,16 @@ export default {
         primaryBgShade1: "rgba(var(--primary-bg-shade-1))",
         primaryBtnBg: "rgba(var(--primary-btn-bg))",
       },
+      keyframes: {
+        rotate: {
+          "0%": { transform: "rotate(0deg)" },
+          "100%": { transform: "rotate(360deg)" },
+        },
+      },
+      animation: {
+        rotate: "rotate 0.4s ease-in-out",
+      },
     },
   },
-  plugins: [],
+  plugins: [require("tailwindcss"), require("autoprefixer")],
 };

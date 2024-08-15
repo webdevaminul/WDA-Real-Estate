@@ -2,6 +2,7 @@ import { useState } from "react";
 import { IoMdMenu, IoMdClose } from "react-icons/io";
 import { IoEnterOutline } from "react-icons/io5";
 import { Link, NavLink } from "react-router-dom";
+import Darkmode from "../features/Darkmode";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
@@ -42,15 +43,20 @@ export default function Header() {
         </Link>
 
         {/* Menu */}
-        <div>
+        <div className="flex items-center gap-2">
           <div className="hidden sm:flex gap-2 p-2">{navLinks}</div>
-          <div className="sm:hidden">
-            <button onClick={toggleNavbar} className="font-semibold text-lg">
-              {isOpen ? <IoMdClose className="text-2xl" /> : <IoMdMenu className="text-2xl" />}
-            </button>
-          </div>
+          <Darkmode></Darkmode>
+          <button onClick={toggleNavbar} className="sm:hidden">
+            {isOpen ? (
+              <IoMdClose className="text-2xl text-primary" />
+            ) : (
+              <IoMdMenu className="text-2xl text-primary" />
+            )}
+          </button>
         </div>
-        {isOpen && <div className="flex flex-col gap-1 items-center basis-full">{navLinks}</div>}
+        {isOpen && (
+          <div className="flex flex-col gap-1 items-center basis-full p-1">{navLinks}</div>
+        )}
       </nav>
     </header>
   );
