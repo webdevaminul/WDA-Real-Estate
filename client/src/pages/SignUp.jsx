@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { FcGoogle } from "react-icons/fc";
 
 export default function SignUp() {
   const [loading, setLoading] = useState(false);
@@ -37,104 +38,111 @@ export default function SignUp() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-[90vh] container mx-auto p-0 sm:p-3">
-      <div className="w-full max-w-4xl mx-auto sm:bg-slate-100 sm:shadow-md sm:border sm:rounded-3xl flex flex-col gap-4 sm:flex-row-reverse h-fit">
-        <div className="h-full w-full sm:w-1/2 md:w-[55%] p-3 sm:p-5 md:p-7 flex flex-col justify-center">
-          <h1 className="text-2xl lg:text-3xl text-center font-semibold lg:font-bold mb-4">
-            Register
-          </h1>
-
-          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-            <input
-              type="text"
-              placeholder="User Name*"
-              className={`border p-2 sm:p-3 rounded-lg outline-slate-500 ${
-                errors.userName ? "border-red-500 outline-red-500" : ""
-              } `}
-              {...register("userName", { required: "User name is required" })}
-              aria-invalid={errors.userName ? "true" : "false"}
-            />
-            {errors.userName && (
-              <p role="alert" className="text-red-500">
-                {errors.userName.message}
-              </p>
-            )}
-
-            <input
-              type="email"
-              placeholder="Email Address*"
-              className={`border p-2 sm:p-3 rounded-lg outline-slate-500 ${
-                errors.userEmail ? "border-red-500 outline-red-500" : ""
-              }`}
-              {...register("userEmail", {
-                required: "Email address is required",
-                pattern: {
-                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                  message: "Please enter a valid email address",
-                },
-              })}
-              aria-invalid={errors.userEmail ? "true" : "false"}
-            />
-            {errors.userEmail && (
-              <p role="alert" className="text-red-500">
-                {errors.userEmail.message}
-              </p>
-            )}
-
-            <input
-              type="password"
-              placeholder="Password*"
-              className={`border p-2 sm:p-3 rounded-lg outline-slate-500 ${
-                errors.userPassword ? "border-red-500 outline-red-500" : ""
-              }`}
-              {...register("userPassword", {
-                required: "Password is required",
-                minLength: {
-                  value: 8,
-                  message: "Password must be at least 8 characters long",
-                },
-                pattern: {
-                  value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/,
-                  message: "Password must contain at least one letter and one number",
-                },
-              })}
-              aria-invalid={errors.userPassword ? "true" : "false"}
-            />
-            {errors.userPassword && (
-              <p role="alert" className="text-red-500">
-                {errors.userPassword.message}
-              </p>
-            )}
-
-            <button
-              disabled={loading}
-              type="submit"
-              className="bg-slate-500 hover:bg-slate-400 text-white p-2 sm:p-3 rounded-lg disabled:bg-slate-300 disabled:cursor-not-allowed"
-            >
-              {loading ? "Loading..." : "SIGN UP"}
-            </button>
-          </form>
-
-          {error && <p className="text-red-500">{error}</p>}
-
-          <div className="flex flex-col gap-2 mt-3">
-            <p>Already have an account?</p>
-            <Link to="/sign-in" className="text-blue-500 hover:underline font-semibold">
-              SIGN IN
-            </Link>
-          </div>
+    <div className="min-h-[90vh] max-w-xs container mx-auto flex items-center justify-center">
+      <div className="flex flex-col gap-4 justify-center p-4 w-full ">
+        {/* Switch between signup and signin */}
+        <div className="text-primary">
+          <p className="text-2xl sm:text-3xl transition-none">Sign up</p>
+          <p className="text-sm transition-none">
+            <span className="transition-none">or </span>
+            <span>
+              <Link to="/sign-in" className="text-blue-500 hover:underline">
+                sign in to your account
+              </Link>
+            </span>
+          </p>
         </div>
 
-        <div className="registration-bg min-h-[70vh] sm:min-h-full w-full sm:w-1/2 md:w-[45%] flex flex-col justify-between sm:rounded-r-none sm:rounded-3xl ">
-          <h3 className="font-semibold lg:font-bold text-slate-500 text-2xl lg:text-3xl p-2 sm:p-3">
-            Connecting <br /> People & Property
-          </h3>
+        {/* Sign up form */}
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
+          {/* User name input */}
+          <input
+            type="text"
+            placeholder="User name*"
+            className={`p-2 bg-transparent border rounded outline-none placeholder:text-highlightGray/75 ${
+              errors.userName ? "border-highlight" : "border-highlightGray/25"
+            } `}
+            {...register("userName", { required: "User name is required" })}
+            aria-invalid={errors.userName ? "true" : "false"}
+          />
+          {errors.userName && (
+            <p role="alert" className="text-highlight">
+              {errors.userName.message}
+            </p>
+          )}
 
-          <h2 className="font-bold text-2xl text-center flex-wrap p-2 sm:p-3">
-            <span className="text-slate-500">WDA</span>
-            <span className="text-slate-800">R Estate</span>
-          </h2>
-        </div>
+          {/* Email address input */}
+          <input
+            type="email"
+            placeholder="Email address*"
+            className={`p-2 mt-4 bg-transparent border rounded outline-none placeholder:text-highlightGray/75 ${
+              errors.userEmail ? "border-highlight" : "border-highlightGray/25"
+            }`}
+            {...register("userEmail", {
+              required: "Email address is required",
+              pattern: {
+                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                message: "Please enter a valid email address",
+              },
+            })}
+            aria-invalid={errors.userEmail ? "true" : "false"}
+          />
+          {errors.userEmail && (
+            <p role="alert" className="text-highlight">
+              {errors.userEmail.message}
+            </p>
+          )}
+
+          {/* Create password input */}
+          <input
+            type="password"
+            placeholder="Create password*"
+            className={`p-2 mt-4 bg-transparent border rounded outline-none placeholder:text-highlightGray/75 ${
+              errors.userPassword ? "border-highlight" : "border-highlightGray/25"
+            }`}
+            {...register("userPassword", {
+              required: "Password is required",
+              minLength: {
+                value: 8,
+                message: "Password must be at least 8 characters long",
+              },
+              pattern: {
+                value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/,
+                message: "Password must contain at least one letter and one number",
+              },
+            })}
+            aria-invalid={errors.userPassword ? "true" : "false"}
+          />
+          {errors.userPassword && (
+            <p role="alert" className="text-highlight">
+              {errors.userPassword.message}
+            </p>
+          )}
+
+          {/* Sign up button */}
+          <button
+            disabled={loading}
+            type="submit"
+            className="p-2 mt-4 bg-highlight hover:bg-highlightHover border-none rounded text-primaryBtn disabled:bg-slate-200 disabled:cursor-not-allowed"
+          >
+            {loading ? "Loading..." : "Sign up"}
+          </button>
+        </form>
+
+        {/* Error message */}
+        {error && <p className="text-highlight">{error}</p>}
+
+        {/* Google button */}
+        <button
+          disabled={loading}
+          type="submit"
+          className="p-2 mt-1 bg-transparent hover:bg-primaryBgShade1/75 border border-highlightGray/25 rounded text-primary disabled:bg-slate-200 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        >
+          <span className="text-2xl">
+            <FcGoogle />
+          </span>
+          <span className="transition-none">{loading ? "Loading..." : "Continue with Google"}</span>
+        </button>
       </div>
     </div>
   );

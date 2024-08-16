@@ -5,11 +5,13 @@ export default {
     extend: {
       colors: {
         primary: "rgba(var(--text-primary))",
-        highlight: "rgba(var(--text-highlight))",
+        highlight: "rgba(var(--highlight))",
+        highlightHover: "rgba(var(--highlight-hover))",
         highlightGray: "rgba(var(--text-highlight-gray))",
         primaryBg: "rgba(var(--primary-bg))",
         primaryBgShade1: "rgba(var(--primary-bg-shade-1))",
         primaryBtnBg: "rgba(var(--primary-btn-bg))",
+        primaryBtn: "rgba(var(--primary-btn))",
       },
       keyframes: {
         rotate: {
@@ -22,5 +24,5 @@ export default {
       },
     },
   },
-  plugins: [require("tailwindcss"), require("autoprefixer")],
+  plugins: [],
 };
