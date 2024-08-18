@@ -3,9 +3,8 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 dotenv.config();
 const app = express();
-const PORT = process.env.PORT || 5000;
+export const PORT = process.env.PORT || 5000;
 
-import userRoutes from "./routes/user.route.js";
 import authRoutes from "./routes/auth.route.js";
 
 app.use(express.json());
@@ -23,7 +22,6 @@ app.listen(PORT, () => {
   console.log(`Server is running at ${PORT}`);
 });
 
-app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
 
 // Middleware

@@ -83,13 +83,13 @@ export default function SignIn() {
             </p>
           )}
 
-          {/* Sign up button */}
+          {/* Sign in button */}
           <button
             disabled={loading}
             type="submit"
             className="p-2 mt-4 bg-highlight hover:bg-highlightHover border-none rounded text-primaryBtn disabled:bg-slate-200 disabled:cursor-not-allowed"
           >
-            {loading ? "Loading..." : "Sign up"}
+            {loading ? "Loading..." : "Sign in"}
           </button>
         </form>
 
