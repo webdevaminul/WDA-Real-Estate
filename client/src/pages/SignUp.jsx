@@ -2,10 +2,12 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
+import { set } from "mongoose";
 
 export default function SignUp() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
 
   const {
     register,
@@ -15,6 +17,7 @@ export default function SignUp() {
 
   const onSubmit = async (formData) => {
     setError(null); // Clear any previous error
+    setSuccess(null); // Clear any previous success
     setLoading(true); // Start loading state
 
     try {
@@ -29,6 +32,10 @@ export default function SignUp() {
 
       if (!data.success) {
         setError(data.message);
+      }
+
+      if (data.success) {
+        setSuccess(data.message);
       }
     } catch (error) {
       setError("Something went wrong. Please try again.");
@@ -59,7 +66,7 @@ export default function SignUp() {
           <input
             type="text"
             placeholder="User name*"
-            className={`p-2 bg-transparent border rounded outline-none placeholder:text-highlightGray/75 ${
+            className={`p-2 bg-transparent border rounded outline-none placeholder:text-highlightGray/75 text-primary ${
               errors.userName ? "border-highlight" : "border-highlightGray/25"
             } `}
             {...register("userName", { required: "User name is required" })}
@@ -75,7 +82,7 @@ export default function SignUp() {
           <input
             type="email"
             placeholder="Email address*"
-            className={`p-2 mt-4 bg-transparent border rounded outline-none placeholder:text-highlightGray/75 ${
+            className={`p-2 mt-4 bg-transparent border rounded outline-none placeholder:text-highlightGray/75 text-primary ${
               errors.userEmail ? "border-highlight" : "border-highlightGray/25"
             }`}
             {...register("userEmail", {
@@ -97,7 +104,7 @@ export default function SignUp() {
           <input
             type="password"
             placeholder="Create password*"
-            className={`p-2 mt-4 bg-transparent border rounded outline-none placeholder:text-highlightGray/75 ${
+            className={`p-2 mt-4 bg-transparent border rounded outline-none placeholder:text-highlightGray/75 text-primary ${
               errors.userPassword ? "border-highlight" : "border-highlightGray/25"
             }`}
             {...register("userPassword", {
@@ -105,6 +112,10 @@ export default function SignUp() {
               minLength: {
                 value: 8,
                 message: "Password must be at least 8 characters long",
+              },
+              maxLength: {
+                value: 24,
+                message: "Password can't be more than 24 characters long",
               },
               pattern: {
                 value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/,
@@ -130,7 +141,10 @@ export default function SignUp() {
         </form>
 
         {/* Error message */}
-        {error && <p className="text-highlight">{error}</p>}
+        {error && <p className="text-primaryBtn bg-highlight rounded p-2">{error}</p>}
+
+        {/* Success message */}
+        {success && <p className="text-[rgba(40, 40, 43)] bg-green-400 rounded p-2">{success}</p>}
 
         {/* Google button */}
         <button
