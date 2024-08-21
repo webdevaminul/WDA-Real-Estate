@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
-import { set } from "mongoose";
 
 export default function SignUp() {
   const [loading, setLoading] = useState(false);

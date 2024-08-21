@@ -36,7 +36,7 @@ export const signup = async (req, res, next) => {
     );
 
     // Send a verification email with the verification token
-    const verificationLink = `http://localhost:${PORT}/api/auth/verify-email?token=${verificationToken}`;
+    const verificationLink = `http://localhost:5173/verify-email?token=${verificationToken}&email=${userEmail}`;
     sendVerificationEmail(userEmail, verificationLink);
 
     // Send a success response
@@ -111,8 +111,12 @@ export const verifyEmail = async (req, res, next) => {
       maxAge: 3600000,
     });
 
+    const { userPassword: pass, ...userInfo } = user._doc;
+
     // Send a success response
-    return res.status(201).json({ success: true, message: "Email verification successful" });
+    return res
+      .status(201)
+      .json({ success: true, message: "Email verification successful", userInfo });
   } catch (error) {
     next(error);
   }
