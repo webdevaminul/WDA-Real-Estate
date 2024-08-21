@@ -2,9 +2,10 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
+import axios from "axios";
+import { useMutation } from "@tanstack/react-query";
 
 export default function SignUp() {
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
 
@@ -14,33 +15,30 @@ export default function SignUp() {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = async (formData) => {
-    setError(null); // Clear any previous error
-    setSuccess(null); // Clear any previous success
-    setLoading(true); // Start loading state
-
-    try {
-      const res = await fetch("/api/auth/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-      const data = await res.json();
-
+  // Define the mutation for the signup process
+  const signUpMutation = useMutation({
+    mutationFn: async (formData) => {
+      const res = await axios.post("/api/auth/signup", formData);
+      return res.data;
+    },
+    onSuccess: (data) => {
+      setError(null); // Clear any previous error message
+      setSuccess(null); // Clear any previous success message
       if (!data.success) {
         setError(data.message);
-      }
-
-      if (data.success) {
+      } else {
         setSuccess(data.message);
       }
-    } catch (error) {
-      setError("Something went wrong. Please try again.");
-    } finally {
-      setLoading(false); // Reset loading state
-    }
+    },
+    onError: (error) => {
+      setError(error.response?.data?.message || "Something went wrong. Please try again.");
+      setSuccess(null);
+    },
+  });
+
+  // Handle form submission
+  const onSubmit = async (formData) => {
+    signUpMutation.mutate(formData);
   };
 
   return (
@@ -131,11 +129,11 @@ export default function SignUp() {
 
           {/* Sign up button */}
           <button
-            disabled={loading}
+            disabled={signUpMutation.isLoading}
             type="submit"
             className="p-2 mt-4 bg-highlight hover:bg-highlightHover border-none rounded text-primaryBtn disabled:bg-slate-200 disabled:cursor-not-allowed"
           >
-            {loading ? "Loading..." : "Sign up"}
+            {signUpMutation.isLoading ? "Loading..." : "Sign up"}
           </button>
         </form>
 
@@ -147,14 +145,16 @@ export default function SignUp() {
 
         {/* Google button */}
         <button
-          disabled={loading}
+          disabled={signUpMutation.isLoading}
           type="submit"
           className="p-2 mt-1 bg-transparent hover:bg-primaryBgShade1/75 border border-highlightGray/25 rounded text-primary disabled:bg-slate-200 disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
           <span className="text-2xl">
             <FcGoogle />
           </span>
-          <span className="transition-none">{loading ? "Loading..." : "Continue with Google"}</span>
+          <span className="transition-none">
+            {signUpMutation.isLoading ? "Loading..." : "Continue with Google"}
+          </span>
         </button>
       </div>
     </div>

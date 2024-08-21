@@ -4,21 +4,25 @@ import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import cors from "cors";
 
-dotenv.config();
-const app = express();
-export const PORT = process.env.PORT || 5000;
-
 import authRoutes from "./routes/auth.route.js";
 
+// Load environment variables from .env file
+dotenv.config();
+
+const app = express();
+const PORT = process.env.PORT || 5000;
+
+// Middleware setup
 app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "http://localhost:5173",
-    credentials: true,
+    origin: "http://localhost:5173", // Allow requests from this origin
+    credentials: true, // Allow cookies to be sent with requests
   })
 );
 
+// Connect to MongoDB
 mongoose
   .connect(process.env.MONGODB)
   .then(() => {
@@ -28,15 +32,17 @@ mongoose
     console.log(err);
   });
 
-app.listen(PORT, () => {
-  console.log(`Server is running at ${PORT}`);
-});
-
+// API routes
 app.use("/api/auth", authRoutes);
 
-// Middleware
+// Error handling middleware
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
   const message = err.message || "Internal Server Error";
   return res.status(statusCode).json({ success: false, statusCode, message });
+});
+
+// Start the server
+app.listen(PORT, () => {
+  console.log(`Server is running at ${PORT}`);
 });

@@ -1,7 +1,6 @@
 import User from "../models/user.model.js";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { PORT } from "../index.js";
 import { sendVerificationEmail } from "../utilites/sendVerificationMail.js";
 
 export const signup = async (req, res, next) => {
@@ -103,6 +102,9 @@ export const verifyEmail = async (req, res, next) => {
       { expiresIn: "1h" }
     );
 
+    // Remove the password from the user object before sending it back to the client
+    const { userPassword: pass, ...userInfo } = user._doc;
+
     // Set the token in a cookie
     res.cookie("authToken", authToken, {
       httpOnly: true,
@@ -110,8 +112,6 @@ export const verifyEmail = async (req, res, next) => {
       sameSite: "strict",
       maxAge: 3600000,
     });
-
-    const { userPassword: pass, ...userInfo } = user._doc;
 
     // Send a success response
     return res
