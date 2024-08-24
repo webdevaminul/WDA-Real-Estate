@@ -2,15 +2,19 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
 import { MdError, MdOutlineEmail, MdOutlineLock } from "react-icons/md";
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 import { useMutation } from "@tanstack/react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { loginRequest, loginSuccess, loginFailure } from "../features/auth/authSlice";
 import axiosInstance from "../api/axiosInstance";
+import { useState } from "react";
 
 export default function SignIn() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { loading, error } = useSelector((state) => state.auth);
+  const [passValue, setPassValue] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
@@ -83,9 +87,6 @@ export default function SignIn() {
                   value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
                   message: "Please enter a valid email address",
                 },
-                onChange: () => {
-                  setError(null);
-                },
               })}
               aria-invalid={errors.userEmail ? "true" : "false"}
             />
@@ -106,7 +107,7 @@ export default function SignIn() {
               <MdOutlineLock />
             </span>
             <input
-              type="password"
+              type={`${showPassword ? "text" : "password"}`}
               placeholder="Password*"
               className={`bg-transparent outline-none placeholder:text-highlightGray/75 text-primary p-2 w-full`}
               {...register("userPassword", {
@@ -124,11 +125,23 @@ export default function SignIn() {
                   message: "Password must contain at least one letter and one number",
                 },
                 onChange: () => {
-                  setError(null);
+                  setPassValue(event.target.value);
                 },
               })}
               aria-invalid={errors.userPassword ? "true" : "false"}
             />
+            {passValue.length > 0 && (
+              <span
+                onClick={() => setShowPassword(!showPassword)}
+                className="p-2 text-xl text-highlightGray/75"
+              >
+                {showPassword ? (
+                  <FaRegEyeSlash className="cursor-pointer" />
+                ) : (
+                  <FaRegEye className="cursor-pointer" />
+                )}
+              </span>
+            )}
           </div>
           {errors.userPassword && (
             <p role="alert" className="text-red-500">
@@ -150,7 +163,7 @@ export default function SignIn() {
           <button
             disabled={loading}
             type="submit"
-            className="p-2 mt-4 bg-highlight hover:bg-highlightHover border-none rounded text-primaryBtn disabled:bg-slate-200 disabled:cursor-not-allowed"
+            className="p-2 mt-4 bg-highlight hover:bg-highlightHover border-none rounded text-primaryBtn disabled:bg-slate-200 disabled:cursor-not-allowed select-none"
           >
             {loading ? "Loading..." : "Sign in"}
           </button>
@@ -160,7 +173,7 @@ export default function SignIn() {
         <button
           disabled={loading}
           type="submit"
-          className="p-2 mt-1 bg-transparent hover:bg-primaryBgShade1/75 border border-highlightGray/25 rounded text-primary disabled:bg-slate-200 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          className="p-2 mt-1 bg-transparent hover:bg-primaryBgShade1/75 border border-highlightGray/25 rounded text-primary disabled:bg-slate-200 disabled:cursor-not-allowed select-none flex items-center justify-center gap-2"
         >
           <span className="text-2xl">
             <FcGoogle />

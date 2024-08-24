@@ -5,6 +5,7 @@ import { FcGoogle } from "react-icons/fc";
 import { useMutation } from "@tanstack/react-query";
 import { MdError, MdCheckCircle, MdOutlineEmail, MdOutlineLock } from "react-icons/md";
 import { FiUser } from "react-icons/fi";
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 import axiosInstance from "../api/axiosInstance";
 
 // TODO: Turn off auto complete
@@ -12,6 +13,8 @@ import axiosInstance from "../api/axiosInstance";
 export default function SignUp() {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const [passValue, setPassValue] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
@@ -135,7 +138,7 @@ export default function SignUp() {
               <MdOutlineLock />
             </span>
             <input
-              type="password"
+              type={`${showPassword ? "tex" : "password"}`}
               placeholder="Create password*"
               className={`bg-transparent outline-none placeholder:text-highlightGray/75 text-primary p-2 w-full`}
               {...register("userPassword", {
@@ -155,10 +158,23 @@ export default function SignUp() {
                 onChange: () => {
                   setError(null);
                   setSuccess(null);
+                  setPassValue(event.target.value);
                 },
               })}
               aria-invalid={errors.userPassword ? "true" : "false"}
             />
+            {passValue.length > 0 && (
+              <span
+                onClick={() => setShowPassword(!showPassword)}
+                className="p-2 text-xl text-highlightGray/75"
+              >
+                {showPassword ? (
+                  <FaRegEyeSlash className="cursor-pointer" />
+                ) : (
+                  <FaRegEye className="cursor-pointer" />
+                )}
+              </span>
+            )}
           </div>
           {errors.userPassword && (
             <p role="alert" className="text-red-500">
@@ -190,7 +206,7 @@ export default function SignUp() {
           <button
             disabled={signUpMutation.isLoading}
             type="submit"
-            className="p-2 mt-4 bg-highlight hover:bg-highlightHover border-none rounded text-primaryBtn disabled:bg-slate-200 disabled:cursor-not-allowed"
+            className="p-2 mt-4 bg-highlight hover:bg-highlightHover border-none rounded text-primaryBtn disabled:bg-slate-200 disabled:cursor-not-allowed select-none"
           >
             {signUpMutation.isLoading ? "Loading..." : "Sign up"}
           </button>
@@ -200,7 +216,7 @@ export default function SignUp() {
         <button
           disabled={signUpMutation.isLoading}
           type="submit"
-          className="p-2 mt-1 bg-transparent hover:bg-primaryBgShade1/75 border border-highlightGray/25 rounded text-primary disabled:bg-slate-200 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          className="p-2 mt-1 bg-transparent hover:bg-primaryBgShade1/75 border border-highlightGray/25 rounded text-primary disabled:bg-slate-200 disabled:cursor-not-allowed select-none flex items-center justify-center gap-2"
         >
           <span className="text-2xl">
             <FcGoogle />
