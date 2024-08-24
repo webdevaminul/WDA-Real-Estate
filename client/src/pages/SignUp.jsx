@@ -2,10 +2,10 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
-import axios from "axios";
 import { useMutation } from "@tanstack/react-query";
 import { MdError, MdCheckCircle, MdOutlineEmail, MdOutlineLock } from "react-icons/md";
 import { FiUser } from "react-icons/fi";
+import axiosInstance from "../api/axiosInstance";
 
 // TODO: Turn off auto complete
 
@@ -22,7 +22,7 @@ export default function SignUp() {
   // Define the mutation for the signup process
   const signUpMutation = useMutation({
     mutationFn: async (formData) => {
-      const res = await axios.post("/api/auth/signup", formData);
+      const res = await axiosInstance.post("/api/auth/signup", formData);
       return res.data;
     },
     onSuccess: (data) => {
@@ -69,7 +69,7 @@ export default function SignUp() {
               errors.userName ? "border-red-500" : "border-highlightGray/25"
             } mt-4 `}
           >
-            <span className="pl-2 text-xl text-highlightGray/75">
+            <span className="p-2 text-xl text-highlightGray/75">
               <FiUser />
             </span>
             <input
@@ -98,7 +98,7 @@ export default function SignUp() {
               errors.userEmail ? "border-red-500" : "border-highlightGray/25"
             } mt-4 `}
           >
-            <span className="pl-2 text-xl text-highlightGray/75">
+            <span className="p-2 text-xl text-highlightGray/75">
               <MdOutlineEmail />
             </span>
             <input
@@ -131,7 +131,7 @@ export default function SignUp() {
               errors.userPassword ? "border-red-500" : "border-highlightGray/25"
             } mt-4 `}
           >
-            <span className="pl-2 text-xl text-highlightGray/75">
+            <span className="p-2 text-xl text-highlightGray/75">
               <MdOutlineLock />
             </span>
             <input

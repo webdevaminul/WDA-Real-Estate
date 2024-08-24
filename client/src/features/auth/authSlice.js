@@ -15,20 +15,21 @@ const authSlice = createSlice({
     },
     loginSuccess: (state, action) => {
       state.loading = false;
-      state.isAuthenticated = true;
       state.user = action.payload;
+      state.isAuthenticated = true;
       state.error = null;
     },
     loginFailure: (state, action) => {
       state.loading = false;
+      state.user = null;
       state.isAuthenticated = false;
       state.error = action.payload;
     },
     logOut: (state) => {
-      state.isAuthenticated = false;
-      state.user = null;
-      state.error = null;
       state.loading = false;
+      state.user = null;
+      state.isAuthenticated = false;
+      state.error = null;
     },
   },
 });

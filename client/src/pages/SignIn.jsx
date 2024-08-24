@@ -1,14 +1,16 @@
-import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
-import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
 import { MdError, MdOutlineEmail, MdOutlineLock } from "react-icons/md";
+import { useMutation } from "@tanstack/react-query";
+import { useDispatch, useSelector } from "react-redux";
+import { loginRequest, loginSuccess, loginFailure } from "../features/auth/authSlice";
+import axiosInstance from "../api/axiosInstance";
 
 export default function SignIn() {
   const navigate = useNavigate();
-  const [error, setError] = useState(null);
+  const dispatch = useDispatch();
+  const { loading, error } = useSelector((state) => state.auth);
 
   const {
     register,
@@ -19,20 +21,23 @@ export default function SignIn() {
   // Define the mutation for the login process
   const SignInMutation = useMutation({
     mutationFn: async (formData) => {
-      const res = await axios.post("/api/auth/signin", formData, { withCredentials: true });
+      dispatch(loginRequest()); // Dispatch login request action before making API call
+      const res = await axiosInstance.post("/api/auth/signin", formData);
       return res.data;
     },
     onSuccess: (data) => {
-      setError(null); // Clear any previous error message
       console.log("Sign in API Response:", data);
       if (!data.success) {
-        setError(data.message);
+        dispatch(loginFailure(data.message));
       } else {
-        navigate("/");
+        dispatch(loginSuccess(data)); // Dispatch login success action if login is successful
+        navigate("/"); // Navigate to homepage
       }
     },
     onError: (error) => {
-      setError(error.response?.data?.message || "Some thing went wrong. Please try again");
+      dispatch(
+        loginFailure(error.response?.data?.message || "Some thing went wrong. Please try again")
+      ); // Dispatch login failure action on error
     },
   });
 
@@ -65,7 +70,7 @@ export default function SignIn() {
               errors.userEmail ? "border-red-500" : "border-highlightGray/25"
             } mt-4 `}
           >
-            <span className="pl-2 text-xl text-highlightGray/75">
+            <span className="p-2 text-xl text-highlightGray/75">
               <MdOutlineEmail />
             </span>
             <input
@@ -97,7 +102,7 @@ export default function SignIn() {
               errors.userPassword ? "border-red-500" : "border-highlightGray/25"
             } mt-4 `}
           >
-            <span className="pl-2 text-xl text-highlightGray/75">
+            <span className="p-2 text-xl text-highlightGray/75">
               <MdOutlineLock />
             </span>
             <input
@@ -143,26 +148,24 @@ export default function SignIn() {
 
           {/* Sign in button */}
           <button
-            disabled={SignInMutation.isLoading}
+            disabled={loading}
             type="submit"
             className="p-2 mt-4 bg-highlight hover:bg-highlightHover border-none rounded text-primaryBtn disabled:bg-slate-200 disabled:cursor-not-allowed"
           >
-            {SignInMutation.isLoading ? "Loading..." : "Sign in"}
+            {loading ? "Loading..." : "Sign in"}
           </button>
         </form>
 
         {/* Google button */}
         <button
-          disabled={SignInMutation.isLoading}
+          disabled={loading}
           type="submit"
           className="p-2 mt-1 bg-transparent hover:bg-primaryBgShade1/75 border border-highlightGray/25 rounded text-primary disabled:bg-slate-200 disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
           <span className="text-2xl">
             <FcGoogle />
           </span>
-          <span className="transition-none">
-            {SignInMutation.isLoading ? "Loading..." : "Continue with Google"}
-          </span>
+          <span className="transition-none">{loading ? "Loading..." : "Continue with Google"}</span>
         </button>
       </div>
     </div>
