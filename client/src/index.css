@@ -30,6 +30,6 @@ body {
   background-color: rgba(var(--primary-bg));
   font-family: Helvetica, Arial, sans-serif;
 }
-.active {
-  border-bottom: 2px solid rgba(var(--text-highlight));
+a.active {
+  border-bottom: 2px solid rgb(255, 95, 31);
 }

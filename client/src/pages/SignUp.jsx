@@ -4,6 +4,10 @@ import { useForm } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
 import axios from "axios";
 import { useMutation } from "@tanstack/react-query";
+import { MdError, MdCheckCircle, MdOutlineEmail, MdOutlineLock } from "react-icons/md";
+import { FiUser } from "react-icons/fi";
+
+// TODO: Turn off auto complete
 
 export default function SignUp() {
   const [error, setError] = useState(null);
@@ -60,70 +64,125 @@ export default function SignUp() {
         {/* Sign up form */}
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
           {/* User name input */}
-          <input
-            type="text"
-            placeholder="User name*"
-            className={`p-2 bg-transparent border rounded outline-none placeholder:text-highlightGray/75 text-primary ${
-              errors.userName ? "border-highlight" : "border-highlightGray/25"
-            } `}
-            {...register("userName", { required: "User name is required" })}
-            aria-invalid={errors.userName ? "true" : "false"}
-          />
+          <div
+            className={`flex items-center border rounded ${
+              errors.userName ? "border-red-500" : "border-highlightGray/25"
+            } mt-4 `}
+          >
+            <span className="pl-2 text-xl text-highlightGray/75">
+              <FiUser />
+            </span>
+            <input
+              type="text"
+              placeholder="User name*"
+              className={`bg-transparent outline-none placeholder:text-highlightGray/75 text-primary p-2 w-full`}
+              {...register("userName", {
+                required: "User name is required",
+                onChange: () => {
+                  setError(null);
+                  setSuccess(null);
+                },
+              })}
+              aria-invalid={errors.userName ? "true" : "false"}
+            />
+          </div>
           {errors.userName && (
-            <p role="alert" className="text-highlight">
+            <p role="alert" className="text-red-500">
               {errors.userName.message}
             </p>
           )}
 
           {/* Email address input */}
-          <input
-            type="email"
-            placeholder="Email address*"
-            className={`p-2 mt-4 bg-transparent border rounded outline-none placeholder:text-highlightGray/75 text-primary ${
-              errors.userEmail ? "border-highlight" : "border-highlightGray/25"
-            }`}
-            {...register("userEmail", {
-              required: "Email address is required",
-              pattern: {
-                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                message: "Please enter a valid email address",
-              },
-            })}
-            aria-invalid={errors.userEmail ? "true" : "false"}
-          />
+          <div
+            className={`flex items-center border rounded ${
+              errors.userEmail ? "border-red-500" : "border-highlightGray/25"
+            } mt-4 `}
+          >
+            <span className="pl-2 text-xl text-highlightGray/75">
+              <MdOutlineEmail />
+            </span>
+            <input
+              type="email"
+              placeholder="Email address*"
+              className={`bg-transparent outline-none placeholder:text-highlightGray/75 text-primary p-2 w-full`}
+              {...register("userEmail", {
+                required: "Email address is required",
+                pattern: {
+                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message: "Please enter a valid email address",
+                },
+                onChange: () => {
+                  setError(null);
+                  setSuccess(null);
+                },
+              })}
+              aria-invalid={errors.userEmail ? "true" : "false"}
+            />
+          </div>
           {errors.userEmail && (
-            <p role="alert" className="text-highlight">
+            <p role="alert" className="text-red-500">
               {errors.userEmail.message}
             </p>
           )}
 
           {/* Create password input */}
-          <input
-            type="password"
-            placeholder="Create password*"
-            className={`p-2 mt-4 bg-transparent border rounded outline-none placeholder:text-highlightGray/75 text-primary ${
-              errors.userPassword ? "border-highlight" : "border-highlightGray/25"
-            }`}
-            {...register("userPassword", {
-              required: "Password is required",
-              minLength: {
-                value: 8,
-                message: "Password must be at least 8 characters long",
-              },
-              maxLength: {
-                value: 24,
-                message: "Password can't be more than 24 characters long",
-              },
-              pattern: {
-                value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/,
-                message: "Password must contain at least one letter and one number",
-              },
-            })}
-            aria-invalid={errors.userPassword ? "true" : "false"}
-          />
+          <div
+            className={`flex items-center border rounded ${
+              errors.userPassword ? "border-red-500" : "border-highlightGray/25"
+            } mt-4 `}
+          >
+            <span className="pl-2 text-xl text-highlightGray/75">
+              <MdOutlineLock />
+            </span>
+            <input
+              type="password"
+              placeholder="Create password*"
+              className={`bg-transparent outline-none placeholder:text-highlightGray/75 text-primary p-2 w-full`}
+              {...register("userPassword", {
+                required: "Password is required",
+                minLength: {
+                  value: 8,
+                  message: "Password must be at least 8 characters long",
+                },
+                maxLength: {
+                  value: 24,
+                  message: "Password can't be more than 24 characters long",
+                },
+                pattern: {
+                  value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/,
+                  message: "Password must contain at least one letter and one number",
+                },
+                onChange: () => {
+                  setError(null);
+                  setSuccess(null);
+                },
+              })}
+              aria-invalid={errors.userPassword ? "true" : "false"}
+            />
+          </div>
           {errors.userPassword && (
-            <p role="alert" className="text-highlight">
+            <p role="alert" className="text-red-500">
               {errors.userPassword.message}
+            </p>
+          )}
+
+          {/* Error message */}
+          {error && (
+            <p className="text-primaryBtn bg-red-600 rounded p-2 mt-4 flex items-center gap-2">
+              <span className="text-xl">
+                <MdError />
+              </span>
+              {error}
+            </p>
+          )}
+
+          {/* Success message */}
+          {success && (
+            <p className="text-[rgba(40, 40, 43)] bg-green-400 rounded p-2 mt-4 flex items-center gap-2">
+              <span className="text-xl">
+                <MdCheckCircle />
+              </span>
+              {success}
             </p>
           )}
 
@@ -136,12 +195,6 @@ export default function SignUp() {
             {signUpMutation.isLoading ? "Loading..." : "Sign up"}
           </button>
         </form>
-
-        {/* Error message */}
-        {error && <p className="text-primaryBtn bg-highlight rounded p-2">{error}</p>}
-
-        {/* Success message */}
-        {success && <p className="text-[rgba(40, 40, 43)] bg-green-400 rounded p-2">{success}</p>}
 
         {/* Google button */}
         <button

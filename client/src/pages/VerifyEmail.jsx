@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { MdVerified, MdError } from "react-icons/md";
 
 export default function VerifyEmail() {
   const location = useLocation();
@@ -20,11 +21,11 @@ export default function VerifyEmail() {
         const res = await axios.get(`http://localhost:5000/api/auth/verify-email?token=${token}`, {
           withCredentials: true,
         });
-        console.log("API Response:", res.data);
+        console.log("Sign up API Response:", res.data);
         setVerification({
           isLoading: false,
           isError: false,
-          message: "Email verified successfully!",
+          message: "Email verified successfully",
         });
 
         setTimeout(() => {
@@ -35,7 +36,7 @@ export default function VerifyEmail() {
         setVerification({
           isLoading: false,
           isError: true,
-          message: "Email verification failed.",
+          message: "Email verification failed",
         });
       }
     };
@@ -50,7 +51,14 @@ export default function VerifyEmail() {
           <span className="loading loading-ring loading-lg text-primary"></span>
         </>
       ) : (
-        <h1 className="text-primary text-2xl">{verification.message}</h1>
+        <>
+          <h1 className={`text-2xl ${verification.isError ? "text-red-500" : "text-green-400"}`}>
+            {verification.message}
+          </h1>
+          <span className={`text-2xl ${verification.isError ? "text-red-500" : "text-green-400"}`}>
+            {verification.isError ? <MdError /> : <MdVerified />}
+          </span>
+        </>
       )}
     </div>
   );
