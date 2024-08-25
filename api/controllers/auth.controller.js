@@ -18,8 +18,7 @@ export const signup = async (req, res, next) => {
     if (existingUser) {
       if (existingUser.userName === userName) {
         return next(errorHandler(409, `Username "${userName}" is already taken`));
-      }
-      if (existingUser.userEmail === userEmail) {
+      } else if (existingUser.userEmail === userEmail) {
         return next(errorHandler(409, `Email "${userEmail}" is already registered`));
       }
     }
@@ -49,23 +48,15 @@ export const verifyEmail = async (req, res, next) => {
     // Extract the verification token from the request query parameters
     const { token } = req.query;
 
-    // Checking the user has verification token
-    if (!token) {
-      return next(errorHandler(400, "Missing verification token"));
-    }
-
     // Verify the verification token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const { userName, userEmail, userPassword } = decoded;
 
+    // Hash the password
+    const hashedPassword = bcryptjs.hashSync(userPassword, 10);
+
     // Check if the user already exists
     let user = await User.findOne({ userEmail });
-    if (user && user.isVerified) {
-      return next(errorHandler(400, `"${userEmail}" is already verified`));
-    }
-
-    // Hash the password
-    const hashedPassword = await bcryptjs.hash(userPassword, 10);
 
     // Create a new user with the verified email and hashed password
     if (!user) {
@@ -77,11 +68,6 @@ export const verifyEmail = async (req, res, next) => {
       });
 
       // Save the new user to the database
-      await user.save();
-    } else {
-      // Update the existing user hashed password
-      user.userPassword = hashedPassword;
-      user.isVerified = true;
       await user.save();
     }
 
@@ -157,6 +143,86 @@ export const signin = async (req, res, next) => {
 
     // Send a success response
     return res.status(201).json({ success: true, message: "Login successful", userInfo });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const googleSignIn = async (req, res, next) => {
+  try {
+    // Extract the user's email, name, and profile picture from the request body
+    const { userName, userEmail, userPhoto } = req.body;
+
+    // Check if the user with the provided email exists
+    const validUser = await User.findOne({ userEmail });
+
+    if (validUser) {
+      // Generate a JWT token for login the user
+      const authToken = jwt.sign(
+        {
+          id: validUser._id,
+          userName: validUser.userName,
+          userEmail: validUser.userEmail,
+        },
+        process.env.JWT_SECRET
+      );
+
+      // Remove the password from the user object before sending it back to the client
+      const { userPassword: pass, ...userInfo } = validUser._doc;
+
+      // Set the token in a cookie
+      res.cookie("authToken", authToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+      });
+
+      // Send a success response
+      return res.status(201).json({ success: true, message: "Google login successful", userInfo });
+    } else {
+      // Generate a random 8-character password for the new user
+      const generatedPassword = Math.random().toString(36).slice(-8);
+
+      // Hash the password for the new user
+      const hashedPassword = bcryptjs.hashSync(generatedPassword, 10);
+
+      // Create a new user with the verified email, hashed password, and profile picture
+      const newUser = new User({
+        userName,
+        userEmail,
+        userPassword: hashedPassword,
+        isVerified: true,
+        userPhoto,
+      });
+
+      // Save the new user to the database
+      await newUser.save();
+
+      // Generate a JWT token for login the user
+      const authToken = jwt.sign(
+        {
+          id: newUser._id,
+          userName: newUser.userName,
+          userEmail: newUser.userEmail,
+        },
+        process.env.JWT_SECRET
+      );
+
+      // Remove the password from the user object before sending it back to the client
+      const { userPassword: pass, ...userInfo } = newUser._doc;
+
+      // Set the token in a cookie
+      res.cookie("authToken", authToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+      });
+
+      // Send a success response
+      return res
+        .status(201)
+        .json({ success: true, message: "Google registration successful", userInfo });
+    }
   } catch (error) {
     next(error);
   }

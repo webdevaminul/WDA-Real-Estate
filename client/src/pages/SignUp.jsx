@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { FcGoogle } from "react-icons/fc";
 import { useMutation } from "@tanstack/react-query";
 import { MdError, MdCheckCircle, MdOutlineEmail, MdOutlineLock } from "react-icons/md";
 import { FiUser } from "react-icons/fi";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 import axiosInstance from "../api/axiosInstance";
+import GoogleAuth from "../components/GoogleAuth";
 
 // TODO: Turn off auto complete
 
@@ -213,18 +213,7 @@ export default function SignUp() {
         </form>
 
         {/* Google button */}
-        <button
-          disabled={signUpMutation.isLoading}
-          type="submit"
-          className="p-2 mt-1 bg-transparent hover:bg-primaryBgShade1/75 border border-highlightGray/25 rounded text-primary disabled:bg-slate-200 disabled:cursor-not-allowed select-none flex items-center justify-center gap-2"
-        >
-          <span className="text-2xl">
-            <FcGoogle />
-          </span>
-          <span className="transition-none">
-            {signUpMutation.isLoading ? "Loading..." : "Continue with Google"}
-          </span>
-        </button>
+        <GoogleAuth />
       </div>
     </div>
   );

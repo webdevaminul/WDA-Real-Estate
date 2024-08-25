@@ -2,7 +2,7 @@ import { useState } from "react";
 import { IoMdMenu, IoMdClose } from "react-icons/io";
 import { IoEnterOutline } from "react-icons/io5";
 import { Link, NavLink } from "react-router-dom";
-import Darkmode from "../features/Darkmode";
+import Darkmode from "../features/darkmode/Darkmode";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);

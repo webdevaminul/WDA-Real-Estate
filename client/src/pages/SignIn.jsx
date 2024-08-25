@@ -1,6 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { FcGoogle } from "react-icons/fc";
 import { MdError, MdOutlineEmail, MdOutlineLock } from "react-icons/md";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 import { useMutation } from "@tanstack/react-query";
@@ -8,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { loginRequest, loginSuccess, loginFailure } from "../features/auth/authSlice";
 import axiosInstance from "../api/axiosInstance";
 import { useState } from "react";
+import GoogleAuth from "../components/GoogleAuth";
 
 export default function SignIn() {
   const navigate = useNavigate();
@@ -170,16 +170,7 @@ export default function SignIn() {
         </form>
 
         {/* Google button */}
-        <button
-          disabled={loading}
-          type="submit"
-          className="p-2 mt-1 bg-transparent hover:bg-primaryBgShade1/75 border border-highlightGray/25 rounded text-primary disabled:bg-slate-200 disabled:cursor-not-allowed select-none flex items-center justify-center gap-2"
-        >
-          <span className="text-2xl">
-            <FcGoogle />
-          </span>
-          <span className="transition-none">{loading ? "Loading..." : "Continue with Google"}</span>
-        </button>
+        <GoogleAuth />
       </div>
     </div>
   );
