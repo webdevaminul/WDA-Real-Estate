@@ -6,7 +6,9 @@ export default function RootPage() {
   return (
     <>
       <Header></Header>
-      <Outlet></Outlet>
+      <main className="mt-14 sm:mt-16">
+        <Outlet></Outlet>
+      </main>
     </>
   );
 }

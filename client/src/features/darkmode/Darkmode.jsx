@@ -37,11 +37,8 @@ export default function Darkmode() {
   };
 
   return (
-    <button
-      onClick={toggleTheme}
-      className={`text-2xl text-primary ${rotating ? "animate-rotate" : ""} transition-none`}
-    >
-      {darkMode ? <IoMdMoon /> : <IoMdSunny />}
+    <button onClick={toggleTheme} className={`text-2xl ${rotating ? "animate-rotate" : ""} p-2`}>
+      {darkMode ? <IoMdSunny /> : <IoMdMoon />}
     </button>
   );
 }

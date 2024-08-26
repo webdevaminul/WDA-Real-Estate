@@ -8,6 +8,7 @@
     --highlight-hover: 255, 106, 46;
     --text-highlight-gray: 128, 139, 150;
     --primary-btn: 251, 252, 252;
+    --primary-white: 251, 252, 252;
 
     --text-primary: 40, 40, 43;
     --primary-bg: 251, 252, 252;
@@ -24,6 +25,17 @@
   [data-theme="dark"] * {
     @apply transition-colors duration-150;
   }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  button {
+    @apply transition-none duration-0 !important;
+  }
 }
 
 body {
@@ -32,4 +44,16 @@ body {
 }
 a.active {
   border-bottom: 2px solid rgb(255, 95, 31);
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+button,
+a,
+input {
+  color: rgb(var(--text-primary));
 }

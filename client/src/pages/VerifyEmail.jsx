@@ -33,22 +33,22 @@ export default function VerifyEmail() {
   }, [location]);
 
   return (
-    <div className="min-h-[calc(100vh-44px)] sm:min-h-[calc(100vh-58px)] flex flex-col items-center justify-center bg-primaryBg">
+    <main className="min-h-[calc(100vh-44px)] sm:min-h-[calc(100vh-58px)] flex flex-col items-center justify-center bg-primaryBg">
       {loading ? (
         <>
-          <h1 className="text-primary text-2xl">Verifying your email</h1>
-          <span className="loading loading-ring loading-lg text-primary"></span>
+          <h2 className="text-2xl">Verifying your email</h2>
+          <span className="loading loading-ring loading-lg"></span>
         </>
       ) : (
         <>
-          <h1 className={`text-2xl ${error ? "text-red-500" : "text-green-400"}`}>
+          <h2 className={`text-2xl ${error ? "text-red-500" : "text-green-400"}`}>
             {error ? "Email verification failed" : "Email verified successfully"}
-          </h1>
+          </h2>
           <span className={`text-2xl ${error ? "text-red-500" : "text-green-400"}`}>
             {error ? <MdError /> : <MdVerified />}
           </span>
         </>
       )}
-    </div>
+    </main>
   );
 }

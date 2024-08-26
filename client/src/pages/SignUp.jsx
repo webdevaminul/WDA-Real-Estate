@@ -49,13 +49,13 @@ export default function SignUp() {
   };
 
   return (
-    <div className="min-h-[90vh] max-w-xs container mx-auto flex items-center justify-center">
-      <div className="flex flex-col gap-4 justify-center p-4 w-full ">
+    <main className="min-h-[90vh] max-w-xs container mx-auto flex items-center justify-center">
+      <section className="flex flex-col gap-4 justify-center p-4 w-full ">
         {/* Switch between signup and signin */}
-        <div className="text-primary">
-          <p className="text-2xl sm:text-3xl transition-none">Sign up</p>
-          <p className="text-sm transition-none">
-            <span className="transition-none">or </span>
+        <div>
+          <p className="text-2xl sm:text-3xl">Sign up</p>
+          <p className="text-sm">
+            <span>or </span>
             <span>
               <Link to="/sign-in" className="text-blue-500 hover:underline">
                 sign in to your account
@@ -78,7 +78,7 @@ export default function SignUp() {
             <input
               type="text"
               placeholder="User name*"
-              className={`bg-transparent outline-none placeholder:text-highlightGray/75 text-primary p-2 w-full`}
+              className={`bg-transparent outline-none placeholder:text-highlightGray/75 p-2 w-full`}
               {...register("userName", {
                 required: "User name is required",
                 onChange: () => {
@@ -107,7 +107,7 @@ export default function SignUp() {
             <input
               type="email"
               placeholder="Email address*"
-              className={`bg-transparent outline-none placeholder:text-highlightGray/75 text-primary p-2 w-full`}
+              className={`bg-transparent outline-none placeholder:text-highlightGray/75 p-2 w-full`}
               {...register("userEmail", {
                 required: "Email address is required",
                 pattern: {
@@ -140,7 +140,7 @@ export default function SignUp() {
             <input
               type={`${showPassword ? "tex" : "password"}`}
               placeholder="Create password*"
-              className={`bg-transparent outline-none placeholder:text-highlightGray/75 text-primary p-2 w-full`}
+              className={`bg-transparent outline-none placeholder:text-highlightGray/75 p-2 w-full`}
               {...register("userPassword", {
                 required: "Password is required",
                 minLength: {
@@ -184,11 +184,11 @@ export default function SignUp() {
 
           {/* Error message */}
           {error && (
-            <p className="text-primaryBtn bg-red-600 rounded p-2 mt-4 flex items-center gap-2">
+            <p className="text-primaryWhite bg-red-600 rounded p-2 mt-4 flex items-center gap-2">
               <span className="text-xl">
                 <MdError />
               </span>
-              {error}
+              <span>{error}</span>
             </p>
           )}
 
@@ -198,7 +198,7 @@ export default function SignUp() {
               <span className="text-xl">
                 <MdCheckCircle />
               </span>
-              {success}
+              <span>{success}</span>
             </p>
           )}
 
@@ -206,7 +206,7 @@ export default function SignUp() {
           <button
             disabled={signUpMutation.isLoading}
             type="submit"
-            className="p-2 mt-4 bg-highlight hover:bg-highlightHover border-none rounded text-primaryBtn disabled:bg-slate-200 disabled:cursor-not-allowed select-none"
+            className="p-2 mt-4 bg-highlight hover:bg-highlightHover border-none rounded text-primaryWhite disabled:bg-slate-200 disabled:cursor-not-allowed select-none"
           >
             {signUpMutation.isLoading ? "Loading..." : "Sign up"}
           </button>
@@ -214,7 +214,7 @@ export default function SignUp() {
 
         {/* Google button */}
         <GoogleAuth />
-      </div>
-    </div>
+      </section>
+    </main>
   );
 }

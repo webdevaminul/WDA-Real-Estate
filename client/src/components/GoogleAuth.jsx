@@ -5,10 +5,12 @@ import { useMutation } from "@tanstack/react-query";
 import axiosInstance from "../api/axiosInstance";
 import { useDispatch } from "react-redux";
 import { loginRequest, loginSuccess, loginFailure } from "../features/auth/authSlice";
+import { useNavigate } from "react-router-dom";
 
 export default function GoogleAuth() {
   const provider = new GoogleAuthProvider();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   // Define the mutation for google login process
   const googleAuthMutation = useMutation({
@@ -20,6 +22,7 @@ export default function GoogleAuth() {
     onSuccess: (data) => {
       console.log("Google Auth API Response:", data);
       dispatch(loginSuccess(data)); // Dispatch login success action if login is successful
+      navigate("/"); // Navigate to homepage
     },
     onError: () => {
       dispatch(loginFailure("Google auth error"));
@@ -47,14 +50,12 @@ export default function GoogleAuth() {
       onClick={handleGoogleAuth}
       disabled={googleAuthMutation.isLoading}
       type="submit"
-      className="p-2 mt-1 bg-transparent hover:bg-primaryBgShade1/75 border border-highlightGray/25 rounded text-primary disabled:bg-slate-200 disabled:cursor-not-allowed select-none flex items-center justify-center gap-2"
+      className="p-2 mt-1 bg-transparent hover:bg-primaryBgShade1/75 border border-highlightGray/25 rounded disabled:bg-slate-200 disabled:cursor-not-allowed select-none flex items-center justify-center gap-2"
     >
       <span className="text-2xl">
         <FcGoogle />
       </span>
-      <span className="transition-none">
-        {googleAuthMutation.isLoading ? "Loading..." : "Continue with Google"}
-      </span>
+      <span>{googleAuthMutation.isLoading ? "Loading..." : "Continue with Google"}</span>
     </button>
   );
 }

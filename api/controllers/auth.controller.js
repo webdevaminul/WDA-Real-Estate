@@ -88,7 +88,6 @@ export const verifyEmail = async (req, res, next) => {
     res.cookie("authToken", authToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
     });
 
     // Send a success response
@@ -135,7 +134,6 @@ export const signin = async (req, res, next) => {
     res.cookie("authToken", authToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
     });
 
     // Remove the password from the user object before sending it back to the client
@@ -174,7 +172,6 @@ export const googleSignIn = async (req, res, next) => {
       res.cookie("authToken", authToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
       });
 
       // Send a success response
@@ -215,7 +212,6 @@ export const googleSignIn = async (req, res, next) => {
       res.cookie("authToken", authToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
       });
 
       // Send a success response

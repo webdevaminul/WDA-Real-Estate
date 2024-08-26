@@ -5,9 +5,10 @@ import storage from "redux-persist/lib/storage";
 
 const combinedReducer = combineReducers({ auth: authReducer });
 const persistConfig = {
-  key: "auth",
+  key: "root",
   storage,
   version: 1,
+  whitelist: ["auth"],
 };
 
 const persistedReducer = persistReducer(persistConfig, combinedReducer);

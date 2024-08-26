@@ -5,6 +5,7 @@ export default {
     extend: {
       colors: {
         primary: "rgba(var(--text-primary))",
+        primaryWhite: "rgba(var(--primary-white))",
         highlight: "rgba(var(--highlight))",
         highlightHover: "rgba(var(--highlight-hover))",
         highlightGray: "rgba(var(--text-highlight-gray))",
