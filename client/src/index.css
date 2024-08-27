@@ -13,12 +13,16 @@
     --text-primary: 40, 40, 43;
     --primary-bg: 251, 252, 252;
     --primary-bg-shade-1: 240, 243, 244;
+    --primary-bg-shade-2: 235, 238, 240;
+    --primary-shade-hover: 229, 231, 235;
   }
 
   :root[data-theme="dark"] {
     --text-primary: 251, 252, 252;
     --primary-bg: 40, 40, 43;
     --primary-bg-shade-1: 50, 50, 56;
+    --primary-bg-shade-2: 60, 60, 66;
+    --primary-shade-hover: 55, 55, 55;
   }
 
   [data-theme="light"] *,
@@ -36,24 +40,40 @@
   button {
     @apply transition-none duration-0 !important;
   }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  button,
+  a,
+  input {
+    color: rgb(var(--text-primary));
+  }
 }
 
 body {
   background-color: rgba(var(--primary-bg));
   font-family: Helvetica, Arial, sans-serif;
 }
-a.active {
-  border-bottom: 2px solid rgb(255, 95, 31);
+
+nav a.active {
+  border-bottom: 2px solid rgba(var(--highlight));
 }
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p,
-button,
-a,
-input {
-  color: rgb(var(--text-primary));
+
+aside a.active {
+  color: rgba(var(--highlight));
+}
+
+@media screen and (min-width: 640px) {
+  aside a.active {
+    background-color: rgba(var(--highlight));
+    color: rgba(var(--primary-btn));
+  }
+  aside a.active:hover {
+    background-color: rgba(var(--highlight-hover));
+  }
 }

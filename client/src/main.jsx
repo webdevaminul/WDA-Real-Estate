@@ -9,10 +9,14 @@ import RootPage from "./pages/RootPage";
 import Home from "./pages/Home";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
-import Profile from "./pages/Profile";
 import About from "./pages/About";
 import VerifyEmail from "./pages/VerifyEmail";
 import { PersistGate } from "redux-persist/integration/react";
+import ManageAccount from "./pages/ManageAccount";
+import PrivatePages from "./pages/PrivatePages";
+import Overview from "./pages/Overview";
+import UpdateProfile from "./pages/UpdateProfile";
+import ManagePost from "./pages/ManagePost";
 
 const queryClient = new QueryClient();
 
@@ -38,8 +42,26 @@ const router = createBrowserRouter([
         element: <SignIn />,
       },
       {
-        path: "/profile",
-        element: <Profile />,
+        path: "/manage-account/",
+        element: (
+          <PrivatePages>
+            <ManageAccount />
+          </PrivatePages>
+        ),
+        children: [
+          {
+            path: "/manage-account/overview",
+            element: <Overview />,
+          },
+          {
+            path: "/manage-account/update-profile",
+            element: <UpdateProfile />,
+          },
+          {
+            path: "/manage-account/manage-post",
+            element: <ManagePost />,
+          },
+        ],
       },
       {
         path: "/about",
