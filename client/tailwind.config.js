@@ -5,6 +5,9 @@ export default {
     extend: {
       colors: {
         primary: "rgba(var(--text-primary))",
+        secondary: "rgba(var(--text-secondary))",
+        blueColor: "rgba(var(--text-blue))",
+        purpleColor: "rgba(var(--text-purple))",
         primaryWhite: "rgba(var(--primary-white))",
         highlight: "rgba(var(--highlight))",
         highlightHover: "rgba(var(--highlight-hover))",
@@ -24,6 +27,9 @@ export default {
       },
       animation: {
         rotate: "rotate 0.4s ease-in-out",
+      },
+      fontFamily: {
+        body: ["Roboto", "Helvetica", "Arial", "sans-serif"],
       },
     },
   },

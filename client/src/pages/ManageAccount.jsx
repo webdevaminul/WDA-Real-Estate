@@ -1,5 +1,8 @@
 import React from "react";
 import { NavLink, Outlet } from "react-router-dom";
+import { IoIosInformationCircleOutline } from "react-icons/io";
+import { BiCreditCardFront } from "react-icons/bi";
+import { LiaUserEditSolid } from "react-icons/lia";
 
 export default function ManageAccount() {
   return (
@@ -10,23 +13,34 @@ export default function ManageAccount() {
             to="/manage-account/overview"
             className="hover:bg-primaryShadeHover whitespace-nowrap w-full sm:rounded-r-full p-2 flex items-center justify-center sm:justify-start gap-2"
           >
-            Overview
+            <span className="text-2xl">
+              <IoIosInformationCircleOutline />
+            </span>
+            <span>Overview</span>
           </NavLink>
           <NavLink
             to="/manage-account/update-profile"
             className="hover:bg-primaryShadeHover whitespace-nowrap w-full sm:rounded-r-full p-2 flex items-center justify-center sm:justify-start gap-2"
           >
-            Update profile
+            <span className="text-2xl">
+              <LiaUserEditSolid />
+            </span>
+            <span className="hidden sm:inline">Update</span>
+            <span>Profile</span>
           </NavLink>
           <NavLink
             to="/manage-account/manage-post"
             className="hover:bg-primaryShadeHover whitespace-nowrap w-full sm:rounded-r-full p-2 flex items-center justify-center sm:justify-start gap-2"
           >
-            Manage post
+            <span className="text-2xl">
+              <BiCreditCardFront />
+            </span>
+            <span className="hidden sm:inline">Manage</span>
+            <span>Post</span>
           </NavLink>
         </ul>
       </aside>
-      <section className="sm:pl-52 pt-12 sm:pt-0 text-justify">
+      <section className="sm:pl-52 pt-12 sm:pt-0 text-justify w-full">
         <Outlet></Outlet>
       </section>
     </main>
