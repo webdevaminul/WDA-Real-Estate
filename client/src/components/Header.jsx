@@ -78,17 +78,18 @@ export default function Header() {
             <div ref={profileMenuRef} className="relative">
               <button onClick={toggleProfileMenu}>
                 <img
-                  className="h-8 w-8 rounded-full object-center"
-                  src={user.userInfo.userPhoto}
+                  src={user?.userInfo?.userPhoto}
                   alt="profile"
+                  className="h-8 w-8 rounded-full object-center"
+                  loading="lazy"
                 />
               </button>
 
               {profileMenu && (
                 <div className="absolute top-[3.2rem] sm:right-0 right-[-4.5rem] z-40 bg-primaryBgShade1 p-4 shadow-sm border border-highlightGray/15 rounded-xl flex flex-col gap-4">
                   <div className="">
-                    <p className="whitespace-nowrap">Hi, {user.userInfo.userName}</p>
-                    <p className="text-xs ">{user.userInfo.userEmail}</p>
+                    <p className="whitespace-nowrap">Hi, {user?.userInfo?.userName}</p>
+                    <p className="text-xs ">{user?.userInfo?.userEmail}</p>
                   </div>
 
                   <Link

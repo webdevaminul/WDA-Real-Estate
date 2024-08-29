@@ -1,7 +1,13 @@
+import { useRef } from "react";
 import { useForm } from "react-hook-form";
-import { FiUser, FiLock, FiPhone, FiMapPin, FiCalendar, FiMail } from "react-icons/fi";
+import { FiUser, FiLock, FiPhone, FiMapPin, FiCalendar } from "react-icons/fi";
+import { GrUpdate } from "react-icons/gr";
+import { RiErrorWarningLine } from "react-icons/ri";
+import { useSelector } from "react-redux";
 
 export default function ManageProfile() {
+  const { user } = useSelector((state) => state.auth);
+  const imageRef = useRef(null);
   const today = new Date().toISOString().split("T")[0];
 
   const {
@@ -16,18 +22,20 @@ export default function ManageProfile() {
 
   return (
     <main className="p-2 sm:p-10">
-      <h2 className="text-2xl md:text-4xl text-center mb-2 font-sans md:font-light text-primary">
-        Manage Profile
-      </h2>
-      <p className="text-center text-primary mb-3 font-sans font-light">
+      <h2 className="text-xl md:text-3xl text-center md:font-light text-primary">Manage Profile</h2>
+      <p className="text-center text-primary mb-5 font-sans font-light">
         Update your information, or delete your account.
       </p>
 
       <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-4 gap-4 md:gap-6">
+        <input type="file" ref={imageRef} hidden accept="image/*" />
+
         {/* Profile Image */}
-        <figure className="col-span-3 w-32 h-32 rounded-full overflow-clip border border-highlightGray cursor-pointer">
+        <figure className="col-span-4 overflow-clip cursor-pointer flex items-center justify-center">
           <img
-            src="https://lh3.googleusercontent.com/a/ACg8ocJ6GHDsJub48BSYgH6IC_aNbXI_NNrW5qq8Cpg5FBZ24xWVzrbs=s288-c-no"
+            onClick={() => imageRef.current.click()}
+            className="w-40 h-40 rounded-full border border-highlightGray"
+            src={user?.userInfo?.userPhoto}
             alt="profile"
           />
         </figure>
@@ -207,18 +215,22 @@ export default function ManageProfile() {
           )}
         </div>
 
-        <div className="col-span-4  flex justify-between items-center">
+        <div className="col-span-4 grid grid-cols-2 gap-4 md:gap-6">
           {/* Submit Button */}
           <button
             type="submit"
-            className="p-2 mt-4 bg-highlight hover:bg-highlightHover border-none rounded text-primaryWhite disabled:bg-slate-200 disabled:cursor-not-allowed select-none"
+            className="p-2 mt-4 bg-highlight hover:bg-highlightHover border-none rounded text-primaryWhite disabled:bg-slate-200 disabled:cursor-not-allowed select-none flex items-center justify-center gap-2 flex-nowrap"
           >
+            <GrUpdate />
             Update Account
           </button>
 
           {/* Delete button */}
-          <button className="p-2 mt-4 bg-red-600 hover:bg-red-500 border-none rounded text-primaryWhite disabled:bg-slate-200 disabled:cursor-not-allowed select-none">
-            Delete Account
+          <button className="p-2 mt-4 bg-red-600 hover:bg-red-500 border-none rounded text-primaryWhite disabled:bg-slate-200 disabled:cursor-not-allowed select-none flex items-center justify-center gap-1 flex-nowrap">
+            <span className="text-xl">
+              <RiErrorWarningLine />
+            </span>
+            <span>Delete Account</span>
           </button>
         </div>
       </form>

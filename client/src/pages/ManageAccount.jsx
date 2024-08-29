@@ -11,7 +11,7 @@ export default function ManageAccount() {
         <ul className="flex flex-row sm:flex-col gap-2 sm:py-5 sm:pr-4">
           <NavLink
             to="/manage-account/overview"
-            className="sm:hover:bg-primaryShadeHover whitespace-nowrap w-full sm:rounded-r-full p-2 flex items-center justify-center sm:justify-start gap-2"
+            className="sm:hover:bg-primaryShadeHover whitespace-nowrap w-full sm:rounded-r-full p-2 flex items-center justify-center sm:justify-start gap-1 sm:gap-2"
           >
             <span className="text-2xl">
               <IoIosInformationCircleOutline />
@@ -20,7 +20,7 @@ export default function ManageAccount() {
           </NavLink>
           <NavLink
             to="/manage-account/manage-profile"
-            className="sm:hover:bg-primaryShadeHover whitespace-nowrap w-full sm:rounded-r-full p-2 flex items-center justify-center sm:justify-start gap-2"
+            className="sm:hover:bg-primaryShadeHover whitespace-nowrap w-full sm:rounded-r-full p-2 flex items-center justify-center sm:justify-start gap-1 sm:gap-2"
           >
             <span className="text-2xl">
               <MdOutlineManageAccounts />
@@ -30,7 +30,7 @@ export default function ManageAccount() {
           </NavLink>
           <NavLink
             to="/manage-account/manage-post"
-            className="sm:hover:bg-primaryShadeHover whitespace-nowrap w-full sm:rounded-r-full p-2 flex items-center justify-center sm:justify-start gap-2"
+            className="sm:hover:bg-primaryShadeHover whitespace-nowrap w-full sm:rounded-r-full p-2 flex items-center justify-center sm:justify-start gap-1 sm:gap-2"
           >
             <span className="text-2xl">
               <BiCreditCardFront />
