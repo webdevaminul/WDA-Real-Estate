@@ -49,7 +49,7 @@ export default function Header() {
   }, []);
 
   return (
-    <header className="bg-primaryBgShade1 shadow fixed top-0 left-0 w-full z-50">
+    <header className="bg-primaryBgShade1 fixed top-0 left-0 w-full z-50">
       <nav className="flex justify-between items-center px-2 py-1 sm:py-0">
         {/* Left Part Logo */}
         <Link

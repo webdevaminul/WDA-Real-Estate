@@ -2,7 +2,7 @@ import React from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import { IoIosInformationCircleOutline } from "react-icons/io";
 import { BiCreditCardFront } from "react-icons/bi";
-import { LiaUserEditSolid } from "react-icons/lia";
+import { MdOutlineManageAccounts } from "react-icons/md";
 
 export default function ManageAccount() {
   return (
@@ -11,7 +11,7 @@ export default function ManageAccount() {
         <ul className="flex flex-row sm:flex-col gap-2 sm:py-5 sm:pr-4">
           <NavLink
             to="/manage-account/overview"
-            className="hover:bg-primaryShadeHover whitespace-nowrap w-full sm:rounded-r-full p-2 flex items-center justify-center sm:justify-start gap-2"
+            className="sm:hover:bg-primaryShadeHover whitespace-nowrap w-full sm:rounded-r-full p-2 flex items-center justify-center sm:justify-start gap-2"
           >
             <span className="text-2xl">
               <IoIosInformationCircleOutline />
@@ -19,18 +19,18 @@ export default function ManageAccount() {
             <span>Overview</span>
           </NavLink>
           <NavLink
-            to="/manage-account/update-profile"
-            className="hover:bg-primaryShadeHover whitespace-nowrap w-full sm:rounded-r-full p-2 flex items-center justify-center sm:justify-start gap-2"
+            to="/manage-account/manage-profile"
+            className="sm:hover:bg-primaryShadeHover whitespace-nowrap w-full sm:rounded-r-full p-2 flex items-center justify-center sm:justify-start gap-2"
           >
             <span className="text-2xl">
-              <LiaUserEditSolid />
+              <MdOutlineManageAccounts />
             </span>
-            <span className="hidden sm:inline">Update</span>
+            <span className="hidden sm:inline">Manage</span>
             <span>Profile</span>
           </NavLink>
           <NavLink
             to="/manage-account/manage-post"
-            className="hover:bg-primaryShadeHover whitespace-nowrap w-full sm:rounded-r-full p-2 flex items-center justify-center sm:justify-start gap-2"
+            className="sm:hover:bg-primaryShadeHover whitespace-nowrap w-full sm:rounded-r-full p-2 flex items-center justify-center sm:justify-start gap-2"
           >
             <span className="text-2xl">
               <BiCreditCardFront />

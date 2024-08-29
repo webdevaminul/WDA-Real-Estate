@@ -8,9 +8,9 @@
     --highlight: 255, 95, 31;
     --highlight-hover: 255, 106, 46;
     --text-highlight-gray: 128, 139, 150;
-    --primary-btn: 251, 252, 252;
-    --primary-white: 251, 252, 252;
+    --primary-btn: 230, 230, 230;
 
+    --primary-white: 230, 230, 230;
     --text-primary: 60, 60, 63;
     --text-secondary: 50, 50, 53;
     --text-blue: 59, 130, 246;
@@ -22,8 +22,9 @@
   }
 
   :root[data-theme="dark"] {
-    --text-primary: 220, 220, 220;
-    --text-secondary: 230, 230, 230;
+    --primary-white: 211, 212, 212;
+    --text-primary: 200, 200, 200;
+    --text-secondary: 200, 200, 200;
     --text-blue: 96, 165, 250;
     --text-purple: 192, 132, 252;
     --primary-bg: 40, 40, 43;

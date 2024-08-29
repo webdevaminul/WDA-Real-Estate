@@ -1,18 +1,17 @@
 import { RiFocus2Line } from "react-icons/ri";
 import { IoIosAt } from "react-icons/io";
-import { LuUserCog2 } from "react-icons/lu";
 
 export default function () {
   return (
     <main className="p-2 sm:p-10 flex flex-col gap-5">
       <div>
-        <figure className="w-40 h-40 rounded-full overflow-clip border border-highlightGray">
+        <figure className="w-32 h-32 rounded-full overflow-clip border border-highlightGray">
           <img
             src="https://lh3.googleusercontent.com/a/ACg8ocJ6GHDsJub48BSYgH6IC_aNbXI_NNrW5qq8Cpg5FBZ24xWVzrbs=s288-c-no"
             alt="profile"
           />
         </figure>
-        <p className="mt-1 text-4xl">Hi, Aminul Islam</p>
+        <h2 className="mt-1 text-2xl sm:text-4xl">Hi, Aminul Islam</h2>
         <p className="text-sm">Your information helps other users to contact with you.</p>
       </div>
 
@@ -20,7 +19,7 @@ export default function () {
         {/* Column 1: Basic Information */}
         <div className="col-span-2 lg:col-span-1 border border-highlightGray/20 p-4 rounded-lg bg-primaryBgShade1">
           <p className="text-lg font-semibold mb-2 flex items-center">
-            <span className="mr-2 text-4xl text-purple-600 bg-purple-200 rounded-full p-1">
+            <span className="mr-2 text-3xl sm:text-4xl text-purple-600 bg-purple-200 rounded-full p-1">
               <RiFocus2Line />
             </span>
             <span className="text-purpleColor">Basic Information</span>
@@ -42,7 +41,7 @@ export default function () {
         {/* Column 2: Contact Information */}
         <div className="col-span-2 lg:col-span-1 border border-highlightGray/20 p-4 rounded-lg bg-primaryBgShade1">
           <p className="text-lg font-semibold mb-2 flex items-center">
-            <span className="mr-2 text-4xl text-blue-600 bg-blue-200 rounded-full p-1">
+            <span className="mr-2 text-3xl sm:text-4xl text-blue-600 bg-blue-200 rounded-full p-1">
               <IoIosAt />
             </span>
             <span className="text-blueColor">Contact Information</span>

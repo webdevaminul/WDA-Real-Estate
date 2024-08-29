@@ -15,8 +15,8 @@ import { PersistGate } from "redux-persist/integration/react";
 import ManageAccount from "./pages/ManageAccount";
 import PrivatePages from "./pages/PrivatePages";
 import Overview from "./pages/Overview";
-import UpdateProfile from "./pages/UpdateProfile";
 import ManagePost from "./pages/ManagePost";
+import ManageProfile from "./pages/ManageProfile";
 
 const queryClient = new QueryClient();
 
@@ -54,8 +54,8 @@ const router = createBrowserRouter([
             element: <Overview />,
           },
           {
-            path: "/manage-account/update-profile",
-            element: <UpdateProfile />,
+            path: "/manage-account/manage-profile",
+            element: <ManageProfile />,
           },
           {
             path: "/manage-account/manage-post",
