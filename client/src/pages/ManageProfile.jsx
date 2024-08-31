@@ -1,15 +1,49 @@
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { FiUser, FiLock, FiPhone, FiMapPin, FiCalendar } from "react-icons/fi";
 import { GrUpdate } from "react-icons/gr";
 import { RiErrorWarningLine } from "react-icons/ri";
 import { useSelector } from "react-redux";
+import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage";
+import { app } from "../../firebase.config";
 
 export default function ManageProfile() {
   const { user } = useSelector((state) => state.auth);
   const imageRef = useRef(null);
   const today = new Date().toISOString().split("T")[0];
+  const [file, setFile] = useState(undefined);
+  const [filePercent, setFilePercent] = useState(0);
+  const [avatarURL, setAvatarURL] = useState("");
+  const [fileUploadError, setFileUploadError] = useState(false);
 
+  useEffect(() => {
+    if (file) {
+      handleFileUpload(file);
+    }
+  }, [file]);
+
+  const handleFileUpload = (file) => {
+    const storage = getStorage(app);
+    const fileName = new Date().getTime() + file.name;
+    const storageRef = ref(storage, fileName);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const process = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        setFilePercent(Math.round(process));
+      },
+      (error) => {
+        setFileUploadError(true);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((url) => {
+          setAvatarURL(url);
+        });
+      }
+    );
+  };
   const {
     register,
     handleSubmit,
@@ -17,7 +51,8 @@ export default function ManageProfile() {
   } = useForm();
 
   const onSubmit = (formData) => {
-    console.log(formData);
+    const updatedFormData = { ...formData, userPhoto: avatarURL };
+    console.log(updatedFormData);
   };
 
   return (
@@ -28,17 +63,36 @@ export default function ManageProfile() {
       </p>
 
       <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-4 gap-4 md:gap-6">
-        <input type="file" ref={imageRef} hidden accept="image/*" />
+        <input
+          type="file"
+          onChange={(e) => setFile(e.target.files[0])}
+          ref={imageRef}
+          hidden
+          accept="image/*"
+        />
 
         {/* Profile Image */}
         <figure className="col-span-4 overflow-clip cursor-pointer flex items-center justify-center">
           <img
             onClick={() => imageRef.current.click()}
             className="w-40 h-40 rounded-full border border-highlightGray"
-            src={user?.userInfo?.userPhoto}
-            alt="profile"
+            src={avatarURL || user?.userInfo?.userPhoto}
           />
         </figure>
+
+        {fileUploadError ? (
+          <p className="col-span-4 text-center text-sm mt-[-1rem] text-red-500">
+            Image upload failed
+          </p>
+        ) : filePercent > 0 && filePercent < 100 ? (
+          <p className="col-span-4 text-center text-sm mt-[-1rem] text-primary">{`Uploading image ${filePercent}`}</p>
+        ) : filePercent === 100 ? (
+          <p className="col-span-4 text-center text-sm mt-[-1rem] text-green-500">
+            Image uploaded successfully
+          </p>
+        ) : (
+          ""
+        )}
 
         {/* User Name */}
         <div className="col-span-4">

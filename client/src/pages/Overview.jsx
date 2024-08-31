@@ -11,7 +11,6 @@ export default function () {
         <figure className="w-32 h-32 rounded-full overflow-clip border border-highlightGray">
           <img
             src={user?.userInfo?.userPhoto}
-            alt="profile"
             className="h-full w-full object-cover object-center"
             loading="lazy"
           />

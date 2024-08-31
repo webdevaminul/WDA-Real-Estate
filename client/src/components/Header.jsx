@@ -79,7 +79,6 @@ export default function Header() {
               <button onClick={toggleProfileMenu}>
                 <img
                   src={user?.userInfo?.userPhoto}
-                  alt="profile"
                   className="h-8 w-8 rounded-full object-center"
                   loading="lazy"
                 />
