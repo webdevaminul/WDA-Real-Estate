@@ -8,10 +8,10 @@ export default function () {
   return (
     <main className="p-2 sm:p-10 flex flex-col gap-5">
       <div className="flex flex-col justify-center items-center">
-        <figure className="w-32 h-32 rounded-full overflow-clip border border-highlightGray">
+        <figure className="w-32 h-32 border border-highlightGray rounded-full overflow-clip">
           <img
             src={user?.userInfo?.userPhoto}
-            className="h-full w-full object-cover object-center"
+            className="h-full w-full object-cover"
             loading="lazy"
           />
         </figure>

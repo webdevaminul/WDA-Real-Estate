@@ -65,34 +65,42 @@ export default function ManageProfile() {
       <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-4 gap-4 md:gap-6">
         <input
           type="file"
-          onChange={(e) => setFile(e.target.files[0])}
+          onChange={(e) => {
+            setFile(e.target.files[0]);
+            setFileUploadError(false);
+            setFilePercent(0);
+          }}
           ref={imageRef}
           hidden
           accept="image/*"
         />
 
         {/* Profile Image */}
-        <figure className="col-span-4 overflow-clip cursor-pointer flex items-center justify-center">
-          <img
+        <div className="col-span-4 flex flex-col items-center justify-center">
+          <figure
             onClick={() => imageRef.current.click()}
-            className="w-40 h-40 rounded-full border border-highlightGray"
-            src={avatarURL || user?.userInfo?.userPhoto}
-          />
-        </figure>
+            className="w-40 h-40 border border-highlightGray rounded-full overflow-clip cursor-pointer"
+          >
+            <img
+              className="w-full h-full object-cover"
+              src={avatarURL || user?.userInfo?.userPhoto}
+            />
+          </figure>
 
-        {fileUploadError ? (
-          <p className="col-span-4 text-center text-sm mt-[-1rem] text-red-500">
-            Image upload failed
-          </p>
-        ) : filePercent > 0 && filePercent < 100 ? (
-          <p className="col-span-4 text-center text-sm mt-[-1rem] text-primary">{`Uploading image ${filePercent}`}</p>
-        ) : filePercent === 100 ? (
-          <p className="col-span-4 text-center text-sm mt-[-1rem] text-green-500">
-            Image uploaded successfully
-          </p>
-        ) : (
-          ""
-        )}
+          {fileUploadError ? (
+            <p className="col-span-4 text-center text-sm text-red-500">
+              Image upload failed (image must be less than 2 MB)
+            </p>
+          ) : filePercent > 0 && filePercent < 100 ? (
+            <p className="col-span-4 text-center text-sm text-primary">{`Uploading image ${filePercent}`}</p>
+          ) : filePercent === 100 ? (
+            <p className="col-span-4 text-center text-sm text-green-500">
+              Image uploaded successfully
+            </p>
+          ) : (
+            ""
+          )}
+        </div>
 
         {/* User Name */}
         <div className="col-span-4">
@@ -106,6 +114,7 @@ export default function ManageProfile() {
           <input
             id="userName"
             type="text"
+            defaultValue={user?.userInfo?.userName}
             className={`w-full bg-primaryBg outline-none placeholder:text-highlightGray/75 border rounded ${
               errors.userName ? "border-red-500" : "border-highlightGray/25"
             } p-2`}
