@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 
 import authRoutes from "./routes/auth.route.js";
+import userRoutes from "./routes/user.route.js";
 
 // Load environment variables from .env file
 dotenv.config();
@@ -34,6 +35,7 @@ mongoose
 
 // API routes
 app.use("/api/auth", authRoutes);
+app.use("/api/user", userRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

@@ -145,7 +145,7 @@ export default function ManageProfile() {
             className={`w-full bg-primaryBg outline-none placeholder:text-highlightGray/75 border rounded ${
               errors.password ? "border-red-500" : "border-highlightGray/25"
             } p-2`}
-            {...register("password", {
+            {...register("userPassword", {
               required: "Password is required",
               minLength: {
                 value: 8,
@@ -181,7 +181,7 @@ export default function ManageProfile() {
             className={`w-full bg-primaryBg outline-none placeholder:text-highlightGray/75 border rounded ${
               errors.dob ? "border-red-500" : "border-highlightGray/25"
             } p-2`}
-            {...register("dob", {
+            {...register("userBirth", {
               validate: (value) => {
                 return value <= today || "Date of birth cannot be in the future";
               },
@@ -207,7 +207,7 @@ export default function ManageProfile() {
             className={`w-full bg-primaryBg outline-none placeholder:text-highlightGray/75 border rounded ${
               errors.phone ? "border-red-500" : "border-highlightGray/25"
             } p-2`}
-            {...register("phone", {
+            {...register("userPhone", {
               pattern: {
                 value: /^\+?[0-9]+$/,
                 message: "Invalid phone number",
@@ -236,7 +236,7 @@ export default function ManageProfile() {
             className={`h-full w-full bg-primaryBg outline-none border rounded ${
               errors.phone ? "border-red-500" : "border-highlightGray/25"
             } p-2 text-primary`}
-            {...register("address")}
+            {...register("userAddress")}
             aria-invalid={errors.address ? "true" : "false"}
           />
           {errors.address && (
@@ -261,7 +261,7 @@ export default function ManageProfile() {
             className={`w-full bg-primaryBg outline-none placeholder:text-highlightGray/75 border rounded ${
               errors.gender ? "border-red-500" : "border-highlightGray/25"
             } p-3 text-primary`}
-            {...register("gender")}
+            {...register("userGender")}
             aria-invalid={errors.gender ? "true" : "false"}
           >
             <option value="" disabled>
