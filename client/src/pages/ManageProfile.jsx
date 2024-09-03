@@ -6,6 +6,10 @@ import { RiErrorWarningLine } from "react-icons/ri";
 import { useSelector } from "react-redux";
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage";
 import { app } from "../../firebase.config";
+import { updateRequest, updateSuccess, updateFailure } from "../features/auth/authSlice";
+import { useDispatch } from "react-redux";
+import { useMutation } from "@tanstack/react-query";
+import axiosInstance from "../api/axiosInstance";
 
 export default function ManageProfile() {
   const { user } = useSelector((state) => state.auth);
@@ -15,6 +19,7 @@ export default function ManageProfile() {
   const [filePercent, setFilePercent] = useState(0);
   const [avatarURL, setAvatarURL] = useState("");
   const [fileUploadError, setFileUploadError] = useState(false);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (file) {
@@ -44,15 +49,64 @@ export default function ManageProfile() {
       }
     );
   };
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
+  // Define the mutation for the update profile process
+  const updateMutation = useMutation({
+    mutationFn: async (updatedFormData) => {
+      dispatch(updateRequest()); // Dispatch update request action before making API call
+      const res = await axiosInstance.post(
+        `/api/user/update/${user?.userInfo?._id}`,
+        updatedFormData
+      );
+      return res.data;
+    },
+    onSuccess: (data) => {
+      console.log("Update API Response:", data);
+      if (!data.success) {
+        dispatch(updateFailure(data.message));
+      } else {
+        dispatch(updateSuccess(data)); // Dispatch update success action if update is successful
+      }
+    },
+    onError: (error) => {
+      dispatch(
+        updateFailure(error.response?.data?.message || "Some thing went wrong. Please try again")
+      );
+    },
+  });
+
   const onSubmit = (formData) => {
-    const updatedFormData = { ...formData, userPhoto: avatarURL };
+    const updatedFormData = {};
+
+    // Compare each field with the original user data
+    Object.keys(formData).forEach((key) => {
+      const value = formData[key];
+      const originalValue = user?.userInfo?.[key];
+
+      // Check if the field has been changed and is not an empty string
+      if (value !== originalValue && value !== "") {
+        updatedFormData[key] = value;
+      }
+    });
+
+    // Add the avatar URL if it's been updated and is not an empty string
+    if (avatarURL && avatarURL !== user?.userInfo?.userPhoto) {
+      updatedFormData.userPhoto = avatarURL;
+    }
+
     console.log(updatedFormData);
+
+    try {
+      updateMutation.mutate(updatedFormData);
+    } catch (error) {
+      dispatch(updateFailure(error.message));
+    }
   };
 
   return (
@@ -118,9 +172,7 @@ export default function ManageProfile() {
             className={`w-full bg-primaryBg outline-none placeholder:text-highlightGray/75 border rounded ${
               errors.userName ? "border-red-500" : "border-highlightGray/25"
             } p-2`}
-            {...register("userName", {
-              required: "User name is required",
-            })}
+            {...register("userName", {})}
             aria-invalid={errors.userName ? "true" : "false"}
           />
           {errors.userName && (
@@ -143,10 +195,9 @@ export default function ManageProfile() {
             id="password"
             type="text"
             className={`w-full bg-primaryBg outline-none placeholder:text-highlightGray/75 border rounded ${
-              errors.password ? "border-red-500" : "border-highlightGray/25"
+              errors.userPassword ? "border-red-500" : "border-highlightGray/25"
             } p-2`}
             {...register("userPassword", {
-              required: "Password is required",
               minLength: {
                 value: 8,
                 message: "Password must be at least 8 characters long",
@@ -160,23 +211,26 @@ export default function ManageProfile() {
                 message: "Password must contain at least one letter and one number",
               },
             })}
-            aria-invalid={errors.password ? "true" : "false"}
+            aria-invalid={errors.userPassword ? "true" : "false"}
           />
-          {errors.password && (
+          {errors.userPassword && (
             <p role="alert" className="text-red-500">
-              {errors.password.message}
+              {errors.userPassword.message}
             </p>
           )}
         </div>
 
         {/* Date of Birth */}
         <div className="col-span-4 md:col-span-2">
-          <label htmlFor="dob" className="text-sm font-thin text-primary flex items-center gap-1">
+          <label
+            htmlFor="userBirth"
+            className="text-sm font-thin text-primary flex items-center gap-1"
+          >
             <FiCalendar className="text-xl text-highlightGray/75" />
             Date of Birth:
           </label>
           <input
-            id="dob"
+            id="userBirth"
             type="date"
             className={`w-full bg-primaryBg outline-none placeholder:text-highlightGray/75 border rounded ${
               errors.dob ? "border-red-500" : "border-highlightGray/25"
@@ -186,11 +240,11 @@ export default function ManageProfile() {
                 return value <= today || "Date of birth cannot be in the future";
               },
             })}
-            aria-invalid={errors.dob ? "true" : "false"}
+            aria-invalid={errors.userBirth ? "true" : "false"}
           />
-          {errors.dob && (
+          {errors.userBirth && (
             <p role="alert" className="text-red-500">
-              {errors.dob.message}
+              {errors.userBirth.message}
             </p>
           )}
         </div>
@@ -257,7 +311,7 @@ export default function ManageProfile() {
           </label>
           <select
             id="gender"
-            defaultValue=""
+            defaultValue={user?.userInfo?.userGender || ""}
             className={`w-full bg-primaryBg outline-none placeholder:text-highlightGray/75 border rounded ${
               errors.gender ? "border-red-500" : "border-highlightGray/25"
             } p-3 text-primary`}

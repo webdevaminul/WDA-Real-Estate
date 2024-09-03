@@ -34,11 +34,15 @@ export default function () {
           </p>
           <p>
             <span className="text-sm">Date of Birth:</span>
-            <span className="text-lg text-secondary font-serif"> January 1, 1990</span>
+            <span className="text-lg text-secondary font-serif">
+              {user?.userInfo?.userBirth || "No data"}
+            </span>
           </p>
           <p>
             <span className="text-sm">Gender:</span>
-            <span className="text-lg text-secondary font-serif"> Male</span>
+            <span className="text-lg text-secondary font-serif">
+              {user?.userInfo?.userGender || "No data"}
+            </span>
           </p>
         </div>
 
@@ -56,11 +60,15 @@ export default function () {
           </p>
           <p>
             <span className="text-sm">Phone:</span>
-            <span className="text-lg text-secondary font-serif"> +1234567890</span>
+            <span className="text-lg text-secondary font-serif">
+              {user?.userInfo?.userPhone || "No data"}
+            </span>
           </p>
           <p>
             <span className="text-sm">Address:</span>
-            <span className="text-lg text-secondary font-serif"> City, Country</span>
+            <span className="text-lg text-secondary font-serif">
+              {user?.userInfo?.userAddress || "No data"}
+            </span>
           </p>
         </div>
       </div>
