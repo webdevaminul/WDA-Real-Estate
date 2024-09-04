@@ -4,6 +4,14 @@ import { useSelector } from "react-redux";
 
 export default function () {
   const { user } = useSelector((state) => state.auth);
+  const dataBaseData = new Date(user?.userInfo?.userBirth);
+
+  // Extract day, month, and year
+  const day = dataBaseData.getDate();
+  const month = dataBaseData.toLocaleString("default", { month: "long" });
+  const year = dataBaseData.getFullYear();
+
+  console.log(day, month, year);
 
   return (
     <main className="p-2 sm:p-10 flex flex-col gap-5">
@@ -35,12 +43,14 @@ export default function () {
           <p>
             <span className="text-sm">Date of Birth:</span>
             <span className="text-lg text-secondary font-serif">
-              {user?.userInfo?.userBirth || "No data"}
+              {" "}
+              {`${month} ${day}, ${year}` || "No data"}
             </span>
           </p>
           <p>
             <span className="text-sm">Gender:</span>
             <span className="text-lg text-secondary font-serif">
+              {" "}
               {user?.userInfo?.userGender || "No data"}
             </span>
           </p>
@@ -61,12 +71,14 @@ export default function () {
           <p>
             <span className="text-sm">Phone:</span>
             <span className="text-lg text-secondary font-serif">
+              {" "}
               {user?.userInfo?.userPhone || "No data"}
             </span>
           </p>
           <p>
             <span className="text-sm">Address:</span>
             <span className="text-lg text-secondary font-serif">
+              {" "}
               {user?.userInfo?.userAddress || "No data"}
             </span>
           </p>

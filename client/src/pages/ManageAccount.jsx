@@ -18,6 +18,7 @@ export default function ManageAccount() {
             </span>
             <span>Overview</span>
           </NavLink>
+
           <NavLink
             to="/manage-account/manage-profile"
             className="sm:hover:bg-primaryShadeHover whitespace-nowrap w-full sm:rounded-r-full p-2 flex items-center justify-center sm:justify-start gap-1 sm:gap-2"
@@ -28,6 +29,18 @@ export default function ManageAccount() {
             <span className="hidden sm:inline">Manage</span>
             <span>Profile</span>
           </NavLink>
+
+          <NavLink
+            to="/manage-account/change-password"
+            className="sm:hover:bg-primaryShadeHover whitespace-nowrap w-full sm:rounded-r-full p-2 flex items-center justify-center sm:justify-start gap-1 sm:gap-2"
+          >
+            <span className="text-2xl">
+              <MdOutlineManageAccounts />
+            </span>
+            <span className="hidden sm:inline">Change</span>
+            <span>password</span>
+          </NavLink>
+
           <NavLink
             to="/manage-account/manage-post"
             className="sm:hover:bg-primaryShadeHover whitespace-nowrap w-full sm:rounded-r-full p-2 flex items-center justify-center sm:justify-start gap-1 sm:gap-2"

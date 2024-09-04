@@ -81,6 +81,10 @@ export default function SignUp() {
               className={`bg-transparent outline-none placeholder:text-highlightGray/75 p-2 w-full`}
               {...register("userName", {
                 required: "User name is required",
+                maxLength: {
+                  value: 24,
+                  message: "User Name can't be more than 24 characters long",
+                },
                 onChange: () => {
                   setError(null);
                   setSuccess(null);

@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { FiUser, FiLock, FiPhone, FiMapPin, FiCalendar } from "react-icons/fi";
 import { GrUpdate } from "react-icons/gr";
 import { RiErrorWarningLine } from "react-icons/ri";
+import { FaEdit } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage";
 import { app } from "../../firebase.config";
@@ -12,44 +13,52 @@ import { useMutation } from "@tanstack/react-query";
 import axiosInstance from "../api/axiosInstance";
 
 export default function ManageProfile() {
-  const { user } = useSelector((state) => state.auth);
+  const { user, loading, error } = useSelector((state) => state.auth);
   const imageRef = useRef(null);
-  const today = new Date().toISOString().split("T")[0];
+  const dispatch = useDispatch();
+
   const [file, setFile] = useState(undefined);
   const [filePercent, setFilePercent] = useState(0);
   const [avatarURL, setAvatarURL] = useState("");
   const [fileUploadError, setFileUploadError] = useState(false);
-  const dispatch = useDispatch();
 
+  // Set today's date for validation purposes
+  const today = new Date().toISOString().split("T")[0];
+
+  // Effect hook to trigger file upload when a file is selected
   useEffect(() => {
     if (file) {
       handleFileUpload(file);
     }
   }, [file]);
 
+  // Function to handle the file upload process
   const handleFileUpload = (file) => {
-    const storage = getStorage(app);
-    const fileName = new Date().getTime() + file.name;
-    const storageRef = ref(storage, fileName);
-    const uploadTask = uploadBytesResumable(storageRef, file);
+    const storage = getStorage(app); // Initialize Firebase storage
+    const fileName = new Date().getTime() + file.name; // Generate a unique file name
+    const storageRef = ref(storage, fileName); // Create a reference to the file in storage
+    const uploadTask = uploadBytesResumable(storageRef, file); // Start the upload
 
+    // Monitor the upload progress
     uploadTask.on(
       "state_changed",
       (snapshot) => {
         const process = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        setFilePercent(Math.round(process));
+        setFilePercent(Math.round(process)); // Update the upload progress
       },
       (error) => {
-        setFileUploadError(true);
+        setFileUploadError(true); // Handle any errors during upload
       },
       () => {
+        // Get the download URL once the upload is complete
         getDownloadURL(uploadTask.snapshot.ref).then((url) => {
-          setAvatarURL(url);
+          setAvatarURL(url); // Save the URL to state
         });
       }
     );
   };
 
+  // Hook from react-hook-form to manage form state and validation
   const {
     register,
     handleSubmit,
@@ -59,40 +68,44 @@ export default function ManageProfile() {
   // Define the mutation for the update profile process
   const updateMutation = useMutation({
     mutationFn: async (updatedFormData) => {
-      dispatch(updateRequest()); // Dispatch update request action before making API call
+      dispatch(updateRequest()); // Dispatch an action to indicate the update request started
       const res = await axiosInstance.post(
-        `/api/user/update/${user?.userInfo?._id}`,
+        `/api/user/update/${user?.userInfo?._id}`, // Make an API call to update user profile
         updatedFormData
       );
-      return res.data;
+      return res.data; // Return the response data
     },
     onSuccess: (data) => {
       console.log("Update API Response:", data);
       if (!data.success) {
-        dispatch(updateFailure(data.message));
+        dispatch(updateFailure(data.message)); // Dispatch a failure action if update fails
       } else {
-        dispatch(updateSuccess(data)); // Dispatch update success action if update is successful
+        dispatch(updateSuccess(data)); // Dispatch a success action if update is successful
       }
     },
     onError: (error) => {
+      // Handle errors during the update process
       dispatch(
-        updateFailure(error.response?.data?.message || "Some thing went wrong. Please try again")
+        updateFailure(error.response?.data?.message || "Something went wrong. Please try again")
       );
     },
   });
 
+  // Function to handle form submission
   const onSubmit = (formData) => {
     const updatedFormData = {};
 
-    // Compare each field with the original user data
+    // Iterate over the form data and compare with original user data
     Object.keys(formData).forEach((key) => {
       const value = formData[key];
-      const originalValue = user?.userInfo?.[key];
 
-      // Check if the field has been changed and is not an empty string
-      if (value !== originalValue && value !== "") {
-        updatedFormData[key] = value;
+      // Skip adding empty password field
+      if (key === "userPassword" && value === "") {
+        return;
       }
+
+      // Add only the fields that have changed or are not empty
+      updatedFormData[key] = value;
     });
 
     // Add the avatar URL if it's been updated and is not an empty string
@@ -103,9 +116,10 @@ export default function ManageProfile() {
     console.log(updatedFormData);
 
     try {
+      // Trigger the mutation to update the user profile
       updateMutation.mutate(updatedFormData);
     } catch (error) {
-      dispatch(updateFailure(error.message));
+      dispatch(updateFailure(error.message)); // Dispatch failure action on error
     }
   };
 
@@ -117,6 +131,7 @@ export default function ManageProfile() {
       </p>
 
       <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-4 gap-4 md:gap-6">
+        {/* Input field for take picture from user */}
         <input
           type="file"
           onChange={(e) => {
@@ -131,16 +146,20 @@ export default function ManageProfile() {
 
         {/* Profile Image */}
         <div className="col-span-4 flex flex-col items-center justify-center">
-          <figure
-            onClick={() => imageRef.current.click()}
-            className="w-40 h-40 border border-highlightGray rounded-full overflow-clip cursor-pointer"
-          >
+          <figure className="w-40 h-40 border border-highlightGray rounded-full relative">
             <img
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover object-center rounded-full"
               src={avatarURL || user?.userInfo?.userPhoto}
             />
+            <span
+              onClick={() => imageRef.current.click()}
+              className="absolute bottom-2 right-2 z-10 bg-primary text-primaryBg cursor-pointer p-2 rounded-full transition-none"
+            >
+              <FaEdit className="transition-none" />
+            </span>
           </figure>
 
+          {/* Profile Image upload status */}
           {fileUploadError ? (
             <p className="col-span-4 text-center text-sm text-red-500">
               Image upload failed (image must be less than 2 MB)
@@ -172,7 +191,13 @@ export default function ManageProfile() {
             className={`w-full bg-primaryBg outline-none placeholder:text-highlightGray/75 border rounded ${
               errors.userName ? "border-red-500" : "border-highlightGray/25"
             } p-2`}
-            {...register("userName", {})}
+            {...register("userName", {
+              required: "User Name is required",
+              maxLength: {
+                value: 24,
+                message: "User Name can't be more than 24 characters long",
+              },
+            })}
             aria-invalid={errors.userName ? "true" : "false"}
           />
           {errors.userName && (
@@ -193,7 +218,8 @@ export default function ManageProfile() {
           </label>
           <input
             id="password"
-            type="text"
+            type="password"
+            placeholder="Set a new password"
             className={`w-full bg-primaryBg outline-none placeholder:text-highlightGray/75 border rounded ${
               errors.userPassword ? "border-red-500" : "border-highlightGray/25"
             } p-2`}
@@ -232,6 +258,11 @@ export default function ManageProfile() {
           <input
             id="userBirth"
             type="date"
+            defaultValue={
+              user?.userInfo?.userBirth
+                ? new Date(user.userInfo.userBirth).toISOString().split("T")[0]
+                : ""
+            }
             className={`w-full bg-primaryBg outline-none placeholder:text-highlightGray/75 border rounded ${
               errors.dob ? "border-red-500" : "border-highlightGray/25"
             } p-2`}
@@ -258,6 +289,7 @@ export default function ManageProfile() {
           <input
             id="phone"
             type="tel"
+            defaultValue={user.userInfo.userPhone || ""}
             className={`w-full bg-primaryBg outline-none placeholder:text-highlightGray/75 border rounded ${
               errors.phone ? "border-red-500" : "border-highlightGray/25"
             } p-2`}
@@ -287,6 +319,7 @@ export default function ManageProfile() {
           </label>
           <textarea
             id="address"
+            defaultValue={user.userInfo.userAddress || ""}
             className={`h-full w-full bg-primaryBg outline-none border rounded ${
               errors.phone ? "border-red-500" : "border-highlightGray/25"
             } p-2 text-primary`}
@@ -321,9 +354,9 @@ export default function ManageProfile() {
             <option value="" disabled>
               Select Gender
             </option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-            <option value="other">Other</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
           </select>
           {errors.gender && (
             <p role="alert" className="text-red-500">
@@ -332,22 +365,45 @@ export default function ManageProfile() {
           )}
         </div>
 
+        {/* Error message */}
+        {error && <p className="col-span-4 break-words text-center text-red-500">{error}</p>}
+
+        {/* Buttons */}
         <div className="col-span-4 grid grid-cols-2 gap-4 md:gap-6">
           {/* Submit Button */}
           <button
+            disabled={loading}
             type="submit"
-            className="p-2 mt-4 bg-highlight hover:bg-highlightHover border-none rounded text-primaryWhite disabled:bg-slate-200 disabled:cursor-not-allowed select-none flex items-center justify-center gap-2 flex-nowrap"
+            className="p-2 mt-4 bg-highlight hover:bg-highlightHover border-none rounded text-primaryWhite disabled:cursor-not-allowed select-none flex items-center justify-center gap-2 flex-nowrap"
           >
-            <GrUpdate />
-            Update Account
+            {loading ? (
+              "Loading.."
+            ) : (
+              <>
+                <span>
+                  <GrUpdate />
+                </span>
+                <span> Update Account</span>
+              </>
+            )}
           </button>
 
           {/* Delete button */}
-          <button className="p-2 mt-4 bg-red-600 hover:bg-red-500 border-none rounded text-primaryWhite disabled:bg-slate-200 disabled:cursor-not-allowed select-none flex items-center justify-center gap-1 flex-nowrap">
-            <span className="text-xl">
-              <RiErrorWarningLine />
-            </span>
-            <span>Delete Account</span>
+          <button
+            disabled={loading}
+            type="button"
+            className="p-2 mt-4 bg-red-600 hover:bg-red-500 border-none rounded text-primaryWhite disabled:cursor-not-allowed select-none flex items-center justify-center gap-1 flex-nowrap"
+          >
+            {loading ? (
+              "Loading.."
+            ) : (
+              <>
+                <span className="text-xl">
+                  <RiErrorWarningLine />
+                </span>
+                <span>Delete Account</span>
+              </>
+            )}
           </button>
         </div>
       </form>

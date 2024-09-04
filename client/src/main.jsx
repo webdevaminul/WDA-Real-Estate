@@ -17,6 +17,7 @@ import PrivatePages from "./pages/PrivatePages";
 import Overview from "./pages/Overview";
 import ManagePost from "./pages/ManagePost";
 import ManageProfile from "./pages/ManageProfile";
+import ChangePassword from "./pages/ChangePassword";
 
 const queryClient = new QueryClient();
 
@@ -56,6 +57,10 @@ const router = createBrowserRouter([
           {
             path: "/manage-account/manage-profile",
             element: <ManageProfile />,
+          },
+          {
+            path: "/manage-account/change-password",
+            element: <ChangePassword />,
           },
           {
             path: "/manage-account/manage-post",

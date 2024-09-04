@@ -36,7 +36,6 @@ const authSlice = createSlice({
     },
     updateFailure: (state, action) => {
       state.loading = false;
-      state.user = null;
       state.error = action.payload;
     },
     logOut: (state) => {
