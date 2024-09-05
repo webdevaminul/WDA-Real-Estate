@@ -4,7 +4,7 @@ import { MdError, MdOutlineEmail, MdOutlineLock } from "react-icons/md";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 import { useMutation } from "@tanstack/react-query";
 import { useDispatch, useSelector } from "react-redux";
-import { loginRequest, loginSuccess, loginFailure } from "../features/auth/authSlice";
+import { loginRequest, loginSuccess, loginFailure, resetError } from "../features/auth/authSlice";
 import axiosInstance from "../api/axiosInstance";
 import { useEffect, useState } from "react";
 import GoogleAuth from "../components/GoogleAuth";
@@ -24,7 +24,7 @@ export default function SignIn() {
 
   // Clear any error message when navigating away from this page
   useEffect(() => {
-    dispatch(loginFailure(null));
+    dispatch(resetError());
   }, [dispatch]);
 
   // Define the mutation for the login process
@@ -93,7 +93,7 @@ export default function SignIn() {
                   message: "Please enter a valid email address",
                 },
                 onChange: () => {
-                  dispatch(loginFailure(null));
+                  dispatch(resetError());
                 },
               })}
               aria-invalid={errors.userEmail ? "true" : "false"}
@@ -134,7 +134,7 @@ export default function SignIn() {
                 },
                 onChange: () => {
                   setPassValue(event.target.value);
-                  dispatch(loginFailure(null));
+                  dispatch(resetError());
                 },
               })}
               aria-invalid={errors.userPassword ? "true" : "false"}
@@ -160,7 +160,7 @@ export default function SignIn() {
 
           {/* Error message */}
           {error && (
-            <p className="text-primaryWhite bg-red-600 rounded p-2 mt-4 flex items-center gap-2">
+            <p className="text-primaryWhite bg-red-600 rounded p-2 mt-4 flex items-center justify-center gap-2">
               <span className="text-xl">
                 <MdError />
               </span>
@@ -172,7 +172,7 @@ export default function SignIn() {
           <button
             disabled={loading}
             type="submit"
-            className="p-2 mt-4 bg-highlight hover:bg-highlightHover border-none rounded text-primaryWhite disabled:bg-slate-200 disabled:cursor-not-allowed select-none"
+            className="p-2 mt-4 bg-highlight hover:bg-highlightHover border-none rounded text-primaryWhite disabled:bg-orange-400 disabled:text-slate-800 disabled:cursor-not-allowed select-none"
           >
             {loading ? "Loading..." : "Sign in"}
           </button>

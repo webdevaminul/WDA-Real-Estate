@@ -9,6 +9,7 @@ export default {
         blueColor: "rgba(var(--text-blue))",
         purpleColor: "rgba(var(--text-purple))",
         primaryWhite: "rgba(var(--primary-white))",
+        primaryBlack: "rgba(var(--primary-black))",
         highlight: "rgba(var(--highlight))",
         highlightHover: "rgba(var(--highlight-hover))",
         primaryShadeHover: "rgba(var(--primary-shade-hover))",

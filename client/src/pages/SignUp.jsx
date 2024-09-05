@@ -188,7 +188,7 @@ export default function SignUp() {
 
           {/* Error message */}
           {error && (
-            <p className="text-primaryWhite bg-red-600 rounded p-2 mt-4 flex items-center gap-2">
+            <p className="text-primaryWhite bg-red-600 rounded p-2 mt-4 flex items-center justify-center gap-2">
               <span className="text-xl">
                 <MdError />
               </span>
@@ -198,7 +198,7 @@ export default function SignUp() {
 
           {/* Success message */}
           {success && (
-            <p className="text-[rgba(40, 40, 43)] bg-green-400 rounded p-2 mt-4 flex items-center gap-2">
+            <p className="text-[rgba(40, 40, 43)] bg-green-400 rounded p-2 mt-4 flex items-center justify-center gap-2">
               <span className="text-xl">
                 <MdCheckCircle />
               </span>

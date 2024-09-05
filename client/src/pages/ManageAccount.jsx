@@ -2,7 +2,7 @@ import React from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import { IoIosInformationCircleOutline } from "react-icons/io";
 import { BiCreditCardFront } from "react-icons/bi";
-import { MdOutlineManageAccounts } from "react-icons/md";
+import { MdOutlineManageAccounts, MdOutlineChangeCircle } from "react-icons/md";
 
 export default function ManageAccount() {
   return (
@@ -24,9 +24,9 @@ export default function ManageAccount() {
             className="sm:hover:bg-primaryShadeHover whitespace-nowrap w-full sm:rounded-r-full p-2 flex items-center justify-center sm:justify-start gap-1 sm:gap-2"
           >
             <span className="text-2xl">
-              <MdOutlineManageAccounts />
+              <MdOutlineChangeCircle />
             </span>
-            <span className="hidden sm:inline">Manage</span>
+            <span className="hidden sm:inline">Update</span>
             <span>Profile</span>
           </NavLink>
 
@@ -38,7 +38,7 @@ export default function ManageAccount() {
               <MdOutlineManageAccounts />
             </span>
             <span className="hidden sm:inline">Change</span>
-            <span>password</span>
+            <span>Password</span>
           </NavLink>
 
           <NavLink

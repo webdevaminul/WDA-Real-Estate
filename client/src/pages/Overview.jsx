@@ -24,7 +24,9 @@ export default function () {
           />
         </figure>
         <h2 className="mt-1 text-2xl sm:text-4xl">Hi, {user?.userInfo?.userName}</h2>
-        <p className="text-sm">Your information helps other users to contact with you.</p>
+        <p className="text-center text-primary mb-5 font-sans font-light">
+          Your information helps other users to contact with you.
+        </p>
       </div>
 
       <div className="grid grid-cols-2 gap-4 w-full">

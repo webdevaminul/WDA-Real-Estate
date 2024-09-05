@@ -9,8 +9,9 @@
     --highlight-hover: 255, 106, 46;
     --text-highlight-gray: 128, 139, 150;
     --primary-btn: 230, 230, 230;
+    --primary-white: 220, 220, 220;
+    --primary-black: 60, 60, 63;
 
-    --primary-white: 230, 230, 230;
     --text-primary: 60, 60, 63;
     --text-secondary: 50, 50, 53;
     --text-blue: 59, 130, 246;
@@ -22,7 +23,6 @@
   }
 
   :root[data-theme="dark"] {
-    --primary-white: 211, 212, 212;
     --text-primary: 200, 200, 200;
     --text-secondary: 200, 200, 200;
     --text-blue: 96, 165, 250;
@@ -46,6 +46,9 @@
   h5,
   h6,
   p,
+  a,
+  span,
+  svg,
   button {
     @apply transition-none duration-0 !important;
   }
