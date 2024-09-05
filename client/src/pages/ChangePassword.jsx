@@ -1,22 +1,25 @@
-import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { MdError, MdOutlineEmail, MdOutlineLock, MdPassword } from "react-icons/md";
+import { useEffect, useState } from "react";
+import { MdCheckCircle, MdError, MdOutlineLock, MdPassword } from "react-icons/md";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 import { useMutation } from "@tanstack/react-query";
 import { useDispatch, useSelector } from "react-redux";
-import { loginRequest, loginSuccess, loginFailure } from "../features/auth/authSlice";
 import axiosInstance from "../api/axiosInstance";
-import { useEffect, useState } from "react";
-import GoogleAuth from "../components/GoogleAuth";
+import {
+  updateRequest,
+  updateFailure,
+  updateSuccess,
+  resetError,
+} from "../features/auth/authSlice";
 
 export default function ChangePassword() {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { loading, error } = useSelector((state) => state.auth);
+  const { user, loading, error } = useSelector((state) => state.auth);
   const [oldPassValue, setOldPassValue] = useState("");
   const [newPassValue, setNewPassValue] = useState("");
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
 
   const {
     register,
@@ -25,36 +28,42 @@ export default function ChangePassword() {
   } = useForm();
 
   // Clear any error message when navigating away from this page
-  // useEffect(() => {
-  //   dispatch(loginFailure(null));
-  // }, [dispatch]);
+  useEffect(() => {
+    dispatch(resetError());
+  }, [dispatch]);
 
   // Define the mutation for the password change process
-  // const changePasswordMutation = useMutation({
-  //   mutationFn: async (formData) => {
-  //     dispatch(loginRequest()); // Dispatch login request action before making API call
-  //     const res = await axiosInstance.post("/api/auth/signin", formData);
-  //     return res.data;
-  //   },
-  //   onSuccess: (data) => {
-  //     console.log("Sign in API Response:", data);
-  //     if (!data.success) {
-  //       dispatch(loginFailure(data.message));
-  //     } else {
-  //       dispatch(loginSuccess(data)); // Dispatch login success action if login is successful
-  //       navigate("/"); // Navigate to homepage
-  //     }
-  //   },
-  //   onError: (error) => {
-  //     dispatch(
-  //       loginFailure(error.response?.data?.message || "Some thing went wrong. Please try again")
-  //     ); // Dispatch login failure action on error
-  //   },
-  // });
+  const changePasswordMutation = useMutation({
+    mutationFn: async (formData) => {
+      dispatch(updateRequest()); // Dispatch update request action before making API call
+      const res = await axiosInstance.post(
+        `/api/user/change-password/${user?.userInfo?._id}`,
+        formData
+      );
+      return res.data;
+    },
+    onSuccess: (data) => {
+      console.log("Change Password API Response:", data);
+      if (!data.success) {
+        dispatch(updateFailure(data.message));
+      } else {
+        dispatch(updateSuccess(data)); // Dispatch update success action if update is successful
+        setSuccessMessage("Password updated successfully"); // Display success message
+      }
+    },
+    onError: (error) => {
+      dispatch(
+        updateFailure(error.response?.data?.message || "Some thing went wrong. Please try again")
+      ); // Dispatch update failure action on error
+    },
+  });
 
   // Handle form submission
   const onSubmit = async (formData) => {
-    console.log(formData);
+    console.log("formData", formData);
+
+    // Trigger the mutation to update the user password
+    changePasswordMutation.mutate(formData);
   };
 
   return (
@@ -100,6 +109,8 @@ export default function ChangePassword() {
                 },
                 onChange: () => {
                   setOldPassValue(event.target.value);
+                  dispatch(resetError());
+                  setSuccessMessage("");
                 },
               })}
               aria-invalid={errors.userPassword ? "true" : "false"}
@@ -152,6 +163,8 @@ export default function ChangePassword() {
                 },
                 onChange: () => {
                   setNewPassValue(event.target.value);
+                  dispatch(resetError());
+                  setSuccessMessage("");
                 },
               })}
               aria-invalid={errors.newPassword ? "true" : "false"}
@@ -177,7 +190,7 @@ export default function ChangePassword() {
 
           {/* Error message */}
           {error && (
-            <p className="text-primaryWhite bg-red-600 rounded p-2 mt-4 flex items-center gap-2">
+            <p className="text-primaryWhite bg-red-600 rounded p-2 mt-4 flex items-center justify-center gap-2">
               <span className="text-xl">
                 <MdError />
               </span>
@@ -185,11 +198,21 @@ export default function ChangePassword() {
             </p>
           )}
 
-          {/* Sign in button */}
+          {/* Success message */}
+          {successMessage && (
+            <p className="text-primaryBlack bg-green-400 rounded p-2 mt-4 flex items-center justify-center gap-2">
+              <span className="text-xl">
+                <MdCheckCircle />
+              </span>
+              <span>{successMessage}</span>
+            </p>
+          )}
+
+          {/* Change password button */}
           <button
             disabled={loading}
             type="submit"
-            className="p-2 mt-4 bg-highlight hover:bg-highlightHover border-none rounded text-primaryWhite disabled:bg-slate-200 disabled:cursor-not-allowed select-none"
+            className="p-2 mt-4 bg-highlight hover:bg-highlightHover border-none rounded text-primaryWhite disabled:bg-orange-400 disabled:text-slate-800 disabled:cursor-not-allowed select-none"
           >
             {loading ? "Loading..." : "Change password"}
           </button>

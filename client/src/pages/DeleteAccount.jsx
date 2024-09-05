@@ -21,6 +21,8 @@ export default function DeleteAccount() {
               </>
             )}
           </button> */}
+
+      <p>Delete account</p>
     </div>
   );
 }

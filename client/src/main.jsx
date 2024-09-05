@@ -18,6 +18,7 @@ import Overview from "./pages/Overview";
 import ManagePost from "./pages/ManagePost";
 import UpdateProfile from "./pages/UpdateProfile";
 import ChangePassword from "./pages/ChangePassword";
+import DeleteAccount from "./pages/DeleteAccount";
 
 const queryClient = new QueryClient();
 
@@ -63,10 +64,18 @@ const router = createBrowserRouter([
             element: <ChangePassword />,
           },
           {
-            path: "/manage-account/manage-post",
-            element: <ManagePost />,
+            path: "/manage-account/delete-account",
+            element: <DeleteAccount />,
           },
         ],
+      },
+      {
+        path: "/manage-posts",
+        element: (
+          <PrivatePages>
+            <ManagePost />
+          </PrivatePages>
+        ),
       },
       {
         path: "/about",

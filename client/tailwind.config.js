@@ -34,7 +34,21 @@ export default {
       },
     },
   },
-  plugins: [require("daisyui")],
+  plugins: [
+    require("daisyui"),
+    function ({ addUtilities }) {
+      const newUtilities = {
+        ".no-scrollbar::-webkit-scrollbar": {
+          display: "none",
+        },
+        ".no-scrollbar": {
+          "-ms-overflow-style": "none", // Internet Explorer 10+
+          "scrollbar-width": "none", // Firefox
+        },
+      };
+      addUtilities(newUtilities);
+    },
+  ],
   daisyui: {
     themes: [],
   },

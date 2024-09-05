@@ -3,15 +3,15 @@ import { updateErrorHandler } from "../utilites/error.js";
 import bcryptjs from "bcryptjs";
 
 export const updateUser = async (req, res, next) => {
+  // req.user.id is the authenticated user's ID (from verifyToken middleware)
+  // req.params.id is the user ID passed in the URL parameters
   if (req.user.id !== req.params.id) {
+    // Return an error if the logged-in user is try to update another user's profile
     return next(updateErrorHandler(401, "You can only update your own account"));
   }
 
   try {
-    if (req.body.userPassword) {
-      req.body.userPassword = bcryptjs.hashSync(req.body.userPassword, 10);
-    }
-
+    // Define an object with fields to be updated (based on request body)
     const updatedInfo = {
       $set: {
         userPhoto: req.body.userPhoto,
@@ -23,14 +23,67 @@ export const updateUser = async (req, res, next) => {
       },
     };
 
+    // Find user by ID and update their profile with the provided info
     const updatedUser = await User.findByIdAndUpdate(req.params.id, updatedInfo, { new: true });
 
+    // Remove the password from the user object before sending it back to the client
     const { userPassword, ...userInfo } = updatedUser._doc;
 
-    res.status(200).json({ success: true, message: "User updated successfully", userInfo });
+    // Send a success response
+    return res.status(200).json({
+      success: true,
+      message: "User updated successfully",
+      userInfo,
+    });
   } catch (error) {
+    // Pass any errors to the error-handling middleware
     next(error);
   }
 };
 
-export const changePassword = async (req, res, next) => {};
+export const changePassword = async (req, res, next) => {
+  const { userPassword, newPassword } = req.body; // Destructure old and new passwords from request body
+
+  // Ensure the logged-in user is only changing their own password
+  if (req.user.id !== req.params.id) {
+    return next(updateErrorHandler(401, "You can only update your own password"));
+  }
+
+  try {
+    // Fetch the user from the database by ID
+    const validUser = await User.findById(req.params.id);
+
+    // Compare the provided current password with the stored hashed password
+    const validPassword = await bcryptjs.compare(userPassword, validUser.userPassword);
+
+    // If the current password is incorrect, return an error
+    if (!validPassword) {
+      return next(updateErrorHandler(401, "Invalid previous password"));
+    }
+
+    // Hash the new password before saving it to the database
+    const newUserPassword = bcryptjs.hashSync(newPassword, 10);
+
+    // Update the user's password in the database
+    const updatedUser = await User.findByIdAndUpdate(
+      req.params.id,
+      {
+        $set: { userPassword: newUserPassword },
+      },
+      { new: true }
+    );
+
+    // Remove the password from the user object before sending it back to the client
+    const { userPassword: pass, ...userInfo } = updatedUser._doc;
+
+    // Send a success response
+    return res.status(200).json({
+      success: true,
+      message: "Password updated successfully",
+      userInfo,
+    });
+  } catch (error) {
+    // Pass any errors to the error-handling middleware
+    next(error);
+  }
+};

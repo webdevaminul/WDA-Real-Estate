@@ -135,6 +135,7 @@ export default function UpdateProfile() {
               <img
                 className="w-full h-full object-cover object-center rounded-full"
                 src={avatarURL || user?.userInfo?.userPhoto}
+                loading="lazy"
               />
               <span
                 onClick={() => imageRef.current.click()}

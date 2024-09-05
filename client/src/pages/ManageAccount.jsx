@@ -1,13 +1,13 @@
-import React from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import { IoIosInformationCircleOutline } from "react-icons/io";
-import { BiCreditCardFront } from "react-icons/bi";
-import { MdOutlineManageAccounts, MdOutlineChangeCircle } from "react-icons/md";
+import { MdOutlineChangeCircle } from "react-icons/md";
+import { PiPasswordFill } from "react-icons/pi";
+import { AiOutlineUserDelete } from "react-icons/ai";
 
 export default function ManageAccount() {
   return (
     <main className="flex">
-      <aside className="bg-primaryBgShade1 fixed w-full sm:w-52 h-fit sm:h-full top-12 sm:top-[3.625rem] left-0 bottom-0 z-30 shadow border-r border-highlightGray/10 ">
+      <aside className="bg-primaryBgShade1 fixed w-full sm:w-52 h-fit sm:h-full top-12 sm:top-[3.625rem] left-0 bottom-0 z-30 shadow md:border-r border-highlightGray/10 overflow-y-auto scroll no-scrollbar">
         <ul className="flex flex-row sm:flex-col gap-2 sm:py-5 sm:pr-4">
           <NavLink
             to="/manage-account/overview"
@@ -26,8 +26,7 @@ export default function ManageAccount() {
             <span className="text-2xl">
               <MdOutlineChangeCircle />
             </span>
-            <span className="hidden sm:inline">Update</span>
-            <span>Profile</span>
+            <span>Update Profile</span>
           </NavLink>
 
           <NavLink
@@ -35,21 +34,19 @@ export default function ManageAccount() {
             className="sm:hover:bg-primaryShadeHover whitespace-nowrap w-full sm:rounded-r-full p-2 flex items-center justify-center sm:justify-start gap-1 sm:gap-2"
           >
             <span className="text-2xl">
-              <MdOutlineManageAccounts />
+              <PiPasswordFill />
             </span>
-            <span className="hidden sm:inline">Change</span>
-            <span>Password</span>
+            <span>Change Password</span>
           </NavLink>
 
           <NavLink
-            to="/manage-account/manage-post"
+            to="/manage-account/delete-account"
             className="sm:hover:bg-primaryShadeHover whitespace-nowrap w-full sm:rounded-r-full p-2 flex items-center justify-center sm:justify-start gap-1 sm:gap-2"
           >
             <span className="text-2xl">
-              <BiCreditCardFront />
+              <AiOutlineUserDelete />
             </span>
-            <span className="hidden sm:inline">Manage</span>
-            <span>Post</span>
+            <span>Delete Account</span>
           </NavLink>
         </ul>
       </aside>

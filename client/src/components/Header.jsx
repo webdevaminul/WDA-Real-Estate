@@ -4,6 +4,7 @@ import { IoCreateOutline, IoEnterOutline, IoExitOutline, IoOptions } from "react
 import { Link, NavLink } from "react-router-dom";
 import Darkmode from "../features/darkmode/Darkmode";
 import { useSelector } from "react-redux";
+import { BiCreditCardFront } from "react-icons/bi";
 
 export default function Header() {
   const { user, isAuthenticated } = useSelector((state) => state.auth);
@@ -91,6 +92,16 @@ export default function Header() {
                     <p className="text-xs ">{user?.userInfo?.userEmail}</p>
                   </div>
 
+                  <Link
+                    onClick={() => setProfileMenu(false)}
+                    to="/manage-posts"
+                    className="text-sm bg-primaryBgShade2 hover:bg-primaryShadeHover border border-highlightGray/10 whitespace-nowrap w-full rounded-xl p-2 flex items-center  gap-2"
+                  >
+                    <span className="text-2xl">
+                      <BiCreditCardFront />
+                    </span>
+                    <span>Manage posts</span>
+                  </Link>
                   <Link
                     onClick={() => setProfileMenu(false)}
                     to="/manage-account/overview"
