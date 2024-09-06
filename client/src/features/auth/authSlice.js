@@ -38,6 +38,20 @@ const authSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
+    deleteRequest: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    deleteSuccess: (state, action) => {
+      state.loading = false;
+      state.user = null;
+      state.isAuthenticated = false;
+      state.error = null;
+    },
+    deleteFailure: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
     resetError: (state) => {
       state.error = null;
     },
@@ -51,6 +65,9 @@ export const {
   updateRequest,
   updateSuccess,
   updateFailure,
+  deleteRequest,
+  deleteSuccess,
+  deleteFailure,
   resetError,
 } = authSlice.actions;
 

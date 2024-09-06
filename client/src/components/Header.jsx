@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { IoMdMenu, IoMdClose } from "react-icons/io";
-import { IoCreateOutline, IoEnterOutline, IoExitOutline, IoOptions } from "react-icons/io5";
+import { IoEnterOutline, IoExitOutline, IoOptions } from "react-icons/io5";
 import { Link, NavLink } from "react-router-dom";
 import Darkmode from "../features/darkmode/Darkmode";
 import { useSelector } from "react-redux";

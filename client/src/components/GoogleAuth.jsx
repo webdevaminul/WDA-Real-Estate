@@ -50,7 +50,7 @@ export default function GoogleAuth() {
       onClick={handleGoogleAuth}
       disabled={googleAuthMutation.isLoading}
       type="submit"
-      className="p-2 mt-1 bg-transparent hover:bg-primaryBgShade1/75 border border-highlightGray/25 rounded disabled:bg-slate-200 disabled:cursor-not-allowed select-none flex items-center justify-center gap-2"
+      className="p-2 mt-1 bg-transparent hover:bg-primaryBgShade1/75 border border-highlightGray/25 rounded disabled:bg-primaryWhite disabled:text-primaryWhite disabled:cursor-not-allowed select-none flex items-center justify-center gap-2"
     >
       <span className="text-2xl">
         <FcGoogle />

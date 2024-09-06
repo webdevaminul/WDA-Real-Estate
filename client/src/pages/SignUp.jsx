@@ -210,7 +210,7 @@ export default function SignUp() {
           <button
             disabled={signUpMutation.isLoading}
             type="submit"
-            className="p-2 mt-4 bg-highlight hover:bg-highlightHover border-none rounded text-primaryWhite disabled:bg-slate-200 disabled:cursor-not-allowed select-none"
+            className="p-2 mt-4 bg-highlight hover:bg-highlightHover border-none rounded text-primaryWhite disabled:bg-primaryWhite disabled:text-primaryBlack disabled:cursor-not-allowed select-none"
           >
             {signUpMutation.isLoading ? "Loading..." : "Sign up"}
           </button>

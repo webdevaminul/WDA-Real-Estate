@@ -7,9 +7,9 @@ export default function () {
   const dataBaseData = new Date(user?.userInfo?.userBirth);
 
   // Extract day, month, and year
-  const day = dataBaseData.getDate();
-  const month = dataBaseData.toLocaleString("default", { month: "long" });
-  const year = dataBaseData.getFullYear();
+  const day = dataBaseData.getDate() || "No data";
+  const month = dataBaseData.toLocaleString("default", { month: "long" }) || "No data";
+  const year = dataBaseData.getFullYear() || "No data";
 
   console.log(day, month, year);
 
