@@ -223,3 +223,15 @@ export const googleSignIn = async (req, res, next) => {
     next(error);
   }
 };
+
+export const signOut = async (req, res, next) => {
+  try {
+    // Clear the authentication token from the cookie
+    res.clearCookie("authToken");
+
+    // Send a success response
+    return res.status(200).json({ success: true, message: "Signout successful" });
+  } catch (error) {
+    next(error);
+  }
+};

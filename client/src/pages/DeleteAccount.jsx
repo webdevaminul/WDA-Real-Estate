@@ -52,7 +52,6 @@ export default function DeleteAccount() {
         dispatch(deleteFailure(data.message));
       } else {
         dispatch(deleteSuccess(data)); // Dispatch delete success action if delete is successful
-        navigate("/"); // Navigate to homepage
         alert("User Delete Successfully"); // Alert user delete success
       }
     },

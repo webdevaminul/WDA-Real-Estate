@@ -1,4 +1,4 @@
-import { errorHandler, updateErrorHandler } from "./error.js";
+import { updateErrorHandler } from "./error.js";
 import jwt from "jsonwebtoken";
 
 export const verifyToken = (req, res, next) => {

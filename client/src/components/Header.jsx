@@ -3,8 +3,10 @@ import { IoMdMenu, IoMdClose } from "react-icons/io";
 import { IoEnterOutline, IoExitOutline, IoOptions } from "react-icons/io5";
 import { Link, NavLink } from "react-router-dom";
 import Darkmode from "../features/darkmode/Darkmode";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { BiCreditCardFront } from "react-icons/bi";
+import { signOutRequest, signOutSuccess, signOutFailure } from "../features/auth/authSlice";
+import axiosInstance from "../api/axiosInstance";
 
 export default function Header() {
   const { user, isAuthenticated } = useSelector((state) => state.auth);
@@ -13,6 +15,7 @@ export default function Header() {
   const mobileMenuRef = useRef(null);
   const [profileMenu, setProfileMenu] = useState(false);
   const profileMenuRef = useRef(null);
+  const dispatch = useDispatch();
 
   const triggerRotationAnimation = () => {
     setRotating(true);
@@ -49,6 +52,21 @@ export default function Header() {
     };
   }, []);
 
+  // Handle Sign Out
+  const handleSignOut = async () => {
+    try {
+      dispatch(signOutRequest());
+      const res = await axiosInstance.get("/api/auth/sign-out");
+      const { data } = res.data;
+      if (data.success) {
+        dispatch(signOutSuccess(data.message));
+      } else {
+        dispatch(signOutFailure(data.message));
+      }
+    } catch (error) {
+      dispatch(signOutFailure(error.message));
+    }
+  };
   return (
     <header className="bg-primaryBgShade1 fixed top-0 left-0 w-full z-50">
       <nav className="flex justify-between items-center px-2 py-1 sm:py-0">
@@ -112,7 +130,10 @@ export default function Header() {
                     </span>
                     <span>Manage account</span>
                   </Link>
-                  <button className="text-sm bg-highlight hover:bg-highlightHover text-primaryWhite border border-highlightGray/10 whitespace-nowrap w-full rounded-xl p-2 flex items-center  gap-2">
+                  <button
+                    onClick={handleSignOut}
+                    className="text-sm bg-highlight hover:bg-highlightHover text-primaryWhite border border-highlightGray/10 whitespace-nowrap w-full rounded-xl p-2 flex items-center  gap-2"
+                  >
                     <span className="text-2xl">
                       <IoExitOutline />
                     </span>

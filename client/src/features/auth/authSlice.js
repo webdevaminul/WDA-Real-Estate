@@ -52,6 +52,19 @@ const authSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
+    signOutRequest: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    signOutSuccess: (state, action) => {
+      state.loading = false;
+      state.user = null;
+      state.error = null;
+    },
+    signOutFailure: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
     resetError: (state) => {
       state.error = null;
     },
@@ -68,6 +81,9 @@ export const {
   deleteRequest,
   deleteSuccess,
   deleteFailure,
+  signOutRequest,
+  signOutSuccess,
+  signOutFailure,
   resetError,
 } = authSlice.actions;
 

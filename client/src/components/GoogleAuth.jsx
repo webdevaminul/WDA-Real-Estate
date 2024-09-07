@@ -34,6 +34,8 @@ export default function GoogleAuth() {
     try {
       const result = await signInWithPopup(auth, provider);
 
+      console.log(result);
+
       const savedData = {
         userName: result?.user?.displayName,
         userEmail: result?.user?.email,

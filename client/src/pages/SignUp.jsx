@@ -198,7 +198,7 @@ export default function SignUp() {
 
           {/* Success message */}
           {success && (
-            <p className="text-[rgba(40, 40, 43)] bg-green-400 rounded p-2 mt-4 flex items-center justify-center gap-2">
+            <p className="text-primaryBlack bg-green-400 rounded p-2 mt-4 flex items-center justify-center gap-2">
               <span className="text-xl">
                 <MdCheckCircle />
               </span>
