@@ -17,12 +17,32 @@ const authSlice = createSlice({
       state.loading = false;
       state.user = action.payload;
       state.isAuthenticated = true;
+      state.isGoogle = false;
       state.error = null;
     },
     loginFailure: (state, action) => {
       state.loading = false;
       state.user = null;
       state.isAuthenticated = false;
+      state.isGoogle = false;
+      state.error = action.payload;
+    },
+    googleLoginRequest: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    googleLoginSuccess: (state, action) => {
+      state.loading = false;
+      state.user = action.payload;
+      state.isAuthenticated = true;
+      state.isGoogle = true;
+      state.error = null;
+    },
+    googleLoginFailure: (state, action) => {
+      state.loading = false;
+      state.user = null;
+      state.isAuthenticated = false;
+      state.isGoogle = false;
       state.error = action.payload;
     },
     updateRequest: (state) => {
@@ -46,6 +66,7 @@ const authSlice = createSlice({
       state.loading = false;
       state.user = null;
       state.isAuthenticated = false;
+      state.isGoogle = false;
       state.error = null;
     },
     deleteFailure: (state, action) => {
@@ -75,6 +96,9 @@ export const {
   loginRequest,
   loginSuccess,
   loginFailure,
+  googleLoginRequest,
+  googleLoginSuccess,
+  googleLoginFailure,
   updateRequest,
   updateSuccess,
   updateFailure,

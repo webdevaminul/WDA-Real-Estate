@@ -17,7 +17,7 @@ import { useNavigate } from "react-router-dom";
 export default function DeleteAccount() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { user, loading, error } = useSelector((state) => state.auth);
+  const { user, loading, error, isGoogle } = useSelector((state) => state.auth);
   const [oldPassValue, setOldPassValue] = useState("");
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
@@ -65,9 +65,10 @@ export default function DeleteAccount() {
   // Handle form submission
   const onSubmit = async (formData) => {
     console.log("formData", formData);
-
     // Trigger the mutation to delete the user
-    deleteAccountMutation.mutate(formData);
+    isGoogle
+      ? deleteAccountMutation.mutate({ isGoogle: true })
+      : deleteAccountMutation.mutate(formData);
   };
 
   return (
@@ -86,53 +87,55 @@ export default function DeleteAccount() {
         {/* Sign up form */}
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
           {/* Verify old password input */}
-          <div
-            className={`flex items-center border rounded ${
-              errors.userPassword ? "border-red-500" : "border-highlightGray/25"
-            } mt-4 `}
-          >
-            <span className="p-2 text-xl text-highlightGray/75">
-              <MdPassword />
-            </span>
-            <input
-              type={`${showOldPassword ? "text" : "password"}`}
-              placeholder="Current password"
-              className={`bg-transparent outline-none placeholder:text-highlightGray/75 p-2 w-full`}
-              {...register("userPassword", {
-                required: "Password can not be empty",
-                minLength: {
-                  value: 8,
-                  message: "Password must be at least 8 characters long",
-                },
-                maxLength: {
-                  value: 24,
-                  message: "Password can't be more than 24 characters long",
-                },
-                pattern: {
-                  value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/,
-                  message: "Password must contain at least one letter and one number",
-                },
-                onChange: () => {
-                  setOldPassValue(event.target.value);
-                  dispatch(resetError());
-                  setSuccessMessage("");
-                },
-              })}
-              aria-invalid={errors.userPassword ? "true" : "false"}
-            />
-            {oldPassValue.length > 0 && (
-              <span
-                onClick={() => setShowOldPassword(!showOldPassword)}
-                className="p-2 text-xl text-highlightGray/75"
-              >
-                {showOldPassword ? (
-                  <FaRegEyeSlash className="cursor-pointer" />
-                ) : (
-                  <FaRegEye className="cursor-pointer" />
-                )}
+          {!isGoogle && (
+            <div
+              className={`flex items-center border rounded ${
+                errors.userPassword ? "border-red-500" : "border-highlightGray/25"
+              } mt-4 `}
+            >
+              <span className="p-2 text-xl text-highlightGray/75">
+                <MdPassword />
               </span>
-            )}
-          </div>
+              <input
+                type={`${showOldPassword ? "text" : "password"}`}
+                placeholder="Current password"
+                className={`bg-transparent outline-none placeholder:text-highlightGray/75 p-2 w-full`}
+                {...register("userPassword", {
+                  required: "Password can not be empty",
+                  minLength: {
+                    value: 8,
+                    message: "Password must be at least 8 characters long",
+                  },
+                  maxLength: {
+                    value: 24,
+                    message: "Password can't be more than 24 characters long",
+                  },
+                  pattern: {
+                    value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/,
+                    message: "Password must contain at least one letter and one number",
+                  },
+                  onChange: () => {
+                    setOldPassValue(event.target.value);
+                    dispatch(resetError());
+                    setSuccessMessage("");
+                  },
+                })}
+                aria-invalid={errors.userPassword ? "true" : "false"}
+              />
+              {oldPassValue.length > 0 && (
+                <span
+                  onClick={() => setShowOldPassword(!showOldPassword)}
+                  className="p-2 text-xl text-highlightGray/75"
+                >
+                  {showOldPassword ? (
+                    <FaRegEyeSlash className="cursor-pointer" />
+                  ) : (
+                    <FaRegEye className="cursor-pointer" />
+                  )}
+                </span>
+              )}
+            </div>
+          )}
           {errors.userPassword && (
             <p role="alert" className="text-red-500">
               {errors.userPassword.message}

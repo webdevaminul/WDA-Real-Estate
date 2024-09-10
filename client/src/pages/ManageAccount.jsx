@@ -3,8 +3,11 @@ import { IoIosInformationCircleOutline } from "react-icons/io";
 import { MdOutlineChangeCircle } from "react-icons/md";
 import { PiPasswordFill } from "react-icons/pi";
 import { AiOutlineUserDelete } from "react-icons/ai";
+import { useSelector } from "react-redux";
 
 export default function ManageAccount() {
+  const { isGoogle } = useSelector((state) => state.auth);
+
   return (
     <main className="flex">
       <aside className="bg-primaryBgShade1 fixed w-full sm:w-52 h-fit sm:h-full top-12 sm:top-[3.625rem] left-0 bottom-0 z-30 shadow md:border-r border-highlightGray/10 overflow-y-auto scroll no-scrollbar">
@@ -29,15 +32,17 @@ export default function ManageAccount() {
             <span>Update Profile</span>
           </NavLink>
 
-          <NavLink
-            to="/manage-account/change-password"
-            className="sm:hover:bg-primaryShadeHover whitespace-nowrap w-full sm:rounded-r-full p-2 flex items-center justify-center sm:justify-start gap-1 sm:gap-2"
-          >
-            <span className="text-2xl">
-              <PiPasswordFill />
-            </span>
-            <span>Change Password</span>
-          </NavLink>
+          {!isGoogle && (
+            <NavLink
+              to="/manage-account/change-password"
+              className="sm:hover:bg-primaryShadeHover whitespace-nowrap w-full sm:rounded-r-full p-2 flex items-center justify-center sm:justify-start gap-1 sm:gap-2"
+            >
+              <span className="text-2xl">
+                <PiPasswordFill />
+              </span>
+              <span>Change Password</span>
+            </NavLink>
+          )}
 
           <NavLink
             to="/manage-account/delete-account"

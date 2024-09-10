@@ -21,6 +21,10 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    isGoogle: {
+      type: Boolean,
+      default: false,
+    },
     userPhoto: {
       type: String,
       default:

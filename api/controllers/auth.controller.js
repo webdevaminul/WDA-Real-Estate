@@ -65,6 +65,7 @@ export const verifyEmail = async (req, res, next) => {
         userEmail,
         userPassword: hashedPassword,
         isVerified: true,
+        isGoogle: false,
       });
 
       // Save the new user to the database
@@ -190,6 +191,7 @@ export const googleSignIn = async (req, res, next) => {
         userPassword: hashedPassword,
         isVerified: true,
         userPhoto,
+        isGoogle: true,
       });
 
       // Save the new user to the database

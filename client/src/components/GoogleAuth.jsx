@@ -4,7 +4,11 @@ import { auth } from "../../firebase.config";
 import { useMutation } from "@tanstack/react-query";
 import axiosInstance from "../api/axiosInstance";
 import { useDispatch } from "react-redux";
-import { loginRequest, loginSuccess, loginFailure } from "../features/auth/authSlice";
+import {
+  googleLoginRequest,
+  googleLoginSuccess,
+  googleLoginFailure,
+} from "../features/auth/authSlice";
 import { useNavigate } from "react-router-dom";
 
 export default function GoogleAuth() {
@@ -15,17 +19,17 @@ export default function GoogleAuth() {
   // Define the mutation for google login process
   const googleAuthMutation = useMutation({
     mutationFn: async (savedData) => {
-      dispatch(loginRequest()); // Dispatch login request action before making API call
+      dispatch(googleLoginRequest()); // Dispatch login request action before making API call
       const res = await axiosInstance.post("/api/auth/google", savedData);
       return res.data;
     },
     onSuccess: (data) => {
       console.log("Google Auth API Response:", data);
-      dispatch(loginSuccess(data)); // Dispatch login success action if login is successful
+      dispatch(googleLoginSuccess(data)); // Dispatch login success action if login is successful
       navigate("/"); // Navigate to homepage
     },
     onError: () => {
-      dispatch(loginFailure("Google auth error"));
+      dispatch(googleLoginFailure("Google auth error"));
     },
   });
 
