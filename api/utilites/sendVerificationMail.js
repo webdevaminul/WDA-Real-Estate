@@ -18,7 +18,7 @@ export const sendVerificationEmail = async (userEmail, verificationLink) => {
       subject: "WDAR Estate Account Verification",
       html: `
       <h1 style="font-size:26px;">Welcome to <span style="color:rgb(128, 139, 150)">WDA</span><span style="color:rgb(255, 95, 31)">R Estate</span></h1>
-      <p style="font-size:18px">To complete your registration, please verify your email by clicking the button below.</p>
+      <p style="font-size:18px;">To complete your registration, please verify your email by clicking the button below.</p>
       <p><a href="${verificationLink}" style="text-decoration:none;background-color:rgb(255, 95, 31); padding:8px; color:white; font-weight:500; font-size:20px">Verify & Sign in</a>.</p>
       
       `,

@@ -105,7 +105,7 @@ export default function SignIn() {
             </p>
           )}
 
-          {/* Create password input */}
+          {/* Verify password input */}
           <div
             className={`flex items-center border rounded ${
               errors.userPassword ? "border-red-500" : "border-highlightGray/25"
@@ -167,6 +167,10 @@ export default function SignIn() {
               <span>{error}</span>
             </p>
           )}
+
+          <Link to="/forget-password" className="mt-4 text-sm text-blue-500 hover:underline">
+            Forget password?
+          </Link>
 
           {/* Sign in button */}
           <button

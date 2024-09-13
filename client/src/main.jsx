@@ -19,6 +19,8 @@ import ManagePost from "./pages/ManagePost";
 import UpdateProfile from "./pages/UpdateProfile";
 import ChangePassword from "./pages/ChangePassword";
 import DeleteAccount from "./pages/DeleteAccount";
+import ForgetPassword from "./pages/ForgetPassword";
+import PasswordRecovery from "./pages/PasswordRecovery";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +44,14 @@ const router = createBrowserRouter([
       {
         path: "/sign-in",
         element: <SignIn />,
+      },
+      {
+        path: "/forget-password",
+        element: <ForgetPassword />,
+      },
+      {
+        path: "/password-recovery",
+        element: <PasswordRecovery />,
       },
       {
         path: "/manage-account/",

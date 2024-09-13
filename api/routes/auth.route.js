@@ -1,6 +1,8 @@
 import express from "express";
 import {
+  forgetPassword,
   googleSignIn,
+  recoverPassword,
   signin,
   signOut,
   signup,
@@ -15,5 +17,7 @@ router.get("/verify-email", verifyEmail); // Handle email verification after use
 router.post("/signin", signin); // Handle user login
 router.post("/google", googleSignIn); // Handle google sign in
 router.get("/sign-out", signOut); // Handle sign out user
+router.post("/forget-password", forgetPassword); // Handle user forget password
+router.post("/recover-password", recoverPassword); // Handle user recover password
 
 export default router;

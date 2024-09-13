@@ -5,6 +5,7 @@ const authSlice = createSlice({
   initialState: {
     user: null,
     isAuthenticated: false,
+    isGoogle: false,
     loading: false,
     error: null,
   },
@@ -80,6 +81,8 @@ const authSlice = createSlice({
     signOutSuccess: (state, action) => {
       state.loading = false;
       state.user = null;
+      state.isAuthenticated = false;
+      state.isGoogle = false;
       state.error = null;
     },
     signOutFailure: (state, action) => {

@@ -1,8 +1,9 @@
 import User from "../models/user.model.js";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { errorHandler } from "../utilites/error.js";
+import { errorHandler, updateErrorHandler } from "../utilites/error.js";
 import { sendVerificationEmail } from "../utilites/sendVerificationMail.js";
+import { sendRecoveryMail } from "../utilites/sendRecoveryMail.js";
 
 export const signup = async (req, res, next) => {
   try {
@@ -47,6 +48,11 @@ export const verifyEmail = async (req, res, next) => {
   try {
     // Extract the verification token from the request query parameters
     const { token } = req.query;
+
+    // Return error if the token is not valid
+    if (!token) {
+      return next(errorHandler(400, "Invalid token"));
+    }
 
     // Verify the verification token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -96,6 +102,7 @@ export const verifyEmail = async (req, res, next) => {
       .status(201)
       .json({ success: true, message: "Email verification successful", userInfo });
   } catch (error) {
+    // Pass any other errors to the error-handling middleware
     next(error);
   }
 };
@@ -143,6 +150,7 @@ export const signin = async (req, res, next) => {
     // Send a success response
     return res.status(201).json({ success: true, message: "Login successful", userInfo });
   } catch (error) {
+    // Pass any other errors to the error-handling middleware
     next(error);
   }
 };
@@ -222,6 +230,7 @@ export const googleSignIn = async (req, res, next) => {
         .json({ success: true, message: "Google registration successful", userInfo });
     }
   } catch (error) {
+    // Pass any other errors to the error-handling middleware
     next(error);
   }
 };
@@ -233,6 +242,83 @@ export const signOut = async (req, res, next) => {
 
     // Send a success response
     return res.status(200).json({ success: true, message: "Signout successful" });
+  } catch (error) {
+    // Pass any other errors to the error-handling middleware
+    next(error);
+  }
+};
+
+export const forgetPassword = async (req, res, next) => {
+  try {
+    // Extract the user's email from the request body
+    const { userEmail } = req.body;
+
+    // Check if the email does not exists in the database
+    const existingUser = await User.findOne({ userEmail });
+
+    // If user not found with the same email, return an error message
+    if (!existingUser) {
+      return next(errorHandler(404, `No user found with email "${userEmail}"`));
+    }
+
+    // Generate a token for email varification
+    const recoveryToken = jwt.sign(userEmail, process.env.JWT_SECRET);
+
+    // Send a recovery email with the verification token
+    const recoveryLink = `http://localhost:5173/password-recovery?token=${recoveryToken}`;
+    sendRecoveryMail(userEmail, recoveryLink);
+
+    // Send a success response
+    return res
+      .status(200)
+      .json({ success: true, message: `Please check "${userEmail}" to reset your password.` });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const recoverPassword = async (req, res, next) => {
+  try {
+    // Extract the verification token from the request query parameters
+    const { token } = req.query;
+
+    // Extract the new password from the request body
+    const { newPassword } = req.body;
+
+    // Return error if newPassword is not valid
+    if (!newPassword) {
+      return next(updateErrorHandler(400, "New password is required"));
+    }
+
+    // Return error if the token is not valid
+    if (!token) {
+      return next(updateErrorHandler(400, "Invalid token"));
+    }
+
+    // Hash the new password
+    const hashedPassword = bcryptjs.hashSync(newPassword, 10);
+
+    // Verify the verification token
+    const userEmail = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Find the user form database and update
+    const updatedUser = await User.findOneAndUpdate(
+      { userEmail },
+      {
+        $set: { userPassword: hashedPassword },
+      },
+      {
+        new: true,
+      }
+    );
+
+    // If user not found with the same email, return an error message
+    if (!updatedUser) {
+      return next(updateErrorHandler(404, `No user found with email "${userEmail}"`));
+    }
+
+    // Send a success response
+    return res.status(200).json({ success: true, message: "Password reset successfully" });
   } catch (error) {
     next(error);
   }

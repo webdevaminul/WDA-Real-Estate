@@ -4,14 +4,18 @@ import { useSelector } from "react-redux";
 
 export default function () {
   const { user } = useSelector((state) => state.auth);
-  const dataBaseData = new Date(user?.userInfo?.userBirth);
+  let day = "No data";
+  let month = "No data";
+  let year = "No data";
+
+  if (user?.userInfo?.userBirth) {
+    const dataBaseData = new Date(user.userInfo.userBirth);
+    day = dataBaseData.getDate() || "No data";
+    month = dataBaseData.toLocaleString("default", { month: "long" }) || "No data";
+    year = dataBaseData.getFullYear() || "No data";
+  }
 
   // Extract day, month, and year
-  const day = dataBaseData.getDate() || "No data";
-  const month = dataBaseData.toLocaleString("default", { month: "long" }) || "No data";
-  const year = dataBaseData.getFullYear() || "No data";
-
-  console.log(day, month, year);
 
   return (
     <main className="p-2 sm:p-10 flex flex-col gap-5">

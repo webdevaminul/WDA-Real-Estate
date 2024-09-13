@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { IoMdMenu, IoMdClose } from "react-icons/io";
 import { IoEnterOutline, IoExitOutline, IoOptions } from "react-icons/io5";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import Darkmode from "../features/darkmode/Darkmode";
 import { useDispatch, useSelector } from "react-redux";
 import { BiCreditCardFront } from "react-icons/bi";
@@ -16,6 +16,7 @@ export default function Header() {
   const [profileMenu, setProfileMenu] = useState(false);
   const profileMenuRef = useRef(null);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const triggerRotationAnimation = () => {
     setRotating(true);
@@ -57,14 +58,14 @@ export default function Header() {
     try {
       dispatch(signOutRequest());
       const res = await axiosInstance.get("/api/auth/sign-out");
-      const { data } = res.data;
-      if (data.success) {
-        dispatch(signOutSuccess(data.message));
-      } else {
-        dispatch(signOutFailure(data.message));
+      if (res.data.success) {
+        dispatch(signOutSuccess());
+        navigate("/");
       }
     } catch (error) {
-      dispatch(signOutFailure(error.message));
+      dispatch(
+        signOutFailure(error.response?.data?.message || "Something went wrong. Please try again.")
+      );
     }
   };
   return (
