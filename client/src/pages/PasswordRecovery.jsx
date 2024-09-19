@@ -10,6 +10,8 @@ export default function PasswordRecovery() {
   const [newPassValue, setNewPassValue] = useState("");
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false);
   const location = useLocation();
 
   const token = new URLSearchParams(location.search).get("token");
@@ -23,14 +25,19 @@ export default function PasswordRecovery() {
   // Define the mutation for the recover password process
   const recoverPasswordMutation = useMutation({
     mutationFn: async (formData) => {
+      setLoading(true);
       const res = await axiosInstance.post(`/api/auth/recover-password?token=${token}`, formData);
       return res.data;
     },
     onSuccess: (data) => {
       setSuccessMessage(data.message);
+      setErrorMessage("");
+      setLoading(false);
     },
     onError: (error) => {
-      console.error("Error recovering password:", error.message);
+      setErrorMessage(error.response?.data?.message || "Something went wrong. Please try again.");
+      setSuccessMessage("");
+      setLoading(false);
     },
   });
 
@@ -85,7 +92,7 @@ export default function PasswordRecovery() {
                 },
                 onChange: () => {
                   setNewPassValue(event.target.value);
-                  // dispatch(resetError());
+                  setErrorMessage("");
                   setSuccessMessage("");
                 },
               })}
@@ -110,15 +117,15 @@ export default function PasswordRecovery() {
             </p>
           )}
 
-          {/* Error message
-          {error && (
+          {/* Error message */}
+          {errorMessage && (
             <p className="text-primaryWhite bg-red-600 rounded p-2 mt-4 flex items-center justify-center gap-2">
               <span className="text-xl">
                 <MdError />
               </span>
-              <span>{error}</span>
+              <span>{errorMessage}</span>
             </p>
-          )} */}
+          )}
 
           {/* Success message */}
           {successMessage && (
@@ -131,12 +138,11 @@ export default function PasswordRecovery() {
           )}
           {/* Change password button */}
           <button
-            // disabled={loading}
+            disabled={loading}
             type="submit"
             className="p-2 mt-4 bg-highlight hover:bg-highlightHover border-none rounded text-primaryWhite disabled:bg-primaryWhite disabled:text-primaryBlack disabled:cursor-not-allowed select-none"
           >
-            {/* {loading ? "Loading..." : "Change password"} */}
-            Change password
+            {loading ? "Loading..." : "Change password"}
           </button>
         </form>
       </section>

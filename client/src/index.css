@@ -49,7 +49,12 @@
   a,
   span,
   svg,
-  button {
+  button,
+  table,
+  thead,
+  th,
+  tr,
+  td {
     @apply transition-none duration-0 !important;
   }
 

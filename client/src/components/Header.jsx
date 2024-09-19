@@ -113,13 +113,13 @@ export default function Header() {
 
                   <Link
                     onClick={() => setProfileMenu(false)}
-                    to="/manage-posts"
+                    to="/manage-posts/post-list"
                     className="text-sm bg-primaryBgShade2 hover:bg-primaryShadeHover border border-highlightGray/10 whitespace-nowrap w-full rounded-xl p-2 flex items-center  gap-2"
                   >
                     <span className="text-2xl">
                       <BiCreditCardFront />
                     </span>
-                    <span>Manage posts</span>
+                    <span>Manage properties</span>
                   </Link>
                   <Link
                     onClick={() => setProfileMenu(false)}

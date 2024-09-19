@@ -262,7 +262,7 @@ export const forgetPassword = async (req, res, next) => {
     }
 
     // Generate a token for email varification
-    const recoveryToken = jwt.sign(userEmail, process.env.JWT_SECRET);
+    const recoveryToken = jwt.sign({ userEmail }, process.env.JWT_SECRET, { expiresIn: "5m" });
 
     // Send a recovery email with the verification token
     const recoveryLink = `http://localhost:5173/password-recovery?token=${recoveryToken}`;
@@ -271,7 +271,10 @@ export const forgetPassword = async (req, res, next) => {
     // Send a success response
     return res
       .status(200)
-      .json({ success: true, message: `Please check "${userEmail}" to reset your password.` });
+      .json({
+        success: true,
+        message: `Please check "${userEmail}" to reset your password. Recovery link is valid for 5 minutes.`,
+      });
   } catch (error) {
     next(error);
   }
@@ -285,40 +288,50 @@ export const recoverPassword = async (req, res, next) => {
     // Extract the new password from the request body
     const { newPassword } = req.body;
 
-    // Return error if newPassword is not valid
+    // Check if newPassword is valid
     if (!newPassword) {
       return next(updateErrorHandler(400, "New password is required"));
     }
 
-    // Return error if the token is not valid
+    // Return an error if the token is not present
     if (!token) {
-      return next(updateErrorHandler(400, "Invalid token"));
+      return next(updateErrorHandler(400, "Token is missing or invalid"));
+    }
+
+    let decodedToken;
+    let userEmail;
+
+    // Verify and decode the token
+    try {
+      decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+      userEmail = decodedToken.userEmail;
+    } catch (error) {
+      // This block will catch tampered or expired tokens
+      return next(updateErrorHandler(401, "Invalid or expired token. Password not changed."));
+    }
+
+    // Ensure the user with this email exists in the database
+    const existingUser = await User.findOne({ userEmail });
+
+    // If user not found, return an error
+    if (!existingUser) {
+      return next(updateErrorHandler(404, `No user found with email "${userEmail}"`));
     }
 
     // Hash the new password
     const hashedPassword = bcryptjs.hashSync(newPassword, 10);
 
-    // Verify the verification token
-    const userEmail = jwt.verify(token, process.env.JWT_SECRET);
-
-    // Find the user form database and update
-    const updatedUser = await User.findOneAndUpdate(
-      { userEmail },
-      {
-        $set: { userPassword: hashedPassword },
-      },
-      {
-        new: true,
-      }
+    // Update the user's password only if the token is valid and the user is found
+    await User.findOneAndUpdate(
+      { userEmail }, // Find by the userEmail
+      { $set: { userPassword: hashedPassword } }, // Update the password
+      { new: true } // Return the updated document
     );
 
-    // If user not found with the same email, return an error message
-    if (!updatedUser) {
-      return next(updateErrorHandler(404, `No user found with email "${userEmail}"`));
-    }
-
     // Send a success response
-    return res.status(200).json({ success: true, message: "Password reset successfully" });
+    return res
+      .status(200)
+      .json({ success: true, message: "Password reset successfully, you can sign in now." });
   } catch (error) {
     next(error);
   }

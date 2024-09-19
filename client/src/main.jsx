@@ -21,6 +21,8 @@ import ChangePassword from "./pages/ChangePassword";
 import DeleteAccount from "./pages/DeleteAccount";
 import ForgetPassword from "./pages/ForgetPassword";
 import PasswordRecovery from "./pages/PasswordRecovery";
+import PropertyList from "./pages/PropertyList";
+import CreateProperty from "./pages/CreateProperty";
 
 const queryClient = new QueryClient();
 
@@ -86,6 +88,16 @@ const router = createBrowserRouter([
             <ManagePost />
           </PrivatePages>
         ),
+        children: [
+          {
+            path: "/manage-posts/post-list",
+            element: <PropertyList />,
+          },
+          {
+            path: "/manage-posts/create-post",
+            element: <CreateProperty />,
+          },
+        ],
       },
       {
         path: "/about",
