@@ -52,6 +52,7 @@ export default function DeleteAccount() {
         dispatch(deleteFailure(data.message));
       } else {
         dispatch(deleteSuccess(data)); // Dispatch delete success action if delete is successful
+        localStorage.removeItem("accessToken"); // Remove access token from localStorage
         alert("User Delete Successfully"); // Alert user delete success
       }
     },

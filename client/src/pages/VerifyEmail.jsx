@@ -20,6 +20,7 @@ export default function VerifyEmail() {
         dispatch(loginRequest()); // Dispatch login request action before making API call
         const res = await axiosInstance.get(`/api/auth/verify-email?token=${token}`);
         dispatch(loginSuccess(res.data)); // Dispatch login success action if login is successful
+        localStorage.setItem("accessToken", res.data.token); // Store the access token in localStorage
         console.log("Sign up API Response:", res.data);
 
         setTimeout(() => {

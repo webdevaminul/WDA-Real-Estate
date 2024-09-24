@@ -40,6 +40,7 @@ export default function SignIn() {
         dispatch(loginFailure(data.message));
       } else {
         dispatch(loginSuccess(data)); // Dispatch login success action if login is successful
+        localStorage.setItem("accessToken", data.token); // Store the access token in localStorage
         navigate("/"); // Navigate to homepage
       }
     },

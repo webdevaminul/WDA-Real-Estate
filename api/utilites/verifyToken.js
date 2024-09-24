@@ -1,18 +1,17 @@
-import { updateErrorHandler } from "./error.js";
 import jwt from "jsonwebtoken";
 
 export const verifyToken = (req, res, next) => {
-  const token = req.cookies.authToken;
+  // Extract the token from the Authorization header
+  const token = req.headers["authorization"]?.split(" ")[1];
 
-  if (!token) {
-    return next(updateErrorHandler(401, "Unauthorized"));
-  }
+  // If the token is not provided, return an error message
+  if (!token) return res.status(401).json({ message: "Unauthorized, token required" });
 
-  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-    if (err) {
-      return next(updateErrorHandler(403, "Unauthorized"));
-    }
+  // Verify the token using the JWT secret
+  jwt.verify(token, process.env.JWT_ACCESS_TOKEN_SECRET, (err, user) => {
+    if (err) return res.status(403).json({ message: "Token expired or invalid" });
 
+    // If the token is valid, attach the user information to the request
     req.user = user;
     next();
   });

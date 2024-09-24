@@ -92,6 +92,11 @@ const authSlice = createSlice({
     resetError: (state) => {
       state.error = null;
     },
+    updateAccessToken: (state, action) => {
+      if (state.user) {
+        state.user.token = action.payload;
+      }
+    },
   },
 });
 
@@ -112,6 +117,7 @@ export const {
   signOutSuccess,
   signOutFailure,
   resetError,
+  updateAccessToken,
 } = authSlice.actions;
 
 export default authSlice.reducer;

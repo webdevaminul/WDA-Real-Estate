@@ -1,5 +1,5 @@
 import User from "../models/user.model.js";
-import { updateErrorHandler } from "../utilites/error.js";
+import { errorHandler } from "../utilites/error.js";
 import bcryptjs from "bcryptjs";
 
 export const updateUser = async (req, res, next) => {
@@ -7,7 +7,7 @@ export const updateUser = async (req, res, next) => {
   // req.params.id is the user ID passed in the URL parameters
   if (req.user.id !== req.params.id) {
     // Return an error if the logged-in user is try to update another user's profile
-    return next(updateErrorHandler(401, "You can only update your own account"));
+    return next(errorHandler(401, "You can only update your own account"));
   }
 
   try {
@@ -46,7 +46,7 @@ export const changePassword = async (req, res, next) => {
 
   // Ensure the logged-in user is only changing their own password
   if (req.user.id !== req.params.id) {
-    return next(updateErrorHandler(401, "You can only update your own password"));
+    return next(errorHandler(401, "You can only update your own password"));
   }
 
   try {
@@ -58,7 +58,7 @@ export const changePassword = async (req, res, next) => {
 
     // If the current password is incorrect, return an error
     if (!validPassword) {
-      return next(updateErrorHandler(401, "Invalid current password"));
+      return next(errorHandler(401, "Invalid current password"));
     }
 
     // Hash the new password before saving it to the database
@@ -97,7 +97,7 @@ export const deleteAccount = async (req, res, next) => {
       await User.findByIdAndDelete(req.params.id);
 
       // Clear cookies
-      res.clearCookie("authToken");
+      res.clearCookie("refreshToken");
 
       // Send a success response
       return res.status(200).json({
@@ -107,12 +107,12 @@ export const deleteAccount = async (req, res, next) => {
     } else {
       // Ensure that the userPassword is not undefined
       if (!userPassword) {
-        return next(updateErrorHandler(400, "Current password is required"));
+        return next(errorHandler(400, "Current password is required"));
       }
 
       // Ensure the logged-in user is only deleting their own account
       if (req.user.id !== req.params.id) {
-        return next(updateErrorHandler(401, "You can only delete your own account"));
+        return next(errorHandler(401, "You can only delete your own account"));
       }
 
       // Fetch the user from the database by ID
@@ -120,7 +120,7 @@ export const deleteAccount = async (req, res, next) => {
 
       // Return 404 if user not found in the database
       if (!validUser) {
-        return next(updateErrorHandler(404, "User not found"));
+        return next(errorHandler(404, "User not found"));
       }
 
       // Compare the provided current password with the stored hashed password
@@ -128,14 +128,14 @@ export const deleteAccount = async (req, res, next) => {
 
       // If the current password is incorrect, return an error
       if (!validPassword) {
-        return next(updateErrorHandler(401, "Invalid current password"));
+        return next(errorHandler(401, "Invalid current password"));
       }
 
       // Delete the user from the database
       await User.findByIdAndDelete(req.params.id);
 
       // Clear cookies
-      res.clearCookie("authToken");
+      res.clearCookie("refreshToken");
 
       // Send a success response
       return res.status(200).json({

@@ -1,7 +1,7 @@
 import User from "../models/user.model.js";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { errorHandler, updateErrorHandler } from "../utilites/error.js";
+import { errorHandler } from "../utilites/error.js";
 import { sendVerificationEmail } from "../utilites/sendVerificationMail.js";
 import { sendRecoveryMail } from "../utilites/sendRecoveryMail.js";
 
@@ -27,7 +27,7 @@ export const signup = async (req, res, next) => {
     // Generate a token for email varification
     const verificationToken = jwt.sign(
       { userName, userEmail, userPassword },
-      process.env.JWT_SECRET
+      process.env.JWT_ACCESS_TOKEN_SECRET
     );
 
     // Send a verification email with the verification token
@@ -51,11 +51,11 @@ export const verifyEmail = async (req, res, next) => {
 
     // Return error if the token is not valid
     if (!token) {
-      return next(errorHandler(400, "Invalid token"));
+      return next(errorHandler(401, "Invalid email verification token"));
     }
 
     // Verify the verification token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_ACCESS_TOKEN_SECRET);
     const { userName, userEmail, userPassword } = decoded;
 
     // Hash the password
@@ -78,29 +78,36 @@ export const verifyEmail = async (req, res, next) => {
       await user.save();
     }
 
-    // Generate a JWT token for login the user
-    const authToken = jwt.sign(
-      {
-        id: user._id,
-        userName: user.userName,
-        userEmail: user.userEmail,
-      },
-      process.env.JWT_SECRET
+    // Generate a JWT access token for login the user
+    const accessToken = jwt.sign({ id: user._id }, process.env.JWT_ACCESS_TOKEN_SECRET, {
+      expiresIn: "15m",
+    });
+
+    // Generate a JWT refresh token for login the user
+    const refreshToken = jwt.sign(
+      { id: user._id },
+      process.env.JWT_REFRESH_TOKEN_SECRET,
+      { expiresIn: "180d" } // Refresh token expires in 6 months
     );
+
+    // Set the refresh token in a cookie
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "Strict",
+      maxAge: 6 * 30 * 24 * 60 * 60 * 1000, // 6 months in milliseconds
+    });
 
     // Remove the password from the user object before sending it back to the client
     const { userPassword: pass, ...userInfo } = user._doc;
 
-    // Set the token in a cookie
-    res.cookie("authToken", authToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-    });
-
     // Send a success response
-    return res
-      .status(201)
-      .json({ success: true, message: "Email verification successful", userInfo });
+    return res.status(201).json({
+      success: true,
+      message: "Email verification successful",
+      token: accessToken,
+      userInfo,
+    });
   } catch (error) {
     // Pass any other errors to the error-handling middleware
     next(error);
@@ -117,7 +124,7 @@ export const signin = async (req, res, next) => {
 
     // If the user is not found or not verified, return an error message
     if (!validUser || !validUser.isVerified) {
-      return next(errorHandler(401, "Invalid email or password"));
+      return next(errorHandler(404, "Invalid email or password"));
     }
 
     // Compare the provided password with the hashed password stored in the database
@@ -125,30 +132,36 @@ export const signin = async (req, res, next) => {
 
     // If the passwords do not match, return an error message
     if (!validPassword) {
-      return next(errorHandler(401, "Invalid email or password"));
+      return next(errorHandler(400, "Invalid email or password"));
     }
 
-    // Generate a JWT token for login the user
-    const authToken = jwt.sign(
-      {
-        id: validUser._id,
-        userName: validUser.userName,
-        userEmail: validUser.userEmail,
-      },
-      process.env.JWT_SECRET
+    // Generate a JWT access token for login the user
+    const accessToken = jwt.sign({ id: validUser._id }, process.env.JWT_ACCESS_TOKEN_SECRET, {
+      expiresIn: "15m",
+    });
+
+    // Generate a JWT refresh token for login the user
+    const refreshToken = jwt.sign(
+      { id: validUser._id },
+      process.env.JWT_REFRESH_TOKEN_SECRET,
+      { expiresIn: "180d" } // Refresh token expires in 6 months
     );
 
-    // Set the token in a cookie
-    res.cookie("authToken", authToken, {
+    // Set the refresh token in a cookie
+    res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
+      sameSite: "Strict",
+      maxAge: 6 * 30 * 24 * 60 * 60 * 1000, // 6 months in milliseconds
     });
 
     // Remove the password from the user object before sending it back to the client
     const { userPassword: pass, ...userInfo } = validUser._doc;
 
     // Send a success response
-    return res.status(201).json({ success: true, message: "Login successful", userInfo });
+    return res
+      .status(201)
+      .json({ success: true, message: "Login successful", token: accessToken, userInfo });
   } catch (error) {
     // Pass any other errors to the error-handling middleware
     next(error);
@@ -164,27 +177,33 @@ export const googleSignIn = async (req, res, next) => {
     const validUser = await User.findOne({ userEmail });
 
     if (validUser) {
-      // Generate a JWT token for login the user
-      const authToken = jwt.sign(
-        {
-          id: validUser._id,
-          userName: validUser.userName,
-          userEmail: validUser.userEmail,
-        },
-        process.env.JWT_SECRET
+      // Generate a JWT access token for login the user
+      const accessToken = jwt.sign({ id: validUser._id }, process.env.JWT_ACCESS_TOKEN_SECRET, {
+        expiresIn: "15m",
+      });
+
+      // Generate a JWT refresh token for login the user
+      const refreshToken = jwt.sign(
+        { id: validUser._id },
+        process.env.JWT_REFRESH_TOKEN_SECRET,
+        { expiresIn: "180d" } // Refresh token expires in 6 months
       );
+
+      // Set the refresh token in a cookie
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "Strict",
+        maxAge: 6 * 30 * 24 * 60 * 60 * 1000, // 6 months in milliseconds
+      });
 
       // Remove the password from the user object before sending it back to the client
       const { userPassword: pass, ...userInfo } = validUser._doc;
 
-      // Set the token in a cookie
-      res.cookie("authToken", authToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-      });
-
       // Send a success response
-      return res.status(201).json({ success: true, message: "Google login successful", userInfo });
+      return res
+        .status(201)
+        .json({ success: true, message: "Google login successful", token: accessToken, userInfo });
     } else {
       // Generate a random 8-character password for the new user
       const generatedPassword = Math.random().toString(36).slice(-8);
@@ -205,29 +224,36 @@ export const googleSignIn = async (req, res, next) => {
       // Save the new user to the database
       await newUser.save();
 
-      // Generate a JWT token for login the user
-      const authToken = jwt.sign(
-        {
-          id: newUser._id,
-          userName: newUser.userName,
-          userEmail: newUser.userEmail,
-        },
-        process.env.JWT_SECRET
+      // Generate a JWT access token for login the user
+      const accessToken = jwt.sign({ id: newUser._id }, process.env.JWT_ACCESS_TOKEN_SECRET, {
+        expiresIn: "15m",
+      });
+
+      // Generate a JWT refresh token for login the user
+      const refreshToken = jwt.sign(
+        { id: validUser._id },
+        process.env.JWT_REFRESH_TOKEN_SECRET,
+        { expiresIn: "180d" } // Refresh token expires in 6 months
       );
+
+      // Set the refresh token in a cookie
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "Strict",
+        maxAge: 6 * 30 * 24 * 60 * 60 * 1000, // 6 months in milliseconds
+      });
 
       // Remove the password from the user object before sending it back to the client
       const { userPassword: pass, ...userInfo } = newUser._doc;
 
-      // Set the token in a cookie
-      res.cookie("authToken", authToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-      });
-
       // Send a success response
-      return res
-        .status(201)
-        .json({ success: true, message: "Google registration successful", userInfo });
+      return res.status(201).json({
+        success: true,
+        message: "Google registration successful",
+        token: accessToken,
+        userInfo,
+      });
     }
   } catch (error) {
     // Pass any other errors to the error-handling middleware
@@ -238,12 +264,41 @@ export const googleSignIn = async (req, res, next) => {
 export const signOut = async (req, res, next) => {
   try {
     // Clear the authentication token from the cookie
-    res.clearCookie("authToken");
+    res.clearCookie("refreshToken");
 
     // Send a success response
     return res.status(200).json({ success: true, message: "Signout successful" });
   } catch (error) {
     // Pass any other errors to the error-handling middleware
+    next(error);
+  }
+};
+
+export const refreshAccessToken = async (req, res, next) => {
+  try {
+    // Extract the refresh token from the cookie
+    const refreshToken = req.cookies.refreshToken;
+
+    // If the refresh token is missing return an error
+    if (!refreshToken) {
+      return next(errorHandler(401, "Missing refresh token. Please sign in again."));
+    }
+
+    // Verify the refresh token
+    jwt.verify(refreshToken, process.env.JWT_REFRESH_TOKEN_SECRET, (err, user) => {
+      if (err) {
+        return next(errorHandler(403, "Invalid refresh token"));
+      }
+
+      // Generate a new access token
+      const newAccessToken = jwt.sign({ id: user.id }, process.env.JWT_ACCESS_TOKEN_SECRET, {
+        expiresIn: "15m",
+      });
+
+      // Send a success response with the new access token
+      return res.status(200).json({ success: true, token: newAccessToken });
+    });
+  } catch (error) {
     next(error);
   }
 };
@@ -262,19 +317,19 @@ export const forgetPassword = async (req, res, next) => {
     }
 
     // Generate a token for email varification
-    const recoveryToken = jwt.sign({ userEmail }, process.env.JWT_SECRET, { expiresIn: "5m" });
+    const recoveryToken = jwt.sign({ userEmail }, process.env.JWT_ACCESS_TOKEN_SECRET, {
+      expiresIn: "5m",
+    });
 
     // Send a recovery email with the verification token
     const recoveryLink = `http://localhost:5173/password-recovery?token=${recoveryToken}`;
     sendRecoveryMail(userEmail, recoveryLink);
 
     // Send a success response
-    return res
-      .status(200)
-      .json({
-        success: true,
-        message: `Please check "${userEmail}" to reset your password. Recovery link is valid for 5 minutes.`,
-      });
+    return res.status(200).json({
+      success: true,
+      message: `Please check "${userEmail}" to reset your password. Recovery link is valid for 5 minutes.`,
+    });
   } catch (error) {
     next(error);
   }
@@ -290,12 +345,12 @@ export const recoverPassword = async (req, res, next) => {
 
     // Check if newPassword is valid
     if (!newPassword) {
-      return next(updateErrorHandler(400, "New password is required"));
+      return next(errorHandler(400, "New password is required"));
     }
 
     // Return an error if the token is not present
     if (!token) {
-      return next(updateErrorHandler(400, "Token is missing or invalid"));
+      return next(errorHandler(400, "Token is missing or invalid"));
     }
 
     let decodedToken;
@@ -303,11 +358,11 @@ export const recoverPassword = async (req, res, next) => {
 
     // Verify and decode the token
     try {
-      decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+      decodedToken = jwt.verify(token, process.env.JWT_ACCESS_TOKEN_SECRET);
       userEmail = decodedToken.userEmail;
     } catch (error) {
       // This block will catch tampered or expired tokens
-      return next(updateErrorHandler(401, "Invalid or expired token. Password not changed."));
+      return next(errorHandler(401, "Invalid or expired token. Password not changed."));
     }
 
     // Ensure the user with this email exists in the database
@@ -315,7 +370,7 @@ export const recoverPassword = async (req, res, next) => {
 
     // If user not found, return an error
     if (!existingUser) {
-      return next(updateErrorHandler(404, `No user found with email "${userEmail}"`));
+      return next(errorHandler(404, `No user found with email "${userEmail}"`));
     }
 
     // Hash the new password

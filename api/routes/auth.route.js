@@ -3,6 +3,7 @@ import {
   forgetPassword,
   googleSignIn,
   recoverPassword,
+  refreshAccessToken,
   signin,
   signOut,
   signup,
@@ -19,5 +20,6 @@ router.post("/google", googleSignIn); // Handle google sign in
 router.get("/sign-out", signOut); // Handle sign out user
 router.post("/forget-password", forgetPassword); // Handle user forget password
 router.post("/recover-password", recoverPassword); // Handle user recover password
+router.get("/refresh-token", refreshAccessToken); // Handle refreshing  access token
 
 export default router;

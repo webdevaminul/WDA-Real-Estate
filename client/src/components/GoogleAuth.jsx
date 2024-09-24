@@ -26,6 +26,7 @@ export default function GoogleAuth() {
     onSuccess: (data) => {
       console.log("Google Auth API Response:", data);
       dispatch(googleLoginSuccess(data)); // Dispatch login success action if login is successful
+      localStorage.setItem("accessToken", data.token); // Store the access token in localStorage
       navigate("/"); // Navigate to homepage
     },
     onError: () => {

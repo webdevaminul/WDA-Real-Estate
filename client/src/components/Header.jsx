@@ -60,6 +60,7 @@ export default function Header() {
       const res = await axiosInstance.get("/api/auth/sign-out");
       if (res.data.success) {
         dispatch(signOutSuccess());
+        localStorage.removeItem("accessToken");
         navigate("/");
       }
     } catch (error) {
