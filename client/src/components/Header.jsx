@@ -2,11 +2,11 @@ import { useEffect, useState, useRef } from "react";
 import { IoMdMenu, IoMdClose } from "react-icons/io";
 import { IoEnterOutline, IoExitOutline, IoOptions } from "react-icons/io5";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import Darkmode from "../features/darkmode/Darkmode";
+import Darkmode from "../features/Darkmode";
 import { useDispatch, useSelector } from "react-redux";
 import { BiCreditCardFront } from "react-icons/bi";
-import { signOutRequest, signOutSuccess, signOutFailure } from "../features/auth/authSlice";
 import axiosInstance from "../api/axiosInstance";
+import { requestFailure, requestStart, userClearSuccess } from "../redux/authSlice";
 
 export default function Header() {
   const { user, isAuthenticated } = useSelector((state) => state.auth);
@@ -56,16 +56,17 @@ export default function Header() {
   // Handle Sign Out
   const handleSignOut = async () => {
     try {
-      dispatch(signOutRequest());
+      dispatch(requestStart());
       const res = await axiosInstance.get("/api/auth/sign-out");
       if (res.data.success) {
-        dispatch(signOutSuccess());
+        dispatch(userClearSuccess());
         localStorage.removeItem("accessToken");
+        setProfileMenu(false);
         navigate("/");
       }
     } catch (error) {
       dispatch(
-        signOutFailure(error.response?.data?.message || "Something went wrong. Please try again.")
+        requestFailure(error.response?.data?.message || "Something went wrong. Please try again.")
       );
     }
   };

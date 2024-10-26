@@ -5,14 +5,10 @@ import { MdCheckCircle, MdError, MdPassword } from "react-icons/md";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 import { IoIosWarning } from "react-icons/io";
 import { useMutation } from "@tanstack/react-query";
-import {
-  resetError,
-  deleteRequest,
-  deleteSuccess,
-  deleteFailure,
-} from "../features/auth/authSlice";
 import axiosInstance from "../api/axiosInstance";
 import { useNavigate } from "react-router-dom";
+import { requestFailure, requestStart, userClearSuccess, resetError } from "../redux/authSlice";
+import Title from "../components/Title";
 
 export default function DeleteAccount() {
   const navigate = useNavigate();
@@ -40,7 +36,7 @@ export default function DeleteAccount() {
   // Define the mutation for the delete account process
   const deleteAccountMutation = useMutation({
     mutationFn: async (formData) => {
-      dispatch(deleteRequest()); // Dispatch delete request action before making API call
+      dispatch(requestStart()); // Dispatch request start action before making API call
       const res = await axiosInstance.delete(`/api/user/delete-account/${user?.userInfo?._id}`, {
         data: formData,
       });
@@ -49,17 +45,18 @@ export default function DeleteAccount() {
     onSuccess: (data) => {
       console.log("Delete user API response", data);
       if (!data.success) {
-        dispatch(deleteFailure(data.message));
+        dispatch(requestFailure(data.message)); // Dispatch request failure action if delete is fail
       } else {
-        dispatch(deleteSuccess(data)); // Dispatch delete success action if delete is successful
+        dispatch(userClearSuccess(data)); // Dispatch user clear success action if delete is successful
         localStorage.removeItem("accessToken"); // Remove access token from localStorage
+        navigate("/"); // Navigate to home
         alert("User Delete Successfully"); // Alert user delete success
       }
     },
     onError: (error) => {
       dispatch(
-        deleteFailure(error.response?.data?.message || "Some thing went wrong. Please try again")
-      ); // Dispatch delete failure action on error
+        requestFailure(error.response?.data?.message || "Some thing went wrong. Please try again")
+      ); // Dispatch request failure action on error
     },
   });
 
@@ -75,15 +72,12 @@ export default function DeleteAccount() {
   return (
     <main className="min-h-[90vh] max-w-sm mx-auto flex items-center justify-center">
       <section className="flex flex-col gap-4 justify-center p-4 w-full">
-        <div>
-          <h2 className="text-xl md:text-3xl text-center md:font-light text-primary">
-            Delete Account
-          </h2>
-          <p className="text-center text-primary mb-5 font-sans font-light">
-            Deleting your account will remove all your data permanently. Please consider this action
-            carefully.
-          </p>
-        </div>
+        <Title
+          title={"Delete Account"}
+          subTitle={
+            "Deleting your account will remove all your data permanently. Please consider this action carefully"
+          }
+        />
 
         {/* Sign up form */}
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
@@ -92,7 +86,7 @@ export default function DeleteAccount() {
             <div
               className={`flex items-center border rounded ${
                 errors.userPassword ? "border-red-500" : "border-highlightGray/25"
-              } mt-4 `}
+              }`}
             >
               <span className="p-2 text-xl text-highlightGray/75">
                 <MdPassword />

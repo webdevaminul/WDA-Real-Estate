@@ -1,6 +1,8 @@
 import { RiFocus2Line } from "react-icons/ri";
 import { IoIosAt } from "react-icons/io";
 import { useSelector } from "react-redux";
+import Title from "../components/Title";
+import InfoField from "../components/InfoField";
 
 export default function () {
   const { user } = useSelector((state) => state.auth);
@@ -27,10 +29,10 @@ export default function () {
             loading="lazy"
           />
         </figure>
-        <h2 className="mt-1 text-2xl sm:text-4xl">Hi, {user?.userInfo?.userName}</h2>
-        <p className="text-center text-primary mb-5 font-sans font-light">
-          Your information helps other users to contact with you.
-        </p>
+        <Title
+          title={`Hi, ${user?.userInfo?.userName}`}
+          subTitle={"Your information helps other users to contact with you."}
+        />
       </div>
 
       <div className="grid grid-cols-2 gap-4 w-full">
@@ -42,24 +44,10 @@ export default function () {
             </span>
             <span className="text-purpleColor">Basic Information</span>
           </p>
-          <p>
-            <span className="text-sm">Name:</span>
-            <span className="text-lg text-secondary font-serif"> {user?.userInfo?.userName}</span>
-          </p>
-          <p>
-            <span className="text-sm">Date of Birth:</span>
-            <span className="text-lg text-secondary font-serif">
-              {" "}
-              {`${month} ${day}, ${year}` || "No data"}
-            </span>
-          </p>
-          <p>
-            <span className="text-sm">Gender:</span>
-            <span className="text-lg text-secondary font-serif">
-              {" "}
-              {user?.userInfo?.userGender || "No data"}
-            </span>
-          </p>
+
+          <InfoField label={"Name"} value={`${user?.userInfo?.userName}`} />
+          <InfoField label={"Date of Birth"} value={`${month} ${day}, ${year}`} />
+          <InfoField label={"Gender"} value={`${user?.userInfo?.userGender}`} />
         </div>
 
         {/* Column 2: Contact Information */}
@@ -70,24 +58,9 @@ export default function () {
             </span>
             <span className="text-blueColor">Contact Information</span>
           </p>
-          <p>
-            <span className="text-sm">Email:</span>
-            <span className="text-lg text-secondary font-serif"> {user?.userInfo?.userEmail}</span>
-          </p>
-          <p>
-            <span className="text-sm">Phone:</span>
-            <span className="text-lg text-secondary font-serif">
-              {" "}
-              {user?.userInfo?.userPhone || "No data"}
-            </span>
-          </p>
-          <p>
-            <span className="text-sm">Address:</span>
-            <span className="text-lg text-secondary font-serif">
-              {" "}
-              {user?.userInfo?.userAddress || "No data"}
-            </span>
-          </p>
+          <InfoField label={"Email"} value={`${user?.userInfo?.userEmail}`} />
+          <InfoField label={"Phone"} value={`${user?.userInfo?.userPhone}`} />
+          <InfoField label={"Address"} value={`${user?.userInfo?.userAddress}`} />
         </div>
       </div>
     </main>

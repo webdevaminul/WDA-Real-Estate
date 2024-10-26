@@ -5,12 +5,8 @@ import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 import { useMutation } from "@tanstack/react-query";
 import { useDispatch, useSelector } from "react-redux";
 import axiosInstance from "../api/axiosInstance";
-import {
-  updateRequest,
-  updateFailure,
-  updateSuccess,
-  resetError,
-} from "../features/auth/authSlice";
+import { profileUpdateSuccess, requestFailure, requestStart, resetError } from "../redux/authSlice";
+import Title from "../components/Title";
 
 export default function ChangePassword() {
   const dispatch = useDispatch();
@@ -35,7 +31,7 @@ export default function ChangePassword() {
   // Define the mutation for the password change process
   const changePasswordMutation = useMutation({
     mutationFn: async (formData) => {
-      dispatch(updateRequest()); // Dispatch update request action before making API call
+      dispatch(requestStart()); // Dispatch request start action before making API call
       const res = await axiosInstance.post(
         `/api/user/change-password/${user?.userInfo?._id}`,
         formData
@@ -45,16 +41,16 @@ export default function ChangePassword() {
     onSuccess: (data) => {
       console.log("Change Password API Response:", data);
       if (!data.success) {
-        dispatch(updateFailure(data.message));
+        dispatch(requestFailure(data.message)); // Dispatch request failure action if update if fail
       } else {
-        dispatch(updateSuccess(data)); // Dispatch update success action if update is successful
+        dispatch(profileUpdateSuccess(data)); // Dispatch update success action if update is successful
         setSuccessMessage("Password updated successfully"); // Display success message
       }
     },
     onError: (error) => {
       dispatch(
-        updateFailure(error.response?.data?.message || "Some thing went wrong. Please try again")
-      ); // Dispatch update failure action on error
+        requestFailure(error.response?.data?.message || "Some thing went wrong. Please try again")
+      ); // Dispatch request failure action on error
     },
   });
 
@@ -69,14 +65,10 @@ export default function ChangePassword() {
   return (
     <main className="min-h-[90vh] max-w-sm mx-auto flex items-center justify-center">
       <section className="flex flex-col gap-4 justify-center p-4 w-full">
-        <div>
-          <h2 className="text-xl md:text-3xl text-center md:font-light text-primary">
-            Change Password
-          </h2>
-          <p className="text-center text-primary mb-5 font-sans font-light">
-            Combine alphabet with number to create a secure password
-          </p>
-        </div>
+        <Title
+          title={"Change Password"}
+          subTitle={"Combine alphabet with number to create a secure password"}
+        />
 
         {/* Sign up form */}
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
@@ -84,7 +76,7 @@ export default function ChangePassword() {
           <div
             className={`flex items-center border rounded ${
               errors.userPassword ? "border-red-500" : "border-highlightGray/25"
-            } mt-4 `}
+            }`}
           >
             <span className="p-2 text-xl text-highlightGray/75">
               <MdPassword />

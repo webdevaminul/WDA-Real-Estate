@@ -10,12 +10,8 @@ import { app } from "../../firebase.config";
 import { useDispatch } from "react-redux";
 import { useMutation } from "@tanstack/react-query";
 import axiosInstance from "../api/axiosInstance";
-import {
-  updateRequest,
-  updateSuccess,
-  updateFailure,
-  resetError,
-} from "../features/auth/authSlice";
+import { profileUpdateSuccess, requestFailure, requestStart, resetError } from "../redux/authSlice";
+import Title from "../components/Title";
 
 export default function UpdateProfile() {
   const { user, loading, error } = useSelector((state) => state.auth);
@@ -66,26 +62,26 @@ export default function UpdateProfile() {
   // Define the mutation for the update profile process
   const updateMutation = useMutation({
     mutationFn: async (updatedFormData) => {
-      dispatch(updateRequest()); // Dispatch an action to indicate the update request started
+      dispatch(requestStart()); // Dispatch request start action before making API call
       const res = await axiosInstance.post(
-        `/api/user/update/${user?.userInfo?._id}`, // Make an API call to update user profile
+        `/api/user/update/${user?.userInfo?._id}`, // Make API call to update user profile
         updatedFormData
       );
-      return res.data; // Return the response data
+      return res.data;
     },
     onSuccess: (data) => {
       console.log("Update API Response:", data);
       if (!data.success) {
-        dispatch(updateFailure(data.message)); // Dispatch a failure action if update fails
+        dispatch(requestFailure(data.message)); // Dispatch a failure action if update fails
       } else {
-        dispatch(updateSuccess(data)); // Dispatch a success action if update is successful
+        dispatch(profileUpdateSuccess(data)); // Dispatch update success action if profile update is successful
         setSuccessMessage("Profile updated successfully"); // Display success message
       }
     },
     onError: (error) => {
       // Handle errors during the update process
       dispatch(
-        updateFailure(error.response?.data?.message || "Something went wrong. Please try again")
+        requestFailure(error.response?.data?.message || "Something went wrong. Please try again")
       );
     },
   });
@@ -104,14 +100,10 @@ export default function UpdateProfile() {
   return (
     <main className="min-h-[90vh] max-w-sm mx-auto flex items-center justify-center">
       <section className="flex flex-col gap-4 justify-center p-4 w-full">
-        <div>
-          <h2 className="text-xl md:text-3xl text-center md:font-light text-primary">
-            Update Profile
-          </h2>
-          <p className="text-center text-primary mb-5 font-sans font-light">
-            Add your information to help other users to know who you are.
-          </p>
-        </div>
+        <Title
+          title={"Update Profile"}
+          subTitle={"Add your information to help other users to know who you are."}
+        />
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
           {/* Input field for take picture from user */}
@@ -151,7 +143,7 @@ export default function UpdateProfile() {
                 Image upload failed (image must be less than 2 MB)
               </p>
             ) : filePercent > 0 && filePercent < 100 ? (
-              <p className="col-span-4 text-center text-sm text-primary">{`Uploading image ${filePercent}`}</p>
+              <p className="col-span-4 text-center text-sm text-primary">{`Uploading image ${filePercent} %`}</p>
             ) : filePercent === 100 ? (
               <p className="col-span-4 text-center text-sm text-green-500">
                 Image uploaded successfully

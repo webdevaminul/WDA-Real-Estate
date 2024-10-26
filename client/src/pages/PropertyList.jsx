@@ -1,102 +1,168 @@
 import { Link } from "react-router-dom";
-import { RiDeleteBin2Line, RiEditBoxLine } from "react-icons/ri";
-import { GrView } from "react-icons/gr";
+import Title from "../components/Title";
+import { PiCaretUpDown } from "react-icons/pi";
+import { RiEyeLine, RiEditBoxLine, RiDeleteBin6Line } from "react-icons/ri";
 
 export default function PropertyList() {
   return (
     <main>
-      <div className="p-4">
-        <h2 className="text-2xl md:text-4xl text-center font-semibold text-primary mb-2">
-          Your properties
-        </h2>
-        <p className="text-center text-primary mb-6">
-          Manage your properties here. View, update, or delete any of your listings.
-        </p>
-      </div>
+      <Title
+        title={"Your properties"}
+        subTitle={"Manage your properties here. View, update, or delete any of your listings."}
+      />
 
-      <div className="overflow-x-auto px-6">
+      <div className="overflow-x-auto px-6 py-6">
         <table className="min-w-full table-auto text-sm text-left text-primary border border-highlightGray/25">
           {/* Table Head */}
           <thead className="bg-primary/5">
-            <tr>
-              <th className="px-6 py-4 font-medium">Property</th>
-              <th className="px-6 py-4 font-medium">Area</th>
-              <th className="px-6 py-4 font-medium">Location</th>
-              <th className="px-6 py-4 font-medium">Price</th>
-              <th className="px-6 py-4 font-medium">Type</th>
-              <th className="px-6 py-4 font-medium">Bed</th>
-              <th className="px-6 py-4 font-medium">Bath</th>
-              <th className="px-6 py-4 font-medium">Actions</th>
+            <tr className="border border-highlightGray/25">
+              <th className="p-3 text-base font-medium">
+                <div className="flex items-center justify-between gap-1 transition-none duration-0">
+                  <span className="text-nowrap">Property</span>
+                  <span className="rounded-full text-lg cursor-pointer p-1">
+                    <PiCaretUpDown />
+                  </span>
+                </div>
+              </th>
+              <th className="p-3 text-base font-medium">
+                <div className="flex items-center justify-between gap-1 transition-none duration-0">
+                  <span className="text-nowrap">Location</span>
+                  <span className="rounded-full text-lg cursor-pointer p-1">
+                    <PiCaretUpDown />
+                  </span>
+                </div>
+              </th>
+              <th className="p-3 text-base font-medium">
+                <div className="flex items-center justify-between gap-1 transition-none duration-0">
+                  <span className="text-nowrap">Area</span>
+                  <span className="rounded-full text-lg cursor-pointer p-1">
+                    <PiCaretUpDown />
+                  </span>
+                </div>
+              </th>
+              <th className="p-3 text-base font-medium">
+                <div className="flex items-center justify-between gap-1 transition-none duration-0">
+                  <span className="text-nowrap">Price</span>
+                  <span className="rounded-full text-lg cursor-pointer p-1">
+                    <PiCaretUpDown />
+                  </span>
+                </div>
+              </th>
+              <th className="p-3 text-base font-medium">
+                <div className="flex items-center justify-between gap-1 transition-none duration-0">
+                  <span className="text-nowrap">Type</span>
+                  <span className="rounded-full text-lg cursor-pointer p-1">
+                    <PiCaretUpDown />
+                  </span>
+                </div>
+              </th>
+              <th className="p-3 text-base font-medium">
+                <div className="flex items-center justify-between gap-1 transition-none duration-0">
+                  <span className="text-nowrap">Bed</span>
+                  <span className="rounded-full text-lg cursor-pointer p-1">
+                    <PiCaretUpDown />
+                  </span>
+                </div>
+              </th>
+              <th className="p-3 text-base font-medium">
+                <div className="flex items-center justify-between gap-1 transition-none duration-0">
+                  <span className="text-nowrap">Bath</span>
+                  <span className="rounded-full text-lg cursor-pointer p-1">
+                    <PiCaretUpDown />
+                  </span>
+                </div>
+              </th>
+              <th className="p-3 font-medium text-base">Actions</th>
             </tr>
           </thead>
 
           {/* Table Body */}
           <tbody className="bg-primaryBg divide-y divide-highlightGray/25">
             {/* Row 1 */}
-            <tr className="hover:bg-primaryBgShade1/25">
-              <td className="px-6 py-4">
+            <tr className="hover:bg-primaryBgShade1/50">
+              <td className="p-3">
                 <div className="flex items-center gap-3 transition-none">
-                  <figure className="w-14 aspect-square rounded-lg overflow-hidden">
+                  <figure className="w-12 aspect-square rounded-lg overflow-hidden">
                     <img
                       src="https://via.placeholder.com/150"
                       className="w-full h-full object-cover object-center"
-                      alt="Luxury Villa"
                     />
                   </figure>
 
                   <span className="font-semibold">Luxury Villa</span>
                 </div>
               </td>
-              <td className="px-6 py-4">1823 sq feet</td>
-              <td className="px-6 py-4">San Francisco, CA</td>
-              <td className="px-6 py-4">$2,500/month</td>
-              <td className="px-6 py-4">Rent</td>
-              <td className="px-6 py-4">2</td>
-              <td className="px-6 py-4">1</td>
-              <td className="px-6 py-4 space-x-2 text-2xl flex items-center flex-nowrap h-16 my-3">
-                <Link className="text-blue-500">
-                  <GrView />
-                </Link>
-                <Link className="text-yellow-500">
-                  <RiEditBoxLine />
-                </Link>
-                <Link className="text-red-500 pb-[2px]">
-                  <RiDeleteBin2Line />
-                </Link>
+              <td className="p-3">San Francisco, CA</td>
+              <td className="p-3">1823</td>
+              <td className="p-3">$2,500/month</td>
+              <td className="p-3">Rent</td>
+              <td className="p-3">2</td>
+              <td className="p-3">1</td>
+              <td className="p-3">
+                <div className="flex items-center gap-2 text-lg">
+                  <Link
+                    className="text-blue-500 border border-highlightGray/25 p-1 rounded-md tooltip"
+                    data-tip="View"
+                  >
+                    <RiEyeLine />
+                  </Link>
+                  <Link
+                    className="text-yellow-500 border border-highlightGray/25 p-1 rounded-md tooltip"
+                    data-tip="Update"
+                  >
+                    <RiEditBoxLine />
+                  </Link>
+                  <Link
+                    className="text-red-500 border border-highlightGray/25 p-1 rounded-md tooltip"
+                    data-tip="Delete"
+                  >
+                    <RiDeleteBin6Line />
+                  </Link>
+                </div>
               </td>
             </tr>
 
             {/* Row 2 */}
-            <tr className="hover:bg-primaryBgShade1/25">
-              <td className="px-6 py-4">
+            <tr className="hover:bg-primaryBgShade1/50">
+              <td className="p-3">
                 <div className="flex items-center gap-3 transition-none">
-                  <figure className="w-14 aspect-square rounded-lg overflow-hidden">
+                  <figure className="w-12 aspect-square rounded-lg overflow-hidden">
                     <img
                       src="https://via.placeholder.com/150"
                       className="w-full h-full object-cover object-center"
-                      alt="Luxury Villa"
                     />
                   </figure>
 
                   <span className="font-semibold">Luxury Villa</span>
                 </div>
               </td>
-              <td className="px-6 py-4">1823 sq feet</td>
-              <td className="px-6 py-4">Miami, FL</td>
-              <td className="px-6 py-4">$1,200,000</td>
-              <td className="px-6 py-4">Sale</td>
-              <td className="px-6 py-4">4</td>
-              <td className="px-6 py-4">3</td>
-              <td className="px-6 py-4 space-x-2 text-2xl flex items-center flex-nowrap h-16 my-3">
-                <Link className="text-blue-500">
-                  <GrView />
-                </Link>
-                <Link className="text-yellow-500">
-                  <RiEditBoxLine />
-                </Link>
-                <Link className="text-red-500 pb-[2px]">
-                  <RiDeleteBin2Line />
-                </Link>
+              <td className="p-3">San Francisco, CA</td>
+              <td className="p-3">1823</td>
+              <td className="p-3">$3,500</td>
+              <td className="p-3">Sell</td>
+              <td className="p-3">2</td>
+              <td className="p-3">1</td>
+              <td className="p-3">
+                <div className="flex items-center gap-2 text-lg">
+                  <Link
+                    className="text-blue-500 border border-highlightGray/25 p-1 rounded-md tooltip"
+                    data-tip="View"
+                  >
+                    <RiEyeLine />
+                  </Link>
+                  <Link
+                    className="text-yellow-500 border border-highlightGray/25 p-1 rounded-md tooltip"
+                    data-tip="Update"
+                  >
+                    <RiEditBoxLine />
+                  </Link>
+                  <Link
+                    className="text-red-500 border border-highlightGray/25 p-1 rounded-md tooltip"
+                    data-tip="Delete"
+                  >
+                    <RiDeleteBin6Line />
+                  </Link>
+                </div>
               </td>
             </tr>
           </tbody>

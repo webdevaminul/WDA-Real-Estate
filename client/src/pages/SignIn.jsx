@@ -4,7 +4,7 @@ import { MdError, MdOutlineEmail, MdOutlineLock } from "react-icons/md";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 import { useMutation } from "@tanstack/react-query";
 import { useDispatch, useSelector } from "react-redux";
-import { loginRequest, loginSuccess, loginFailure, resetError } from "../features/auth/authSlice";
+import { requestStart, loginFailure, emailLoginSuccess, resetError } from "../redux/authSlice";
 import axiosInstance from "../api/axiosInstance";
 import { useEffect, useState } from "react";
 import GoogleAuth from "../components/GoogleAuth";
@@ -30,21 +30,25 @@ export default function SignIn() {
   // Define the mutation for the login process
   const SignInMutation = useMutation({
     mutationFn: async (formData) => {
-      dispatch(loginRequest()); // Dispatch login request action before making API call
+      dispatch(requestStart()); // Dispatch request start action before making API call
       const res = await axiosInstance.post("/api/auth/signin", formData);
       return res.data;
     },
     onSuccess: (data) => {
       console.log("Sign in API Response:", data);
       if (!data.success) {
-        dispatch(loginFailure(data.message));
+        dispatch(loginFailure(data.message)); // Dispatch login failure action if login is fail
       } else {
-        dispatch(loginSuccess(data)); // Dispatch login success action if login is successful
+        dispatch(emailLoginSuccess(data)); // Dispatch login success action if login is successful
         localStorage.setItem("accessToken", data.token); // Store the access token in localStorage
         navigate("/"); // Navigate to homepage
       }
     },
     onError: (error) => {
+      console.log("full error", error);
+      console.log("response error", error.response);
+      console.log("data error", error.response?.data);
+      console.log("message error", error.response?.data?.message);
       dispatch(
         loginFailure(error.response?.data?.message || "Some thing went wrong. Please try again")
       ); // Dispatch login failure action on error

@@ -4,12 +4,8 @@ import { auth } from "../../firebase.config";
 import { useMutation } from "@tanstack/react-query";
 import axiosInstance from "../api/axiosInstance";
 import { useDispatch } from "react-redux";
-import {
-  googleLoginRequest,
-  googleLoginSuccess,
-  googleLoginFailure,
-} from "../features/auth/authSlice";
 import { useNavigate } from "react-router-dom";
+import { requestStart, googleLoginSuccess, loginFailure } from "../redux/authSlice";
 
 export default function GoogleAuth() {
   const provider = new GoogleAuthProvider();
@@ -19,18 +15,22 @@ export default function GoogleAuth() {
   // Define the mutation for google login process
   const googleAuthMutation = useMutation({
     mutationFn: async (savedData) => {
-      dispatch(googleLoginRequest()); // Dispatch login request action before making API call
+      dispatch(requestStart()); // Dispatch request start action before making API call
       const res = await axiosInstance.post("/api/auth/google", savedData);
       return res.data;
     },
     onSuccess: (data) => {
       console.log("Google Auth API Response:", data);
-      dispatch(googleLoginSuccess(data)); // Dispatch login success action if login is successful
-      localStorage.setItem("accessToken", data.token); // Store the access token in localStorage
-      navigate("/"); // Navigate to homepage
+      if (!data.success) {
+        dispatch(loginFailure()); // Dispatch login failure action if login is fail
+      } else {
+        dispatch(googleLoginSuccess(data)); // Dispatch google login success action if login is successful
+        localStorage.setItem("accessToken", data.token); // Store the access token in localStorage
+        navigate("/"); // Navigate to homepage
+      }
     },
     onError: () => {
-      dispatch(googleLoginFailure("Google auth error"));
+      dispatch(loginFailure("Google auth error"));
     },
   });
 
