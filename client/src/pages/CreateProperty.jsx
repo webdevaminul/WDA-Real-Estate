@@ -272,7 +272,7 @@ export default function CreateProperty() {
                 type="radio"
                 value="sell"
                 className="w-5 h-5 cursor-pointer accent-primary appearance-none border border-highlightGray/50 rounded-full checked:appearance-auto"
-                {...register("type", {
+                {...register("propertyType", {
                   required: "Please select a property type",
                 })}
               />
@@ -283,16 +283,16 @@ export default function CreateProperty() {
                 type="radio"
                 value="rent"
                 className="w-5 h-5 cursor-pointer accent-primary appearance-none border border-highlightGray/50 rounded-full checked:appearance-auto"
-                {...register("type", {
+                {...register("propertyType", {
                   required: "Please select a property type",
                 })}
               />
               <span>Rent</span>
             </label>
           </div>
-          {errors.type && (
+          {errors.propertyType && (
             <p role="alert" className="text-red-500 text-sm">
-              {errors.type.message}
+              {errors.propertyType.message}
             </p>
           )}
         </div>
@@ -306,7 +306,7 @@ export default function CreateProperty() {
                 type="radio"
                 value="yes"
                 className="w-5 h-5 cursor-pointer accent-primary appearance-none border border-highlightGray/50 rounded-full checked:appearance-auto"
-                {...register("offer", {
+                {...register("isOffer", {
                   required: "Please select an offer option",
                 })}
               />
@@ -317,16 +317,16 @@ export default function CreateProperty() {
                 type="radio"
                 value="no"
                 className="w-5 h-5 cursor-pointer accent-primary appearance-none border border-highlightGray/50 rounded-full checked:appearance-auto"
-                {...register("offer", {
+                {...register("isOffer", {
                   required: "Please select an offer option",
                 })}
               />
               <span>No</span>
             </label>
           </div>
-          {errors.offer && (
+          {errors.isOffer && (
             <p role="alert" className="text-red-500 text-sm">
-              {errors.offer.message}
+              {errors.isOffer.message}
             </p>
           )}
         </div>
