@@ -1,22 +1,56 @@
-import { useRef } from "react";
+import { useEffect, useState } from "react";
 import Title from "../components/Title";
 import { LuImagePlus } from "react-icons/lu";
-import home1 from "../assets/home1.jpeg";
-import home2 from "../assets/home2.jpg";
 import { useForm } from "react-hook-form";
 
 export default function CreateProperty() {
-  const imageRef = useRef(null);
+  const [imagePreviews, setImagePreviews] = useState([]);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isTouched, setIsTouched] = useState(false); // Track if the user has interacted
 
-  // Hook from react-hook-form to manage form state and validation
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
-  const onSubmit = async (formData) => {
-    console.log("Create property formData", formData);
+  const handleSelectedImage = (event) => {
+    setIsTouched(true); // Mark as touched on interaction
+    const selectedImages = event.target.files;
+    const selectedImagesArray = Array.from(selectedImages);
+    const imagesArray = selectedImagesArray.map((image) => URL.createObjectURL(image));
+    setImagePreviews((prev) => prev.concat(imagesArray));
+  };
+
+  const handleImageDelete = (sourceURL) => {
+    setIsTouched(true); // Mark as touched on interaction
+    setImagePreviews((prev) => prev.filter((e) => e !== sourceURL));
+  };
+
+  useEffect(() => {
+    if (!isTouched) return; // Skip validation until the form is touched
+
+    if (imagePreviews.length > 4) {
+      setErrorMessage("You can't add more than 4 images");
+    } else if (imagePreviews.length < 1) {
+      setErrorMessage("You must add at least one image");
+    } else {
+      setErrorMessage(""); // Clear the error message if no errors
+    }
+  }, [imagePreviews, isTouched]);
+
+  const onSubmit = (formData) => {
+    if (errorMessage) {
+      console.log("Fix errors before submitting");
+      return;
+    }
+
+    const { images, ...rest } = formData;
+    const newFormData = { imagePreviews, ...rest };
+
+    console.log("formSubmitting..");
+    console.log("formData", formData);
+    console.log("newFormData", newFormData);
   };
 
   return (
@@ -28,14 +62,22 @@ export default function CreateProperty() {
 
       <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-12 gap-5 p-5">
         {/* Add Images */}
-        <div className="col-span-12 grid grid-cols-12 gap-3 mt-4">
+        <div className="col-span-12 grid grid-cols-12 gap-3 my-4">
           {/* Take images input */}
-          <div className="col-span-12 md:col-span-4 lg:col-span-2">
-            <input type="file" ref={imageRef} accept="image/*" hidden multiple />
-            <div
-              onClick={() => imageRef.current.click()}
-              className="transition-none border border-highlightGray/25 flex gap-2 flex-col items-center justify-center text-primary cursor-pointer px-2 py-5 w-full h-full"
-            >
+          <label className="col-span-12 md:col-span-4 lg:col-span-2">
+            <input
+              type="file"
+              {...register("images", {
+                onChange: (e) => {
+                  handleSelectedImage(e);
+                },
+                required: "Please select at least one image",
+              })}
+              accept="image/*"
+              hidden
+              multiple
+            />
+            <div className="transition-none border border-highlightGray/25 flex gap-2 flex-col items-center justify-center text-primary cursor-pointer px-2 py-5 w-full h-full">
               <p className="flex flex-nowrap items-center justify-center gap-1">
                 <span>
                   <LuImagePlus className="text-lg" />
@@ -43,29 +85,39 @@ export default function CreateProperty() {
                 <span className="text-nowrap">Add Images</span>
               </p>
               <p className="text-sm text-center text-primary/50">
-                The first image will be the cover max (4)
+                The first image will be the cover. max (4)
               </p>
             </div>
-          </div>
+          </label>
 
           {/* Show images previews */}
           <div className="col-span-12 md:col-span-8 lg:col-span-10 grid grid-cols-12 gap-3 w-full">
-            <figure className="border border-highlightGray/25 col-span-6 lg:col-span-3 aspect-video h-full w-full">
-              <img src={home1} className="object-cover object-center h-full w-full" />
-            </figure>
-
-            <figure className="border border-highlightGray/25 col-span-6 lg:col-span-3 aspect-video h-full w-full">
-              <img src={home2} className="object-cover object-center h-full w-full" />
-            </figure>
-
-            <figure className="border border-highlightGray/25 col-span-6 lg:col-span-3 aspect-video h-full w-full">
-              <img src={home1} className="object-cover object-center h-full w-full" />
-            </figure>
-
-            <figure className="border border-highlightGray/25 col-span-6 lg:col-span-3 aspect-video h-full w-full">
-              <img src={home2} className="object-cover object-center h-full w-full" />
-            </figure>
+            {imagePreviews &&
+              imagePreviews.map((sourceURL, i) => (
+                <figure
+                  key={i}
+                  className="relative border border-highlightGray/25 col-span-6 lg:col-span-3 aspect-video"
+                >
+                  <img src={sourceURL} alt="Preview" className="object-cover w-full h-full" />
+                  <button
+                    type="button"
+                    className="bg-red-500 absolute top-1 right-1 rounded-full w-6 h-6 flex items-center justify-center text-sm text-white"
+                    onClick={() => handleImageDelete(sourceURL)}
+                  >
+                    X
+                  </button>
+                </figure>
+              ))}
           </div>
+          {/* Error Messages */}
+          {errors.images && (
+            <p role="alert" className="text-red-500 text-sm col-span-12">
+              {errors.images.message}
+            </p>
+          )}
+          {isTouched && errorMessage && (
+            <p className="text-red-500 text-sm col-span-12">{errorMessage}</p>
+          )}
         </div>
 
         {/* Property name */}

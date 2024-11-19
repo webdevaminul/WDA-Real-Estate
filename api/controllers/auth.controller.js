@@ -231,7 +231,7 @@ export const googleSignIn = async (req, res, next) => {
 
       // Generate a JWT refresh token for login the user
       const refreshToken = jwt.sign(
-        { id: validUser._id },
+        { id: newUser._id },
         process.env.JWT_REFRESH_TOKEN_SECRET,
         { expiresIn: "180d" } // Refresh token expires in 6 months
       );
