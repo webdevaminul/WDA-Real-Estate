@@ -29,7 +29,7 @@ export default function UpdateProfile() {
     if (file) {
       const storage = getStorage(app); // Initialize Firebase storage
       const fileName = new Date().getTime() + file.name; // Generate a unique file name
-      const storageRef = ref(storage, fileName); // Create a reference to the file in storage
+      const storageRef = ref(storage, `WDAR Estate/Profile/${fileName}`); // Create a reference to the file in storage
       const uploadTask = uploadBytesResumable(storageRef, file); // Start the upload
 
       // Monitor the upload progress

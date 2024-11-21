@@ -2,55 +2,113 @@ import { useEffect, useState } from "react";
 import Title from "../components/Title";
 import { LuImagePlus } from "react-icons/lu";
 import { useForm } from "react-hook-form";
+import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage";
+import { app } from "../../firebase.config";
 
 export default function CreateProperty() {
-  const [imagePreviews, setImagePreviews] = useState([]);
+  const [propertyImages, setPropertyImages] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
-  const [isTouched, setIsTouched] = useState(false); // Track if the user has interacted
+  const [isTouched, setIsTouched] = useState(false);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
+    watch,
   } = useForm();
 
+  const propertyType = watch("propertyType");
+  const isOffer = watch("isOffer");
+
   const handleSelectedImage = (event) => {
-    setIsTouched(true); // Mark as touched on interaction
-    const selectedImages = event.target.files;
-    const selectedImagesArray = Array.from(selectedImages);
-    const imagesArray = selectedImagesArray.map((image) => URL.createObjectURL(image));
-    setImagePreviews((prev) => prev.concat(imagesArray));
+    setIsTouched(true);
+    const selectedFiles = Array.from(event.target.files);
+
+    const newFiles = selectedFiles.map((file) => ({
+      file,
+      preview: URL.createObjectURL(file),
+    }));
+
+    setPropertyImages((prev) => prev.concat(newFiles));
   };
 
-  const handleImageDelete = (sourceURL) => {
+  const handleImageDelete = (previewURL) => {
     setIsTouched(true); // Mark as touched on interaction
-    setImagePreviews((prev) => prev.filter((e) => e !== sourceURL));
+    setPropertyImages((prev) => prev.filter((image) => image.preview !== previewURL));
   };
 
   useEffect(() => {
     if (!isTouched) return; // Skip validation until the form is touched
 
-    if (imagePreviews.length > 4) {
+    if (propertyImages.length > 4) {
       setErrorMessage("You can't add more than 4 images");
-    } else if (imagePreviews.length < 1) {
+    } else if (propertyImages.length < 1) {
       setErrorMessage("You must add at least one image");
     } else {
       setErrorMessage(""); // Clear the error message if no errors
     }
-  }, [imagePreviews, isTouched]);
+  }, [propertyImages, isTouched]);
 
-  const onSubmit = (formData) => {
+  const onSubmit = async (formData) => {
     if (errorMessage) {
       console.log("Fix errors before submitting");
       return;
     }
 
-    const { images, ...rest } = formData;
-    const newFormData = { imagePreviews, ...rest };
+    const files = propertyImages.map((image) => image.file);
 
-    console.log("formSubmitting..");
-    console.log("formData", formData);
-    console.log("newFormData", newFormData);
+    const finalData = {
+      ...formData,
+      images: files,
+    };
+
+    console.log("Submitting form with data:", finalData);
+
+    const uploadedImageUrls = await Promise.all(
+      files.map(async (file) => {
+        const uploadedUrl = await uploadImageToFirebase(file);
+        return uploadedUrl;
+      })
+    );
+
+    console.log("Uploaded Image URLs:", uploadedImageUrls);
+
+    const finalSubmissionData = {
+      ...formData,
+      images: uploadedImageUrls,
+    };
+
+    console.log("Final Submission Data:", finalSubmissionData);
+  };
+
+  const uploadImageToFirebase = async (file) => {
+    return new Promise((resolve, reject) => {
+      const storage = getStorage(app); // Initialize Firebase storage
+      const fileName = new Date().getTime() + file.name; // Generate a unique file name
+      const storageRef = ref(storage, `WDAR Estate/Property/${fileName}`); // Create a reference to the file in storage
+      const uploadTask = uploadBytesResumable(storageRef, file); // Start the upload
+
+      // Monitor the upload progress
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          // Progress monitoring
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log(`Upload is ${progress}% done`);
+        },
+        (error) => {
+          // Handle errors during upload
+          console.error("Image Upload failed:", error);
+          reject(error);
+        },
+        () => {
+          // Upload completed - get the download URL
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            resolve(downloadURL);
+          });
+        }
+      );
+    });
   };
 
   return (
@@ -77,7 +135,11 @@ export default function CreateProperty() {
               hidden
               multiple
             />
-            <div className="transition-none border border-highlightGray/25 flex gap-2 flex-col items-center justify-center text-primary cursor-pointer px-2 py-5 w-full h-full">
+            <div
+              className={`transition-none border ${
+                errors.images || errorMessage ? "border-red-500" : "border-highlightGray/25"
+              }  flex gap-2 flex-col items-center justify-center text-primary cursor-pointer px-2 py-5 w-full h-full`}
+            >
               <p className="flex flex-nowrap items-center justify-center gap-1">
                 <span>
                   <LuImagePlus className="text-lg" />
@@ -92,17 +154,17 @@ export default function CreateProperty() {
 
           {/* Show images previews */}
           <div className="col-span-12 md:col-span-8 lg:col-span-10 grid grid-cols-12 gap-3 w-full">
-            {imagePreviews &&
-              imagePreviews.map((sourceURL, i) => (
+            {propertyImages &&
+              propertyImages.map((image, i) => (
                 <figure
                   key={i}
                   className="relative border border-highlightGray/25 col-span-6 lg:col-span-3 aspect-video"
                 >
-                  <img src={sourceURL} alt="Preview" className="object-cover w-full h-full" />
+                  <img src={image.preview} alt="Preview" className="object-cover w-full h-full" />
                   <button
                     type="button"
                     className="bg-red-500 absolute top-1 right-1 rounded-full w-6 h-6 flex items-center justify-center text-sm text-white"
-                    onClick={() => handleImageDelete(sourceURL)}
+                    onClick={() => handleImageDelete(image.preview)}
                   >
                     X
                   </button>
@@ -384,8 +446,11 @@ export default function CreateProperty() {
         </div>
 
         {/* Regular price */}
-        <div className="col-span-6">
-          <label className="block mb-1 text-sm font-medium text-primary">Regular price*</label>
+        <div className={`${isOffer === "yes" ? "col-span-6" : "col-span-12"}`}>
+          <label className="block mb-1 text-sm font-medium text-primary">
+            Regular price* {propertyType === "rent" ? <span>/ month</span> : <span></span>}
+          </label>
+
           <input
             type="number"
             className={`w-full bg-transparent outline-none border ${
@@ -404,8 +469,10 @@ export default function CreateProperty() {
         </div>
 
         {/* Offer price */}
-        <div className="col-span-6">
-          <label className="block mb-1 text-sm font-medium text-primary">Offer price*</label>
+        <div className={`${isOffer === "yes" ? "col-span-6" : "hidden"}`}>
+          <label className="block mb-1 text-sm font-medium text-primary">
+            Offer price* {propertyType === "rent" ? <span>/ month</span> : <span></span>}
+          </label>
           <input
             type="number"
             className={`w-full bg-transparent outline-none border ${
