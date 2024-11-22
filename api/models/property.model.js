@@ -74,7 +74,8 @@ const propertySchema = new mongoose.Schema(
       },
     },
     userReference: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
       required: true,
     },
   },

@@ -4,11 +4,18 @@ import { LuImagePlus } from "react-icons/lu";
 import { useForm } from "react-hook-form";
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage";
 import { app } from "../../firebase.config";
+import imageCompression from "browser-image-compression";
+import { useMutation } from "@tanstack/react-query";
+import axiosInstance from "../api/axiosInstance";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 export default function CreateProperty() {
   const [propertyImages, setPropertyImages] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [isTouched, setIsTouched] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const {
     register,
@@ -43,27 +50,22 @@ export default function CreateProperty() {
     if (propertyImages.length > 4) {
       setErrorMessage("You can't add more than 4 images");
     } else if (propertyImages.length < 1) {
-      setErrorMessage("You must add at least one image");
+      setErrorMessage("You must add at least 1 image");
     } else {
       setErrorMessage(""); // Clear the error message if no errors
     }
   }, [propertyImages, isTouched]);
 
   const onSubmit = async (formData) => {
+    setLoading(true);
+
     if (errorMessage) {
       console.log("Fix errors before submitting");
+      setLoading(false);
       return;
     }
 
     const files = propertyImages.map((image) => image.file);
-
-    const finalData = {
-      ...formData,
-      images: files,
-    };
-
-    console.log("Submitting form with data:", finalData);
-
     const uploadedImageUrls = await Promise.all(
       files.map(async (file) => {
         const uploadedUrl = await uploadImageToFirebase(file);
@@ -71,22 +73,36 @@ export default function CreateProperty() {
       })
     );
 
-    console.log("Uploaded Image URLs:", uploadedImageUrls);
+    const formWithImageURL = {
+      ...formData,
+      propertyImages: uploadedImageUrls,
+    };
+    const { images, ...formWithoutImageFiles } = formWithImageURL;
 
     const finalSubmissionData = {
-      ...formData,
-      images: uploadedImageUrls,
+      ...formWithoutImageFiles,
+      propertyArea: Number(formWithoutImageFiles.propertyArea),
+      propertyFloor: Number(formWithoutImageFiles.propertyFloor),
+      propertyBedroom: Number(formWithoutImageFiles.propertyBedroom),
+      propertyBathroom: Number(formWithoutImageFiles.propertyBathroom),
+      regularPrice: Number(formWithoutImageFiles.regularPrice),
+      offerPrice: formWithoutImageFiles.offerPrice
+        ? Number(formWithoutImageFiles.offerPrice)
+        : null,
     };
 
-    console.log("Final Submission Data:", finalSubmissionData);
+    createPropertyMutation.mutate(finalSubmissionData);
+
+    setLoading(false);
   };
 
   const uploadImageToFirebase = async (file) => {
+    const compressedImage = await compressImage(file);
     return new Promise((resolve, reject) => {
       const storage = getStorage(app); // Initialize Firebase storage
-      const fileName = new Date().getTime() + file.name; // Generate a unique file name
+      const fileName = new Date().getTime() + compressedImage.name; // Generate a unique file name
       const storageRef = ref(storage, `WDAR Estate/Property/${fileName}`); // Create a reference to the file in storage
-      const uploadTask = uploadBytesResumable(storageRef, file); // Start the upload
+      const uploadTask = uploadBytesResumable(storageRef, compressedImage); // Start the upload
 
       // Monitor the upload progress
       uploadTask.on(
@@ -111,6 +127,43 @@ export default function CreateProperty() {
     });
   };
 
+  const compressImage = async (file) => {
+    const options = {
+      maxSizeMB: 2, // Limit the file size to 2MB
+      maxWidthOrHeight: 1920, // Limit the image size to 1000px on either dimension
+      useWebWorker: true, // Use a web worker to compress the image
+    };
+    try {
+      const compressedFile = await imageCompression(file, options);
+      console.log("Compressed file size:", compressedFile.size / 1024, "KB");
+      return compressedFile;
+    } catch (error) {
+      console.error("Image compression error:", error);
+    }
+  };
+
+  // Define the mutation for the creating property post
+  const createPropertyMutation = useMutation({
+    mutationFn: async (finalSubmissionData) => {
+      const res = await axiosInstance.post(
+        `/api/property/create`, // Make API call to create a new property
+        finalSubmissionData
+      );
+      return res.data;
+    },
+    onSuccess: (data) => {
+      if (!data.success) {
+        toast.error("Error creating property");
+      } else {
+        toast.success("Property created successfully");
+        navigate("/manage-posts/post-list");
+      }
+    },
+    onError: () => {
+      toast.error("Error creating property");
+    },
+  });
+
   return (
     <section className="container mx-auto bg-primaryBg">
       <Title
@@ -129,7 +182,7 @@ export default function CreateProperty() {
                 onChange: (e) => {
                   handleSelectedImage(e);
                 },
-                required: "Please select at least one image",
+                required: "You must add at least 1 image",
               })}
               accept="image/*"
               hidden
@@ -191,7 +244,7 @@ export default function CreateProperty() {
               errors.propertyName ? "border-red-500" : "border-highlightGray/25"
             } rounded px-3 py-2`}
             {...register("propertyName", {
-              required: "Property name can not be empty",
+              required: "Property name cannot be empty",
               maxLength: {
                 value: 40,
                 message: "Property Name can't be more than 40 characters long",
@@ -215,7 +268,7 @@ export default function CreateProperty() {
               errors.propertyAddress ? "border-red-500" : "border-highlightGray/25"
             } rounded px-3 py-2`}
             {...register("propertyAddress", {
-              required: "Property location can not be empty",
+              required: "Property location cannot be empty",
               maxLength: {
                 value: 40,
                 message: "Property location can't be more than 40 characters long",
@@ -239,7 +292,14 @@ export default function CreateProperty() {
               errors.propertyArea ? "border-red-500" : "border-highlightGray/25"
             } rounded px-3 py-2`}
             {...register("propertyArea", {
-              required: "Area can not be empty",
+              validate: (value) => {
+                if (!value) {
+                  return "Area cannot be empty";
+                } else if (value < 1) {
+                  return "Area must be greater than 0";
+                }
+                return true;
+              },
             })}
             aria-invalid={errors.propertyArea ? "true" : "false"}
           />
@@ -259,7 +319,14 @@ export default function CreateProperty() {
               errors.propertyFloor ? "border-red-500" : "border-highlightGray/25"
             } rounded px-3 py-2`}
             {...register("propertyFloor", {
-              required: "Floor can not be empty",
+              validate: (value) => {
+                if (!value) {
+                  return "Floor cannot be empty";
+                } else if (value < 1) {
+                  return "Floor must be greater than 0";
+                }
+                return true;
+              },
             })}
             aria-invalid={errors.propertyFloor ? "true" : "false"}
           />
@@ -279,7 +346,14 @@ export default function CreateProperty() {
               errors.propertyBedroom ? "border-red-500" : "border-highlightGray/25"
             } rounded px-3 py-2`}
             {...register("propertyBedroom", {
-              required: "Bedroom can not be empty",
+              validate: (value) => {
+                if (!value) {
+                  return "Bedroom cannot be empty";
+                } else if (value < 1) {
+                  return "Bedroom must be greater than 0";
+                }
+                return true;
+              },
             })}
             aria-invalid={errors.propertyBedroom ? "true" : "false"}
           />
@@ -299,7 +373,14 @@ export default function CreateProperty() {
               errors.propertyBathroom ? "border-red-500" : "border-highlightGray/25"
             } rounded px-3 py-2`}
             {...register("propertyBathroom", {
-              required: "Bathroom can not be empty",
+              validate: (value) => {
+                if (!value) {
+                  return "Bathroom cannot be empty";
+                } else if (value < 1) {
+                  return "Bathroom must be greater than 0";
+                }
+                return true;
+              },
             })}
             aria-invalid={errors.propertyBathroom ? "true" : "false"}
           />
@@ -346,7 +427,7 @@ export default function CreateProperty() {
               <input
                 type="checkbox"
                 className="w-5 h-5 cursor-pointer accent-primary appearance-none border border-highlightGray/50 rounded checked:appearance-auto"
-                {...register("features.parking")}
+                {...register("propertyFeatures.parking")}
               />
               <span>Parking</span>
             </label>
@@ -354,7 +435,7 @@ export default function CreateProperty() {
               <input
                 type="checkbox"
                 className="w-5 h-5 cursor-pointer accent-primary appearance-none border border-highlightGray/50 rounded checked:appearance-auto"
-                {...register("features.masterBed")}
+                {...register("propertyFeatures.masterBed")}
               />
               <span>Master Bed</span>
             </label>
@@ -362,7 +443,7 @@ export default function CreateProperty() {
               <input
                 type="checkbox"
                 className="w-5 h-5 cursor-pointer accent-primary appearance-none border border-highlightGray/50 rounded checked:appearance-auto"
-                {...register("features.furnished")}
+                {...register("propertyFeatures.furnished")}
               />
               <span>Furnished</span>
             </label>
@@ -370,7 +451,7 @@ export default function CreateProperty() {
               <input
                 type="checkbox"
                 className="w-5 h-5 cursor-pointer accent-primary appearance-none border border-highlightGray/50 rounded checked:appearance-auto"
-                {...register("features.swimming")}
+                {...register("propertyFeatures.swimming")}
               />
               <span>Swimming pool</span>
             </label>
@@ -387,7 +468,7 @@ export default function CreateProperty() {
                 value="sell"
                 className="w-5 h-5 cursor-pointer accent-primary appearance-none border border-highlightGray/50 rounded-full checked:appearance-auto"
                 {...register("propertyType", {
-                  required: "Please select a property type",
+                  required: "Please select your property type",
                 })}
               />
               <span>Sell</span>
@@ -398,7 +479,7 @@ export default function CreateProperty() {
                 value="rent"
                 className="w-5 h-5 cursor-pointer accent-primary appearance-none border border-highlightGray/50 rounded-full checked:appearance-auto"
                 {...register("propertyType", {
-                  required: "Please select a property type",
+                  required: "Please select your property type",
                 })}
               />
               <span>Rent</span>
@@ -413,7 +494,7 @@ export default function CreateProperty() {
 
         {/* Offer */}
         <div className="col-span-12 md:col-span-6">
-          <label className="text-sm font-medium text-primary">Any offer?*</label>
+          <label className="text-sm font-medium text-primary">Offer*</label>
           <div className="flex gap-5 text-sm font-medium text-primary mt-1 transition-none duration-0">
             <label className="flex items-center text-base gap-1 cursor-pointer">
               <input
@@ -457,7 +538,15 @@ export default function CreateProperty() {
               errors.regularPrice ? "border-red-500" : "border-highlightGray/25"
             } rounded px-3 py-2`}
             {...register("regularPrice", {
-              required: "Regular price can not be empty",
+              validate: (value) => {
+                const numericValue = Number(value);
+                if (!numericValue) {
+                  return "Regular price cannot be empty";
+                } else if (numericValue < 0) {
+                  return "Regular price must be greater than 0";
+                }
+                return true;
+              },
             })}
             aria-invalid={errors.regularPrice ? "true" : "false"}
           />
@@ -479,7 +568,17 @@ export default function CreateProperty() {
               errors.offerPrice ? "border-red-500" : "border-highlightGray/25"
             } rounded px-3 py-2`}
             {...register("offerPrice", {
-              required: "Offer price can not be empty",
+              validate: (value) => {
+                const offerValue = Number(value);
+                const regularValue = Number(watch("regularPrice"));
+                if (isOffer === "yes" && !offerValue) {
+                  return `Offer price is required when "Any offer = yes"`;
+                }
+                if (isOffer === "yes" && offerValue >= regularValue) {
+                  return "Offer price must be less than the regular price";
+                }
+                return true;
+              },
             })}
             aria-invalid={errors.offerPrice ? "true" : "false"}
           />
@@ -493,9 +592,10 @@ export default function CreateProperty() {
         {/* Submit Button */}
         <button
           type="submit"
+          disabled={loading}
           className="col-span-12 p-2 mt-4 bg-highlight hover:bg-highlightHover border-none rounded text-primaryWhite disabled:bg-primaryWhite disabled:text-primaryBlack disabled:cursor-not-allowed select-none"
         >
-          Submit Property
+          {loading ? "Loading..." : "Submit Property"}
         </button>
       </form>
     </section>

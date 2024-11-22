@@ -5,6 +5,6 @@ import { verifyToken } from "../utilites/verifyToken.js";
 // Create a new Express router instance
 const router = express.Router();
 
-router.post("/create", createProperty);
+router.post("/create", verifyToken, createProperty);
 
 export default router;
