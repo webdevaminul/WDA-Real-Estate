@@ -5,6 +5,7 @@ import { RiEyeLine, RiEditBoxLine, RiDeleteBin6Line } from "react-icons/ri";
 import { useEffect, useState } from "react";
 import axiosInstance from "../api/axiosInstance";
 import { useSelector } from "react-redux";
+import Swal from "sweetalert2";
 
 export default function PropertyList() {
   const [properties, setProperties] = useState([]);
@@ -37,14 +38,81 @@ export default function PropertyList() {
     }));
   };
 
-  console.log("properties", properties);
+  const handleDelete = async (id) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      iconColor: "rgb(255, 95, 31)",
+      customClass: {
+        icon: "custom-swal-icon",
+        popup: "custom-swal-popup",
+      },
+      showCancelButton: true,
+      confirmButtonColor: "rgb(255, 95, 31)",
+      cancelButtonColor: "#ef4444",
+      confirmButtonText: "Yes",
+      width: "22rem",
+      padding: "1rem",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          // Send a DELETE request to the backend
+          const res = await axiosInstance.delete(`api/property/delete/${id}`);
+
+          if (res.data.success) {
+            setProperties((prevProperties) =>
+              prevProperties.filter((property) => property._id !== id)
+            );
+
+            Swal.fire({
+              title: "Deleted!",
+              text: "Your file has been deleted.",
+              icon: "success",
+              iconColor: "#22c55e",
+              customClass: {
+                icon: "custom-swal-icon",
+                popup: "custom-swal-popup",
+              },
+              width: "22rem",
+              padding: "1rem",
+              confirmButtonColor: "rgb(255, 95, 31)",
+            });
+          }
+        } catch (err) {
+          console.error("Error deleting property:", err);
+          Swal.fire({
+            title: "Failed!",
+            text: `${err.response?.data?.message}. Failed to delete property.`,
+            icon: "error",
+            iconColor: "#ef4444",
+            customClass: {
+              icon: "custom-swal-icon",
+              popup: "custom-swal-popup",
+            },
+            width: "22rem",
+            padding: "1rem",
+            confirmButtonColor: "rgb(255, 95, 31)",
+          });
+        }
+      }
+    });
+  };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="min-h-[calc(100vh-3rem)] flex items-center justify-center">
+        <span className="text-primary loading loading-spinner loading-md"></span>
+      </div>
+    );
   }
 
   if (error) {
-    return <div>{error}</div>;
+    return (
+      <div className="min-h-[calc(100vh-3rem)] flex items-center justify-center">
+        <p>{error}</p>
+      </div>
+    );
   }
 
   return (
@@ -55,7 +123,7 @@ export default function PropertyList() {
       />
 
       <div className="overflow-x-auto px-6 py-6">
-        <table className="min-w-full h-screen table-auto text-sm text-left text-primary border border-highlightGray/25">
+        <table className="min-w-full table-auto text-sm text-left text-primary border border-highlightGray/25">
           {/* Table Head */}
           <thead className="bg-primary/5">
             <tr className="border border-highlightGray/25">

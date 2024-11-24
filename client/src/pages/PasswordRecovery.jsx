@@ -56,7 +56,7 @@ export default function PasswordRecovery() {
           <h2 className="text-xl md:text-3xl text-center md:font-light text-primary">
             Set a new password
           </h2>
-          <p className="text-center text-primary mb-5 font-sans font-light">
+          <p className="text-center text-primary mb-5 font-light">
             Combine alphabet with number to create a secure password
           </p>
         </div>

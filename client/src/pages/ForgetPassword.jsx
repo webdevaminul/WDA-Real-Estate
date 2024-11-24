@@ -90,7 +90,7 @@ export default function ForgetPassword() {
               <span className="text-xl">
                 <MdError />
               </span>
-              <span>{error}</span>
+              <span className="break-all">{error}</span>
             </p>
           )}
 
@@ -100,7 +100,7 @@ export default function ForgetPassword() {
               <span className="text-xl">
                 <MdCheckCircle />
               </span>
-              <span>{success}</span>
+              <span className="break-all">{success}</span>
             </p>
           )}
 

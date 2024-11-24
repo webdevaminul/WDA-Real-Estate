@@ -246,8 +246,8 @@ export default function CreateProperty() {
             {...register("propertyName", {
               required: "Property name cannot be empty",
               maxLength: {
-                value: 40,
-                message: "Property Name can't be more than 40 characters long",
+                value: 30,
+                message: "Property Name can't be more than 30 characters long",
               },
             })}
             aria-invalid={errors.propertyName ? "true" : "false"}
@@ -270,8 +270,8 @@ export default function CreateProperty() {
             {...register("propertyAddress", {
               required: "Property location cannot be empty",
               maxLength: {
-                value: 40,
-                message: "Property location can't be more than 40 characters long",
+                value: 30,
+                message: "Property location can't be more than 30 characters long",
               },
             })}
             aria-invalid={errors.propertyAddress ? "true" : "false"}

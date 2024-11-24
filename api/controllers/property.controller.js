@@ -1,4 +1,5 @@
 import Property from "../models/property.model.js";
+import { errorHandler } from "../utilites/error.js";
 
 export const createProperty = async (req, res, next) => {
   try {
@@ -40,6 +41,22 @@ export const getProperties = async (req, res, next) => {
     return res.status(200).json(properties);
   } catch (error) {
     // Pass any errors to the error-handling middleware
+    next(error);
+  }
+};
+
+export const deleteProperty = async (req, res, next) => {
+  const { id } = req.params;
+
+  try {
+    const deletedProperty = await Property.findByIdAndDelete(id);
+
+    if (!deletedProperty) {
+      return next(errorHandler(404, "Property not found"));
+    }
+
+    res.status(200).json({ success: true, message: "Property deleted successfully" });
+  } catch (error) {
     next(error);
   }
 };
