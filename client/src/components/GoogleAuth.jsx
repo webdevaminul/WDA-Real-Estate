@@ -2,10 +2,11 @@ import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { FcGoogle } from "react-icons/fc";
 import { auth } from "../../firebase.config";
 import { useMutation } from "@tanstack/react-query";
-import axiosInstance from "../api/axiosInstance";
+import axiosPublic from "../api/axiosPublic";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { requestStart, googleLoginSuccess, loginFailure } from "../redux/authSlice";
+import axiosSecure from "../api/axiosSecure";
 
 export default function GoogleAuth() {
   const provider = new GoogleAuthProvider();
@@ -16,7 +17,7 @@ export default function GoogleAuth() {
   const googleAuthMutation = useMutation({
     mutationFn: async (savedData) => {
       dispatch(requestStart()); // Dispatch request start action before making API call
-      const res = await axiosInstance.post("/api/auth/google", savedData);
+      const res = await axiosSecure.post("/api/auth/google", savedData);
       return res.data;
     },
     onSuccess: (data) => {

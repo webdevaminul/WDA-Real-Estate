@@ -5,6 +5,7 @@ import { errorHandler } from "../utilites/error.js";
 import { sendVerificationEmail } from "../utilites/sendVerificationMail.js";
 import { sendRecoveryMail } from "../utilites/sendRecoveryMail.js";
 
+// Controller to send verification mail
 export const signup = async (req, res, next) => {
   try {
     // Extract the user's username, email, and password from the request body
@@ -44,6 +45,7 @@ export const signup = async (req, res, next) => {
   }
 };
 
+// Controller to verify user and sign in automatically with token
 export const verifyEmail = async (req, res, next) => {
   try {
     // Extract the verification token from the request query parameters
@@ -114,6 +116,7 @@ export const verifyEmail = async (req, res, next) => {
   }
 };
 
+// Controller to sign in user with token
 export const signin = async (req, res, next) => {
   try {
     // Extract the user's email, and password from the request body
@@ -168,6 +171,7 @@ export const signin = async (req, res, next) => {
   }
 };
 
+// Controller to sign in with google
 export const googleSignIn = async (req, res, next) => {
   try {
     // Extract the user's email, name, and profile picture from the request body
@@ -261,6 +265,7 @@ export const googleSignIn = async (req, res, next) => {
   }
 };
 
+// Controller to sing out the user
 export const signOut = async (req, res, next) => {
   try {
     // Clear the authentication token from the cookie
@@ -274,6 +279,7 @@ export const signOut = async (req, res, next) => {
   }
 };
 
+// Controller to refresh the access token
 export const refreshAccessToken = async (req, res, next) => {
   try {
     // Extract the refresh token from the cookie
@@ -303,6 +309,7 @@ export const refreshAccessToken = async (req, res, next) => {
   }
 };
 
+// Controller to to send password reset mail
 export const forgetPassword = async (req, res, next) => {
   try {
     // Extract the user's email from the request body
@@ -335,6 +342,7 @@ export const forgetPassword = async (req, res, next) => {
   }
 };
 
+// Controller to reset the user's password
 export const recoverPassword = async (req, res, next) => {
   try {
     // Extract the verification token from the request query parameters

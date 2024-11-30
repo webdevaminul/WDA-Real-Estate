@@ -2,6 +2,7 @@ import User from "../models/user.model.js";
 import { errorHandler } from "../utilites/error.js";
 import bcryptjs from "bcryptjs";
 
+// Controller to update the user's profile
 export const updateUser = async (req, res, next) => {
   // req.user.id is the authenticated user's ID (from verifyToken middleware)
   // req.params.id is the user ID passed in the URL parameters
@@ -41,6 +42,7 @@ export const updateUser = async (req, res, next) => {
   }
 };
 
+// Controller to change the user's password
 export const changePassword = async (req, res, next) => {
   const { userPassword, newPassword } = req.body; // Destructure old and new passwords from request body
 
@@ -88,6 +90,7 @@ export const changePassword = async (req, res, next) => {
   }
 };
 
+// Controller to delete a user
 export const deleteAccount = async (req, res, next) => {
   const { userPassword, isGoogle } = req.body; // Destructure current password and isGoogle from request body
 

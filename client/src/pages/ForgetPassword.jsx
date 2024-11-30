@@ -2,7 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { MdCheckCircle, MdError, MdOutlineEmail } from "react-icons/md";
-import axiosInstance from "../api/axiosInstance";
+import axiosPublic from "../api/axiosPublic";
 
 export default function ForgetPassword() {
   const [error, setError] = useState(null);
@@ -17,7 +17,7 @@ export default function ForgetPassword() {
   // Define the mutation for the forget password process
   const forgetPasswordMutation = useMutation({
     mutationFn: async (formData) => {
-      const res = await axiosInstance.post("/api/auth/forget-password", formData);
+      const res = await axiosPublic.post("/api/auth/forget-password", formData);
       return res.data;
     },
     onSuccess: (data) => {

@@ -4,7 +4,7 @@ import { MdCheckCircle, MdError, MdOutlineLock, MdPassword } from "react-icons/m
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 import { useMutation } from "@tanstack/react-query";
 import { useDispatch, useSelector } from "react-redux";
-import axiosInstance from "../api/axiosInstance";
+import axiosSecure from "../api/axiosSecure";
 import { profileUpdateSuccess, requestFailure, requestStart, resetError } from "../redux/authSlice";
 import Title from "../components/Title";
 
@@ -32,7 +32,7 @@ export default function ChangePassword() {
   const changePasswordMutation = useMutation({
     mutationFn: async (formData) => {
       dispatch(requestStart()); // Dispatch request start action before making API call
-      const res = await axiosInstance.post(
+      const res = await axiosSecure.post(
         `/api/user/change-password/${user?.userInfo?._id}`,
         formData
       );

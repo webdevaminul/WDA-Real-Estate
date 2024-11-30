@@ -3,7 +3,7 @@ import Title from "../components/Title";
 import { PiCaretUpDown } from "react-icons/pi";
 import { RiEyeLine, RiEditBoxLine, RiDeleteBin6Line } from "react-icons/ri";
 import { useEffect, useState } from "react";
-import axiosInstance from "../api/axiosInstance";
+import axiosSecure from "../api/axiosSecure";
 import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
 
@@ -17,8 +17,8 @@ export default function PropertyList() {
   useEffect(() => {
     const fetchProperties = async () => {
       try {
-        const res = await axiosInstance.get(
-          `api/property/list/${user?.userInfo?._id}?sortField=${sort.field}&sortOrder=${sort.order}`
+        const res = await axiosSecure.get(
+          `/api/property/list/${user?.userInfo?._id}?sortField=${sort.field}&sortOrder=${sort.order}`
         );
         console.log("API response for property", res.data);
         setProperties(res.data);
@@ -38,7 +38,7 @@ export default function PropertyList() {
     }));
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (propertyId) => {
     Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
@@ -58,11 +58,11 @@ export default function PropertyList() {
       if (result.isConfirmed) {
         try {
           // Send a DELETE request to the backend
-          const res = await axiosInstance.delete(`api/property/delete/${id}`);
+          const res = await axiosSecure.delete(`/api/property/delete/${propertyId}`);
 
           if (res.data.success) {
             setProperties((prevProperties) =>
-              prevProperties.filter((property) => property._id !== id)
+              prevProperties.filter((property) => property._id !== propertyId)
             );
 
             Swal.fire({
@@ -242,7 +242,7 @@ export default function PropertyList() {
                     <Link
                       className="text-yellow-500 border border-highlightGray/25 p-1 rounded-md tooltip"
                       data-tip="Update"
-                      to={`/property/edit/${property._id}`}
+                      to={`/manage-posts/update-post/${property._id}`}
                     >
                       <RiEditBoxLine />
                     </Link>

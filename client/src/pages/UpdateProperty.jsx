@@ -5,27 +5,56 @@ import { useForm } from "react-hook-form";
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage";
 import { app } from "../../firebase.config";
 import imageCompression from "browser-image-compression";
-import { useMutation } from "@tanstack/react-query";
-import axiosSecure from "../api/axiosSecure";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import axiosPublic from "../api/axiosPublic";
+import axiosSecure from "../api/axiosSecure";
 
-export default function CreateProperty() {
-  const [propertyImages, setPropertyImages] = useState([]);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [isTouched, setIsTouched] = useState(false);
+export default function UpdateProperty() {
+  const { propertyId } = useParams(); // Assuming the property ID is passed as a route param
+  const [fetchedImages, setFetchedImages] = useState([]);
+  const [newImages, setNewImages] = useState([]);
+  const [removedImages, setRemovedImages] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isTouched, setIsTouched] = useState(false);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
     watch,
   } = useForm();
 
   const propertyType = watch("propertyType");
   const isOffer = watch("isOffer");
+
+  useEffect(() => {
+    // Fetch property data manually
+    const fetchPropertyData = async () => {
+      try {
+        const res = await axiosSecure.get(`/api/property/specific/${propertyId}`);
+        console.log("API Response:", res.data); // Debugging
+        const { propertyType, isOffer, regularPrice, offerPrice, propertyImages, ...rest } =
+          res.data.property;
+
+        setFetchedImages(propertyImages);
+
+        // Set form values
+        Object.entries({ propertyType, isOffer, regularPrice, offerPrice, ...rest }).forEach(
+          ([key, value]) => setValue(key, value)
+        );
+      } catch (error) {
+        console.error("Error fetching property data:", error.response?.data || error.message);
+        setErrorMessage("Failed to fetch property data. Please try again.");
+      }
+    };
+
+    fetchPropertyData();
+  }, [propertyId, setValue]);
 
   const handleSelectedImage = (event) => {
     setIsTouched(true);
@@ -36,12 +65,17 @@ export default function CreateProperty() {
       preview: URL.createObjectURL(file),
     }));
 
-    setPropertyImages((prev) => prev.concat(newFiles));
+    setNewImages((prev) => prev.concat(newFiles));
   };
 
-  const handleImageDelete = (previewURL) => {
-    setIsTouched(true); // Mark as touched on interaction
-    setPropertyImages((prev) => prev.filter((image) => image.preview !== previewURL));
+  const handleImageDelete = (image, isFetched) => {
+    setIsTouched(true);
+    if (isFetched) {
+      setFetchedImages((prev) => prev.filter((img) => img !== image));
+      setRemovedImages((prev) => prev.concat(image));
+    } else {
+      setNewImages((prev) => prev.filter((img) => img.preview !== image.preview));
+    }
   };
 
   const onSubmit = async (formData) => {
@@ -53,35 +87,48 @@ export default function CreateProperty() {
       return;
     }
 
-    const uploadedImageUrls = await Promise.all(
-      propertyImages.map(async (image) => {
-        const uploadedUrl = await uploadImageToFirebase(image.file);
-        return uploadedUrl;
-      })
-    );
+    try {
+      // Upload new images to Firebase
+      const newImageUrls = await Promise.all(
+        newImages.map(async (image) => {
+          const uploadedUrl = await uploadImageToFirebase(image.file);
+          return uploadedUrl;
+        })
+      );
 
-    const formWithImageFiles = {
-      ...formData,
-      propertyImages: uploadedImageUrls,
-    };
-    const { images, ...formWithoutImageFiles } = formWithImageFiles;
+      const formWithImageFiles = {
+        ...formData,
+        propertyImages: [...fetchedImages, ...newImageUrls],
+        offerPrice: formData.isOffer === "yes" ? Number(formData.offerPrice) : null,
+      };
 
-    const finalSubmissionData = {
-      ...formWithoutImageFiles,
-      propertyArea: Number(formWithoutImageFiles.propertyArea),
-      propertyFloor: Number(formWithoutImageFiles.propertyFloor),
-      propertyBedroom: Number(formWithoutImageFiles.propertyBedroom),
-      propertyBathroom: Number(formWithoutImageFiles.propertyBathroom),
-      regularPrice: Number(formWithoutImageFiles.regularPrice),
-      offerPrice: formWithoutImageFiles.offerPrice
-        ? Number(formWithoutImageFiles.offerPrice)
-        : null,
-    };
+      const { images, ...formWithOutImageFiles } = formWithImageFiles;
 
-    createPropertyMutation.mutate(finalSubmissionData);
+      console.log("updatedData", formWithOutImageFiles);
 
-    setLoading(false);
+      // // Update the property using your API
+      updatePropertyMutation.mutate(formWithOutImageFiles);
+    } catch (error) {
+      console.error("Error updating property:", error.response?.data || error.message);
+      setErrorMessage("Failed to update property. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
+
+  useEffect(() => {
+    if (!isTouched) return; // Skip validation until the form is touched
+
+    const totalImages = [...fetchedImages, ...newImages];
+
+    if (totalImages.length > 4) {
+      setErrorMessage("You can't add more than 4 images");
+    } else if (totalImages.length < 1) {
+      setErrorMessage("You must add at least 1 image");
+    } else {
+      setErrorMessage(""); // Clear the error message if no errors
+    }
+  }, [fetchedImages, newImages, isTouched]);
 
   const uploadImageToFirebase = async (file) => {
     const compressedImage = await compressImage(file);
@@ -129,46 +176,34 @@ export default function CreateProperty() {
     }
   };
 
-  // Define the mutation for the creating property post
-  const createPropertyMutation = useMutation({
-    mutationFn: async (finalSubmissionData) => {
-      const res = await axiosSecure.post(
-        `/api/property/create`, // Make API call to create a new property
-        finalSubmissionData
+  // Define the mutation for the update property post
+  const updatePropertyMutation = useMutation({
+    mutationFn: async (formWithOutImageFiles) => {
+      const res = await axiosSecure.patch(
+        `/api/property/update/${propertyId}`,
+        formWithOutImageFiles
       );
       return res.data;
     },
     onSuccess: (data) => {
-      if (!data.success) {
-        toast.error("Error creating property");
-      } else {
-        toast.success("Property created successfully");
+      if (data.success) {
+        toast.success("Property updated successfully");
         navigate("/manage-posts/post-list");
+      } else {
+        toast.error("Error updating property");
       }
     },
     onError: () => {
-      toast.error("Error creating property");
+      toast.error("Error updating property");
+    },
+    onSettled: () => {
+      setLoading(false);
     },
   });
 
-  useEffect(() => {
-    if (!isTouched) return; // Skip validation until the form is touched
-
-    if (propertyImages.length > 4) {
-      setErrorMessage("You can't add more than 4 images");
-    } else if (propertyImages.length < 1) {
-      setErrorMessage("You must add at least 1 image");
-    } else {
-      setErrorMessage(""); // Clear the error message if no errors
-    }
-  }, [propertyImages, isTouched]);
-
   return (
     <section className="container mx-auto bg-primaryBg">
-      <Title
-        title={"Add Property"}
-        subTitle={"The more information you will provide, the better deal you will have"}
-      />
+      <Title title={"Update Property"} subTitle={"Update your property details for better deals"} />
 
       <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-12 gap-5 p-5">
         {/* Add Images */}
@@ -181,7 +216,6 @@ export default function CreateProperty() {
                 onChange: (e) => {
                   handleSelectedImage(e);
                 },
-                required: "You must add at least 1 image",
               })}
               accept="image/*"
               hidden
@@ -206,22 +240,24 @@ export default function CreateProperty() {
 
           {/* Show images previews */}
           <div className="col-span-12 md:col-span-8 lg:col-span-10 grid grid-cols-12 gap-3 w-full">
-            {propertyImages &&
-              propertyImages.map((image, i) => (
-                <figure
-                  key={i}
-                  className="relative border border-highlightGray/25 col-span-6 lg:col-span-3 aspect-video"
+            {[...fetchedImages, ...newImages].map((image, i) => (
+              <figure
+                key={i}
+                className="relative border border-highlightGray/25 col-span-6 lg:col-span-3 aspect-video"
+              >
+                <img
+                  src={typeof image === "string" ? image : image.preview}
+                  className="object-cover w-full h-full"
+                />
+                <button
+                  type="button"
+                  className="bg-red-500 absolute top-1 right-1 rounded-full w-6 h-6 flex items-center justify-center text-sm text-white"
+                  onClick={() => handleImageDelete(image, typeof image === "string")}
                 >
-                  <img src={image.preview} className="object-cover w-full h-full" />
-                  <button
-                    type="button"
-                    className="bg-red-500 absolute top-1 right-1 rounded-full w-6 h-6 flex items-center justify-center text-sm text-white"
-                    onClick={() => handleImageDelete(image.preview)}
-                  >
-                    X
-                  </button>
-                </figure>
-              ))}
+                  X
+                </button>
+              </figure>
+            ))}
           </div>
           {/* Error Messages */}
           {errors.images && (
@@ -594,7 +630,7 @@ export default function CreateProperty() {
           disabled={loading}
           className="col-span-12 p-2 mt-4 bg-highlight hover:bg-highlightHover border-none rounded text-primaryWhite disabled:bg-primaryWhite disabled:text-primaryBlack disabled:cursor-not-allowed select-none"
         >
-          {loading ? "Loading..." : "Create Property"}
+          {loading ? "Loading..." : "Update Property"}
         </button>
       </form>
     </section>

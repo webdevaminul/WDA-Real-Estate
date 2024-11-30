@@ -1,8 +1,10 @@
 import express from "express";
 import {
   createProperty,
-  getProperties,
+  getUserProperties,
   deleteProperty,
+  getSpecificProperty,
+  updateProperty,
 } from "../controllers/property.controller.js";
 import { verifyToken } from "../utilites/verifyToken.js";
 
@@ -10,7 +12,9 @@ import { verifyToken } from "../utilites/verifyToken.js";
 const router = express.Router();
 
 router.post("/create", verifyToken, createProperty);
-router.get("/list/:id", verifyToken, getProperties);
-router.delete("/delete/:id", verifyToken, deleteProperty);
+router.get("/list/:id", verifyToken, getUserProperties);
+router.delete("/delete/:propertyId", verifyToken, deleteProperty);
+router.get("/specific/:propertyId", getSpecificProperty);
+router.patch("/update/:propertyId", verifyToken, updateProperty);
 
 export default router;

@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 import { MdCheckCircle, MdError, MdPassword } from "react-icons/md";
 import { useLocation } from "react-router-dom";
-import axiosInstance from "../api/axiosInstance";
+import axiosSecure from "../api/axiosSecure";
 
 export default function PasswordRecovery() {
   const [newPassValue, setNewPassValue] = useState("");
@@ -26,7 +26,7 @@ export default function PasswordRecovery() {
   const recoverPasswordMutation = useMutation({
     mutationFn: async (formData) => {
       setLoading(true);
-      const res = await axiosInstance.post(`/api/auth/recover-password?token=${token}`, formData);
+      const res = await axiosSecure.post(`/api/auth/recover-password?token=${token}`, formData);
       return res.data;
     },
     onSuccess: (data) => {

@@ -5,7 +5,7 @@ import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 import { useMutation } from "@tanstack/react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { requestStart, loginFailure, emailLoginSuccess, resetError } from "../redux/authSlice";
-import axiosInstance from "../api/axiosInstance";
+import axiosSecure from "../api/axiosSecure";
 import { useEffect, useState } from "react";
 import GoogleAuth from "../components/GoogleAuth";
 
@@ -31,7 +31,7 @@ export default function SignIn() {
   const SignInMutation = useMutation({
     mutationFn: async (formData) => {
       dispatch(requestStart()); // Dispatch request start action before making API call
-      const res = await axiosInstance.post("/api/auth/signin", formData);
+      const res = await axiosSecure.post("/api/auth/signin", formData);
       return res.data;
     },
     onSuccess: (data) => {

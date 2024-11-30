@@ -5,7 +5,7 @@ import { MdCheckCircle, MdError, MdPassword } from "react-icons/md";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 import { IoIosWarning } from "react-icons/io";
 import { useMutation } from "@tanstack/react-query";
-import axiosInstance from "../api/axiosInstance";
+import axiosSecure from "../api/axiosSecure";
 import { useNavigate } from "react-router-dom";
 import { requestFailure, requestStart, userClearSuccess, resetError } from "../redux/authSlice";
 import Title from "../components/Title";
@@ -37,7 +37,7 @@ export default function DeleteAccount() {
   const deleteAccountMutation = useMutation({
     mutationFn: async (formData) => {
       dispatch(requestStart()); // Dispatch request start action before making API call
-      const res = await axiosInstance.delete(`/api/user/delete-account/${user?.userInfo?._id}`, {
+      const res = await axiosSecure.delete(`/api/user/delete-account/${user?.userInfo?._id}`, {
         data: formData,
       });
       return res.data;

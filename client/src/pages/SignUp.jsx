@@ -5,7 +5,7 @@ import { useMutation } from "@tanstack/react-query";
 import { MdError, MdCheckCircle, MdOutlineEmail, MdOutlineLock } from "react-icons/md";
 import { FiUser } from "react-icons/fi";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
-import axiosInstance from "../api/axiosInstance";
+import axiosPublic from "../api/axiosPublic";
 import GoogleAuth from "../components/GoogleAuth";
 
 // TODO: Turn off auto complete
@@ -25,7 +25,7 @@ export default function SignUp() {
   // Define the mutation for the signup process
   const signUpMutation = useMutation({
     mutationFn: async (formData) => {
-      const res = await axiosInstance.post("/api/auth/signup", formData);
+      const res = await axiosPublic.post("/api/auth/signup", formData);
       return res.data;
     },
     onSuccess: (data) => {

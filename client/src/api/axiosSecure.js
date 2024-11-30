@@ -1,13 +1,13 @@
 import axios from "axios";
 
 // Create an instance of axios with base configuration
-const axiosInstance = axios.create({
+const axiosSecure = axios.create({
   baseURL: "http://localhost:5000",
   withCredentials: true,
 });
 
 // Request interceptor to add token to request headers
-axiosInstance.interceptors.request.use(
+axiosSecure.interceptors.request.use(
   (config) => {
     // Get the access token from local storage
     const token = localStorage.getItem("accessToken");
@@ -23,7 +23,7 @@ axiosInstance.interceptors.request.use(
 );
 
 // Response interceptor to handle token expiration and refresh token
-axiosInstance.interceptors.response.use(
+axiosSecure.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
@@ -34,7 +34,7 @@ axiosInstance.interceptors.response.use(
 
       try {
         // Make a request to refresh the access token using the refresh token from the cookie
-        const res = await axiosInstance.get("/api/auth/refresh-token");
+        const res = await axiosSecure.get("/api/auth/refresh-token");
 
         // Get the new access token from the response
         const newToken = res.data?.token;
@@ -46,7 +46,7 @@ axiosInstance.interceptors.response.use(
         originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
 
         // Retry the original request with new token
-        return axiosInstance(originalRequest);
+        return axiosSecure(originalRequest);
       } catch (err) {
         // Handle refresh token failure
         console.error("Failed to refresh token:", err);
@@ -58,4 +58,4 @@ axiosInstance.interceptors.response.use(
   }
 );
 
-export default axiosInstance;
+export default axiosSecure;

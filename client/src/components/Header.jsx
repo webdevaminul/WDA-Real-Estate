@@ -5,7 +5,7 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import Darkmode from "../features/Darkmode";
 import { useDispatch, useSelector } from "react-redux";
 import { BiCreditCardFront } from "react-icons/bi";
-import axiosInstance from "../api/axiosInstance";
+import axiosSecure from "../api/axiosSecure";
 import { requestFailure, requestStart, userClearSuccess } from "../redux/authSlice";
 
 export default function Header() {
@@ -57,7 +57,7 @@ export default function Header() {
   const handleSignOut = async () => {
     try {
       dispatch(requestStart());
-      const res = await axiosInstance.get("/api/auth/sign-out");
+      const res = await axiosSecure.get("/api/auth/sign-out");
       if (res.data.success) {
         dispatch(userClearSuccess());
         localStorage.removeItem("accessToken");

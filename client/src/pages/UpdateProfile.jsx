@@ -9,7 +9,7 @@ import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/
 import { app } from "../../firebase.config";
 import { useDispatch } from "react-redux";
 import { useMutation } from "@tanstack/react-query";
-import axiosInstance from "../api/axiosInstance";
+import axiosSecure from "../api/axiosSecure";
 import { profileUpdateSuccess, requestFailure, requestStart, resetError } from "../redux/authSlice";
 import Title from "../components/Title";
 
@@ -63,7 +63,7 @@ export default function UpdateProfile() {
   const updateMutation = useMutation({
     mutationFn: async (updatedFormData) => {
       dispatch(requestStart()); // Dispatch request start action before making API call
-      const res = await axiosInstance.post(
+      const res = await axiosSecure.post(
         `/api/user/update/${user?.userInfo?._id}`, // Make API call to update user profile
         updatedFormData
       );
