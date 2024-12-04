@@ -12,7 +12,7 @@ import axiosPublic from "../api/axiosPublic";
 import axiosSecure from "../api/axiosSecure";
 
 export default function UpdateProperty() {
-  const { propertyId } = useParams(); // Assuming the property ID is passed as a route param
+  const { propertyId } = useParams();
   const [fetchedImages, setFetchedImages] = useState([]);
   const [newImages, setNewImages] = useState([]);
   const [removedImages, setRemovedImages] = useState([]);
@@ -36,8 +36,8 @@ export default function UpdateProperty() {
     // Fetch property data manually
     const fetchPropertyData = async () => {
       try {
-        const res = await axiosSecure.get(`/api/property/specific/${propertyId}`);
-        console.log("API Response:", res.data); // Debugging
+        const res = await axiosPublic.get(`/api/property/specific/${propertyId}`);
+        console.log("API Response:", res.data);
         const { propertyType, isOffer, regularPrice, offerPrice, propertyImages, ...rest } =
           res.data.property;
 
@@ -500,7 +500,7 @@ export default function UpdateProperty() {
             <label className="flex items-center text-base gap-1 cursor-pointer">
               <input
                 type="radio"
-                value="sell"
+                value="Sell"
                 className="w-5 h-5 cursor-pointer accent-primary appearance-none border border-highlightGray/50 rounded-full checked:appearance-auto"
                 {...register("propertyType", {
                   required: "Please select your property type",
@@ -511,7 +511,7 @@ export default function UpdateProperty() {
             <label className="flex items-center text-base gap-1 cursor-pointer">
               <input
                 type="radio"
-                value="rent"
+                value="Rent"
                 className="w-5 h-5 cursor-pointer accent-primary appearance-none border border-highlightGray/50 rounded-full checked:appearance-auto"
                 {...register("propertyType", {
                   required: "Please select your property type",
@@ -564,7 +564,7 @@ export default function UpdateProperty() {
         {/* Regular price */}
         <div className={`${isOffer === "yes" ? "col-span-6" : "col-span-12"}`}>
           <label className="block mb-1 text-sm font-medium text-primary">
-            Regular price* {propertyType === "rent" ? <span>/ month</span> : <span></span>}
+            Regular price* {propertyType === "Rent" ? <span>/ month</span> : <span></span>}
           </label>
 
           <input
@@ -595,7 +595,7 @@ export default function UpdateProperty() {
         {/* Offer price */}
         <div className={`${isOffer === "yes" ? "col-span-6" : "hidden"}`}>
           <label className="block mb-1 text-sm font-medium text-primary">
-            Offer price* {propertyType === "rent" ? <span>/ month</span> : <span></span>}
+            Offer price* {propertyType === "Rent" ? <span>/ month</span> : <span></span>}
           </label>
           <input
             type="number"

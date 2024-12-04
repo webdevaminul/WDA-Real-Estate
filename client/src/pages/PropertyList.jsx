@@ -99,9 +99,11 @@ export default function PropertyList() {
     });
   };
 
+  console.log(properties);
+
   if (loading) {
     return (
-      <div className="min-h-[calc(100vh-3rem)] flex items-center justify-center">
+      <div className="min-h-[calc(100vh-3.8rem)] flex items-center justify-center">
         <span className="text-primary loading loading-spinner loading-md"></span>
       </div>
     );
@@ -109,8 +111,16 @@ export default function PropertyList() {
 
   if (error) {
     return (
-      <div className="min-h-[calc(100vh-3rem)] flex items-center justify-center">
+      <div className="min-h-[calc(100vh-3.8rem)] flex items-center justify-center">
         <p>{error}</p>
+      </div>
+    );
+  }
+
+  if (properties.length === 0) {
+    return (
+      <div className="min-h-[calc(100vh-3.8rem)] flex items-center justify-center">
+        <p>No properties found. Add new properties in the "Create Property" page.</p>
       </div>
     );
   }
@@ -233,22 +243,19 @@ export default function PropertyList() {
                 <td className="p-3">
                   <div className="flex items-center gap-2 text-lg">
                     <Link
-                      className="text-blue-500 border border-highlightGray/25 p-1 rounded-md tooltip"
-                      data-tip="View"
-                      to={`/property/${property._id}`}
+                      className="text-blue-500 hover:bg-blue-500 hover:text-primaryWhite !transition-all !duration-200 ease-linear border border-highlightGray/25 p-1 rounded-md"
+                      to={`/manage-posts/property/${property._id}`}
                     >
                       <RiEyeLine />
                     </Link>
                     <Link
-                      className="text-yellow-500 border border-highlightGray/25 p-1 rounded-md tooltip"
-                      data-tip="Update"
+                      className="text-yellow-500 hover:bg-yellow-500 hover:text-primaryWhite !transition-all !duration-200 ease-linear border border-highlightGray/25 p-1 rounded-md"
                       to={`/manage-posts/update-post/${property._id}`}
                     >
                       <RiEditBoxLine />
                     </Link>
                     <button
-                      className="text-red-500 border border-highlightGray/25 p-1 rounded-md tooltip"
-                      data-tip="Delete"
+                      className="text-red-500 hover:bg-red-500 hover:text-primaryWhite !transition-all !duration-200 ease-linear border border-highlightGray/25 p-1 rounded-md"
                       onClick={() => handleDelete(property._id)}
                     >
                       <RiDeleteBin6Line />

@@ -7,10 +7,10 @@
 @layer base {
   :root {
     --highlight: 255, 95, 31;
-    --highlight-hover: 255, 106, 46;
+    --highlight-hover: 255, 80, 36;
     --text-highlight-gray: 128, 139, 150;
     --primary-btn: 230, 230, 230;
-    --primary-white: 220, 220, 220;
+    --primary-white: 230, 230, 230;
     --primary-black: 60, 60, 63;
 
     --text-primary: 60, 60, 63;
@@ -55,7 +55,8 @@
   thead,
   th,
   tr,
-  td {
+  td,
+  li {
     @apply transition-none duration-0 !important;
   }
 

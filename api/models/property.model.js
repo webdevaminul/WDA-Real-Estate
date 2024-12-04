@@ -55,7 +55,7 @@ const propertySchema = new mongoose.Schema(
     },
     propertyType: {
       type: String,
-      enum: ["sell", "rent"], // Only 'sell' or 'rent' is allowed
+      enum: ["Sell", "Rent"], // Only 'sell' or 'rent' is allowed
       required: true,
     },
     isOffer: {

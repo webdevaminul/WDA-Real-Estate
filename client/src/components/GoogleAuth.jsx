@@ -2,7 +2,6 @@ import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { FcGoogle } from "react-icons/fc";
 import { auth } from "../../firebase.config";
 import { useMutation } from "@tanstack/react-query";
-import axiosPublic from "../api/axiosPublic";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { requestStart, googleLoginSuccess, loginFailure } from "../redux/authSlice";

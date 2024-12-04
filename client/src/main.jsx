@@ -24,6 +24,7 @@ import PasswordRecovery from "./pages/PasswordRecovery";
 import PropertyList from "./pages/PropertyList";
 import CreateProperty from "./pages/CreateProperty";
 import UpdateProperty from "./pages/UpdateProperty";
+import PropertyDetails from "./pages/PropertyDetails";
 
 const queryClient = new QueryClient();
 
@@ -101,6 +102,10 @@ const router = createBrowserRouter([
           {
             path: "/manage-posts/update-post/:propertyId",
             element: <UpdateProperty />,
+          },
+          {
+            path: "/manage-posts/property/:propertyId",
+            element: <PropertyDetails />,
           },
         ],
       },

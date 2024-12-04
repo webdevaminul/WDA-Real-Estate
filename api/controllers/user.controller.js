@@ -151,3 +151,18 @@ export const deleteAccount = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getUserInfo = async (req, res, next) => {
+  const userId = req.params.id;
+  const user = await User.findById(userId);
+  if (!user) {
+    return next(errorHandler(404, "User not found"));
+  }
+  const { userName, userEmail, userPhoto } = user;
+
+  // Send a success response
+  return res.status(200).json({
+    success: true,
+    user: { userName, userEmail, userPhoto },
+  });
+};

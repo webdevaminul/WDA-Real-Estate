@@ -401,8 +401,8 @@ export default function CreateProperty() {
             {...register("propertyDescription", {
               required: "Description can not be empty",
               maxLength: {
-                value: 1000,
-                message: "Description can't be more than 1000 characters long",
+                value: 2500,
+                message: "Description can't be more than 2500 characters long",
               },
               minLength: {
                 value: 50,
@@ -464,7 +464,7 @@ export default function CreateProperty() {
             <label className="flex items-center text-base gap-1 cursor-pointer">
               <input
                 type="radio"
-                value="sell"
+                value="Sell"
                 className="w-5 h-5 cursor-pointer accent-primary appearance-none border border-highlightGray/50 rounded-full checked:appearance-auto"
                 {...register("propertyType", {
                   required: "Please select your property type",
@@ -475,7 +475,7 @@ export default function CreateProperty() {
             <label className="flex items-center text-base gap-1 cursor-pointer">
               <input
                 type="radio"
-                value="rent"
+                value="Rent"
                 className="w-5 h-5 cursor-pointer accent-primary appearance-none border border-highlightGray/50 rounded-full checked:appearance-auto"
                 {...register("propertyType", {
                   required: "Please select your property type",
@@ -528,7 +528,7 @@ export default function CreateProperty() {
         {/* Regular price */}
         <div className={`${isOffer === "yes" ? "col-span-6" : "col-span-12"}`}>
           <label className="block mb-1 text-sm font-medium text-primary">
-            Regular price* {propertyType === "rent" ? <span>/ month</span> : <span></span>}
+            Regular price in USD* {propertyType === "Rent" ? <span>/ month</span> : <span></span>}
           </label>
 
           <input
@@ -559,7 +559,7 @@ export default function CreateProperty() {
         {/* Offer price */}
         <div className={`${isOffer === "yes" ? "col-span-6" : "hidden"}`}>
           <label className="block mb-1 text-sm font-medium text-primary">
-            Offer price* {propertyType === "rent" ? <span>/ month</span> : <span></span>}
+            Offer price in USD* {propertyType === "Rent" ? <span>/ month</span> : <span></span>}
           </label>
           <input
             type="number"
@@ -571,7 +571,7 @@ export default function CreateProperty() {
                 const offerValue = Number(value);
                 const regularValue = Number(watch("regularPrice"));
                 if (isOffer === "yes" && !offerValue) {
-                  return `Offer price is required when "Any offer = yes"`;
+                  return `Offer price is required when "Offer = Yes"`;
                 }
                 if (isOffer === "yes" && offerValue >= regularValue) {
                   return "Offer price must be less than the regular price";
