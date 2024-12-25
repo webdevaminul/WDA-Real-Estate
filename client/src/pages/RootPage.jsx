@@ -8,7 +8,7 @@ export default function RootPage() {
   return (
     <>
       <Header></Header>
-      <main className="mt-[3rem] sm:mt-[3.7rem]">
+      <main className="mt-[3rem] sm:mt-[3.625rem]">
         <Outlet></Outlet>
       </main>
       <ToastContainer

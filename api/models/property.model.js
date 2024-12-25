@@ -15,6 +15,16 @@ const propertySchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    propertyCategory: {
+      type: String,
+      enum: ["Apartment", "Condo", "Villa", "Duplex", "Townhouse"],
+      required: true,
+    },
+    propertyBasement: {
+      type: String,
+      enum: ["Concrete", "Wood", "Stone", "Earthen", "Hybrid"],
+      required: true,
+    },
     propertyArea: {
       type: Number,
       required: true,

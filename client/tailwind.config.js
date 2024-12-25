@@ -25,9 +25,15 @@ export default {
           "0%": { transform: "rotate(0deg)" },
           "100%": { transform: "rotate(360deg)" },
         },
+        zoom: {
+          "0%": { transform: "scale(1)" },
+          "50%": { transform: "scale(1.1)" },
+          "100%": { transform: "scale(1)" },
+        },
       },
       animation: {
         rotate: "rotate 0.4s ease-in-out",
+        zoom: "zoom 10s ease-in-out infinite",
       },
       fontFamily: {
         body: ["Roboto", "Helvetica", "Arial", "sans-serif"],

@@ -318,6 +318,78 @@ export default function UpdateProperty() {
           )}
         </div>
 
+        {/* Category */}
+        <div className="col-span-12 md:col-span-6">
+          <label className="block mb-1 font-medium text-sm text-primary">Property Category*</label>
+          <select
+            className={`w-full text-primary bg-transparent outline-none border ${
+              errors.propertyCategory ? "border-red-500" : "border-highlightGray/25"
+            } rounded px-3 py-[9.5px]`}
+            {...register("propertyCategory", {
+              required: "Please select a property category",
+            })}
+            aria-invalid={errors.propertyCategory ? "true" : "false"}
+          >
+            <option className="bg-primaryBg text-primary" value=""></option>
+            <option className="bg-primaryBg text-primary" value="Apartment">
+              Apartment
+            </option>
+            <option className="bg-primaryBg text-primary" value="Condo">
+              Condo
+            </option>
+            <option className="bg-primaryBg text-primary" value="Villa">
+              Villa
+            </option>
+            <option className="bg-primaryBg text-primary" value="Duplex">
+              Duplex
+            </option>
+            <option className="bg-primaryBg text-primary" value="Townhouse">
+              Townhouse
+            </option>
+          </select>
+          {errors.propertyCategory && (
+            <p role="alert" className="text-red-500 text-sm">
+              {errors.propertyCategory.message}
+            </p>
+          )}
+        </div>
+
+        {/* Basement */}
+        <div className="col-span-12 md:col-span-6">
+          <label className="block mb-1 font-medium text-sm text-primary">Property Basement*</label>
+          <select
+            className={`w-full text-primary bg-transparent outline-none border ${
+              errors.propertyBasement ? "border-red-500" : "border-highlightGray/25"
+            } rounded px-3 py-[9.5px]`}
+            {...register("propertyBasement", {
+              required: "Please select a property basement",
+            })}
+            aria-invalid={errors.propertyBasement ? "true" : "false"}
+          >
+            <option className="bg-primaryBg text-primary" value=""></option>
+            <option className="bg-primaryBg text-primary" value="Concrete">
+              Concrete
+            </option>
+            <option className="bg-primaryBg text-primary" value="Wood">
+              Wood
+            </option>
+            <option className="bg-primaryBg text-primary" value="Stone">
+              Stone
+            </option>
+            <option className="bg-primaryBg text-primary" value="Earthen">
+              Earthen
+            </option>
+            <option className="bg-primaryBg text-primary" value="Hybrid">
+              Hybrid
+            </option>
+          </select>
+          {errors.propertyBasement && (
+            <p role="alert" className="text-red-500 text-sm">
+              {errors.propertyBasement.message}
+            </p>
+          )}
+        </div>
+
         {/* Area */}
         <div className="col-span-6 md:col-span-3">
           <label className="block mb-1 text-sm font-medium text-primary">Area (sq ft)*</label>
@@ -437,8 +509,8 @@ export default function UpdateProperty() {
             {...register("propertyDescription", {
               required: "Description can not be empty",
               maxLength: {
-                value: 1000,
-                message: "Description can't be more than 1000 characters long",
+                value: 2500,
+                message: "Description can't be more than 2500 characters long",
               },
               minLength: {
                 value: 50,

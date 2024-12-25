@@ -24,7 +24,7 @@
   }
 
   :root[data-theme="dark"] {
-    --text-primary: 200, 200, 200;
+    --text-primary: 230, 230, 230;
     --text-secondary: 200, 200, 200;
     --text-blue: 96, 165, 250;
     --text-purple: 192, 132, 252;

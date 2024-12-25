@@ -96,6 +96,8 @@ export default function PropertyDetails() {
     );
   }
 
+  console.log(property.propertyType);
+
   return (
     <main className="mx-auto">
       {/* Header Slider */}
@@ -115,16 +117,13 @@ export default function PropertyDetails() {
         className="mySwiper max-h-[calc(80vh-3.8rem)] overflow-hidden"
       >
         {property?.propertyImages?.map((propertyImage, i) => (
-          <div className="relative">
-            <SwiperSlide key={i}>
-              <img
-                src={propertyImage}
-                alt={`Property Image ${i + 1}`}
-                className="object-center max-h-[calc(100vh-3.8rem)] w-full"
-              />
-              <p className="absolute z-[100] top-5 right-5 bg-pink-400">Link</p>
-            </SwiperSlide>
-          </div>
+          <SwiperSlide key={i}>
+            <img
+              src={propertyImage}
+              alt={`Property Image ${i + 1}`}
+              className="object-center max-h-[calc(100vh-3.8rem)] w-full"
+            />
+          </SwiperSlide>
         ))}
       </Swiper>
 
@@ -175,8 +174,26 @@ export default function PropertyDetails() {
             <table className="table-auto w-full">
               <tbody className="divide-y divide-highlightGray/25 border border-highlightGray/25 text-primary">
                 <tr>
+                  <td className="p-2">Category</td>
+                  <td className="p-2">{property.propertyCategory}</td>
+                </tr>
+                <tr>
                   <td className="p-2">Type</td>
-                  <td className="p-2">{property.propertyType}</td>
+                  <td className="p-2">
+                    <span
+                      className={`px-3 py-2 rounded-full ${
+                        property.propertyType === "Sell"
+                          ? "bg-red-500 text-primaryWhite"
+                          : "bg-yellow-500 text-primaryBlack"
+                      }`}
+                    >
+                      {property.propertyType}
+                    </span>
+                  </td>
+                </tr>
+                <tr>
+                  <td className="p-2">Basement</td>
+                  <td className="p-2">{property.propertyBasement}</td>
                 </tr>
                 <tr>
                   <td className="p-2">Created</td>
@@ -219,7 +236,9 @@ export default function PropertyDetails() {
             <h2 className="text-lg font-semibold border-b border-highlightGray/25 pb-1">
               Description
             </h2>
-            <p className="whitespace-pre-wrap mt-1">{property.propertyDescription}</p>
+            <p className="whitespace-pre-wrap break-words max-w-full mt-1">
+              {property.propertyDescription}
+            </p>
           </div>
         </div>
 
@@ -242,8 +261,26 @@ export default function PropertyDetails() {
           <table className="table-auto w-full">
             <tbody className="divide-y divide-highlightGray/25 border border-highlightGray/25 text-primary">
               <tr>
+                <td className="p-2">Category</td>
+                <td className="p-2">{property.propertyCategory}</td>
+              </tr>
+              <tr>
                 <td className="p-2">Type</td>
-                <td className="p-2">{property.propertyType}</td>
+                <td className="p-2">
+                  <span
+                    className={`px-3 py-2 rounded-full ${
+                      property.propertyType === "Sell"
+                        ? "bg-red-500 text-primaryWhite"
+                        : "bg-yellow-500 text-primaryBlack"
+                    }`}
+                  >
+                    {property.propertyType}
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td className="p-2">Basement</td>
+                <td className="p-2">{property.propertyBasement}</td>
               </tr>
               <tr>
                 <td className="p-2">Created</td>

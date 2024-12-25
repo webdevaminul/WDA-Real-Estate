@@ -27,7 +27,7 @@ export default function ManageAccount() {
           </NavLink>
         </ul>
       </aside>
-      <section className="sm:pl-52 pt-12 sm:pt-0 text-justify w-full">
+      <section className="sm:pl-52 pt-10 sm:pt-0 text-justify w-full">
         <Outlet></Outlet>
       </section>
     </main>
