@@ -19,7 +19,9 @@ app.use(cookieParser());
 
 // CORS Middleware
 const allowedOrigins =
-  process.env.NODE_ENV === "development" ? "http://localhost:5173" : "upcomingurl";
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:5173"
+    : "https://wda-real-estate.vercel.app";
 
 app.use(
   cors({

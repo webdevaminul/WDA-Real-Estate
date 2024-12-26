@@ -61,6 +61,7 @@ export default function Banner() {
               <img
                 src={image}
                 alt="Property Image"
+                loading="lazy"
                 className="object-center w-full h-full object-cover animate-zoom"
               />
             </div>

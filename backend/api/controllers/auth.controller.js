@@ -32,7 +32,9 @@ export const signup = async (req, res, next) => {
 
     // Send a verification email with the verification token
     const baseUrl =
-      process.env.NODE_ENV === "development" ? "http://localhost:5173" : "upcomingurl";
+      process.env.NODE_ENV === "development"
+        ? "http://localhost:5173"
+        : "https://wda-real-estate.vercel.app";
     const verificationLink = `${baseUrl}/verify-email?token=${verificationToken}`;
 
     try {
@@ -363,7 +365,9 @@ export const forgetPassword = async (req, res, next) => {
 
     // Create the recovery link using the token
     const baseUrl =
-      process.env.NODE_ENV === "development" ? "http://localhost:5173" : "upcomingurl";
+      process.env.NODE_ENV === "development"
+        ? "http://localhost:5173"
+        : "https://wda-real-estate.vercel.app";
     const recoveryLink = `${baseUrl}/password-recovery?token=${recoveryToken}`;
 
     try {
