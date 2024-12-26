@@ -3,9 +3,9 @@ import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import cors from "cors";
-import authRoutes from "./routes/auth.route.js";
-import userRoutes from "./routes/user.route.js";
-import propertyRoutes from "./routes/property.route.js";
+import authRoutes from "./api/routes/auth.route.js";
+import userRoutes from "./api/routes/user.route.js";
+import propertyRoutes from "./api/routes/property.route.js";
 
 // Load environment variables from .env file
 dotenv.config();
