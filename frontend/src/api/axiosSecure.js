@@ -2,7 +2,10 @@ import axios from "axios";
 
 // Create an instance of axios with base configuration
 const axiosSecure = axios.create({
-  baseURL: "http://localhost:5000",
+  baseURL:
+    process.env.NODE_ENV === "development"
+      ? "http://localhost:5000" // Development URL
+      : "backendurl", // Production URL,
   withCredentials: true,
 });
 

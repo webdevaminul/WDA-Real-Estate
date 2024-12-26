@@ -2,8 +2,7 @@ import User from "../models/user.model.js";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { errorHandler } from "../utilites/error.js";
-import { sendVerificationEmail } from "../utilites/sendVerificationMail.js";
-import { sendRecoveryMail } from "../utilites/sendRecoveryMail.js";
+import nodemailer from "nodemailer";
 
 // Controller to send verification mail
 export const signup = async (req, res, next) => {
@@ -32,13 +31,47 @@ export const signup = async (req, res, next) => {
     );
 
     // Send a verification email with the verification token
-    const verificationLink = `http://localhost:5173/verify-email?token=${verificationToken}`;
-    sendVerificationEmail(userEmail, verificationLink);
+    const baseUrl =
+      process.env.NODE_ENV === "development" ? "http://localhost:5173" : "upcomingurl";
+    const verificationLink = `${baseUrl}/verify-email?token=${verificationToken}`;
 
-    // Send a success response
-    return res
-      .status(200)
-      .json({ success: true, message: `Please check "${userEmail}" to verify your account.` });
+    try {
+      // Create a transporter object
+      const transporter = nodemailer.createTransport({
+        service: "Gmail",
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS,
+        },
+      });
+
+      // Define the email content
+      const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: userEmail,
+        subject: "WDAR Estate Account Verification",
+        html: `
+          <h1 style="font-size:26px;">Welcome to <span style="color:rgb(128, 139, 150)">WDA</span><span style="color:rgb(255, 95, 31)">R Estate</span></h1>
+          <p style="font-size:18px;">To complete your registration, please verify your email by clicking the button below.</p>
+          <p><a href="${verificationLink}" style="text-decoration:none;background-color:rgb(255, 95, 31); padding:8px; color:white; font-weight:500; font-size:20px">Verify & Sign in</a>.</p>
+          
+          `,
+      };
+
+      // Send the email
+      await transporter.sendMail(mailOptions);
+
+      // Log a success message if the email is sent successfully
+      console.log("Verification email sent successfully");
+
+      // Send a success response
+      return res
+        .status(200)
+        .json({ success: true, message: `Please check "${userEmail}" to verify your account.` });
+    } catch (error) {
+      // Log an error message if there is an issue sending the email
+      console.error("Error sending verification email:", error);
+    }
   } catch (error) {
     // Pass any other errors to the error-handling middleware
     next(error);
@@ -328,15 +361,48 @@ export const forgetPassword = async (req, res, next) => {
       expiresIn: "5m",
     });
 
-    // Send a recovery email with the verification token
-    const recoveryLink = `http://localhost:5173/password-recovery?token=${recoveryToken}`;
-    sendRecoveryMail(userEmail, recoveryLink);
+    // Create the recovery link using the token
+    const baseUrl =
+      process.env.NODE_ENV === "development" ? "http://localhost:5173" : "upcomingurl";
+    const recoveryLink = `${baseUrl}/password-recovery?token=${recoveryToken}`;
 
-    // Send a success response
-    return res.status(200).json({
-      success: true,
-      message: `Please check "${userEmail}" to reset your password. Recovery link is valid for 5 minutes.`,
-    });
+    try {
+      // Create a transporter object
+      const transporter = nodemailer.createTransport({
+        service: "Gmail",
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS,
+        },
+      });
+
+      // Define the email content
+      const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: userEmail,
+        subject: "WDAR Estate Password Reset",
+        html: `
+            <h1 style="font-size:26px;">Reset Password</h1>
+            <p style="font-size:18px;">Click on the following link to reset your password:</p>
+            <p><a href="${recoveryLink}" style="text-decoration:none;background-color:rgb(255, 95, 31); padding:8px; color:white; font-weight:500; font-size:20px">Reset Password</a>.</p>
+          `,
+      };
+
+      // Send the email
+      await transporter.sendMail(mailOptions);
+
+      // Log a success message if the email is sent successfully
+      console.log("Recovert email sent successfully");
+
+      // Send a success response
+      return res.status(200).json({
+        success: true,
+        message: `Please check "${userEmail}" to reset your password. Recovery link is valid for 5 minutes.`,
+      });
+    } catch (error) {
+      // Log an error message if there is an issue sending the email
+      console.error("Error sending recovery email:", error);
+    }
   } catch (error) {
     next(error);
   }
