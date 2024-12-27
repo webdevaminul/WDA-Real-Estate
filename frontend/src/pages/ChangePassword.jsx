@@ -63,8 +63,8 @@ export default function ChangePassword() {
   };
 
   return (
-    <main className="min-h-[90vh] max-w-sm mx-auto flex items-center justify-center">
-      <section className="flex flex-col gap-4 justify-center p-4 w-full">
+    <main className="min-h-[calc(100vh-6rem)] sm:min-h-[calc(100vh-3.625rem)] max-w-sm mx-auto flex">
+      <section className="flex flex-col gap-4 sm:justify-center p-4 w-full">
         <Title
           title={"Change Password"}
           subTitle={"Combine alphabet with number to create a secure password"}

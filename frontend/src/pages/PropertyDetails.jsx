@@ -96,9 +96,6 @@ export default function PropertyDetails() {
     );
   }
 
-  console.log(property.propertyType);
-  console.log("postuser", postUser);
-
   return (
     <main className="mx-auto">
       {/* Header Slider */}
@@ -154,7 +151,7 @@ export default function PropertyDetails() {
             onClick={() => {
               window.location.href = `mailto:${postUser?.user?.userEmail}?subject=${property?.propertyName}`;
             }}
-            // disabled={user?.userInfo?._id === property?.userReference}
+            disabled={user?.userInfo?._id === property?.userReference}
             className="mt-4 md:mt-5 text-sm px-6 py-2 bg-highlight hover:bg-highlightHover border-none rounded text-primaryWhite disabled:bg-primaryWhite disabled:text-primaryBlack disabled:cursor-not-allowed select-none"
           >
             Contact Agent

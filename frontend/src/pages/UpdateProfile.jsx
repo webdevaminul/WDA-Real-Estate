@@ -98,7 +98,7 @@ export default function UpdateProfile() {
   };
 
   return (
-    <main className="min-h-[90vh] max-w-sm mx-auto flex items-center justify-center">
+    <main className="min-h-[calc(100vh-6rem)] max-w-sm mx-auto flex items-center justify-center">
       <section className="flex flex-col gap-4 justify-center p-4 w-full">
         <Title
           title={"Update Profile"}

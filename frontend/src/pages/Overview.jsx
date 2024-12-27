@@ -20,7 +20,7 @@ export default function () {
   // Extract day, month, and year
 
   return (
-    <main className="p-2 sm:p-10 flex flex-col gap-5">
+    <main className="px-2 py-5 sm:p-10 flex flex-col gap-5">
       <div className="flex flex-col justify-center items-center">
         <figure className="w-32 h-32 border border-highlightGray rounded-full overflow-clip">
           <img
