@@ -72,7 +72,7 @@ export default function Header() {
   };
   return (
     <header className="bg-primaryBgShade1 fixed top-0 left-0 w-full z-50">
-      <nav className="flex justify-between items-center px-2 py-1 sm:py-0">
+      <nav className="flex justify-between items-center px-2 py-2 sm:py-0">
         {/* Left Part Logo */}
         <Link
           onClick={() => setMobileMenu(false)}
@@ -97,11 +97,11 @@ export default function Header() {
 
           {/* Profile or Sign in */}
           {user && isAuthenticated ? (
-            <div ref={profileMenuRef} className="relative">
-              <button onClick={toggleProfileMenu}>
+            <div ref={profileMenuRef} className="relative m-auto">
+              <button onClick={toggleProfileMenu} className="flex items-center justify-center">
                 <img
                   src={user?.userInfo?.userPhoto}
-                  className="h-8 w-8 rounded-full object-cover object-center"
+                  className="h-9 w-9 rounded-full object-cover object-center"
                   loading="lazy"
                 />
               </button>

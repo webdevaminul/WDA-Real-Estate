@@ -23,21 +23,21 @@ export default function Banner() {
     propertyImage7,
   ];
   return (
-    <div className="relative w-full h-[60vh] sm:h-[80vh] md:h-[90vh] lg:h-screen max-h-[calc(100vh-3rem)] sm:max-h-[calc(100vh-3.625rem)] overflow-hidden">
+    <div className="relative w-full h-[60vh] sm:h-[80vh] md:h-[90vh] lg:h-screen max-h-[calc(100vh-3.5rem)] sm:max-h-[calc(100vh-3.625rem)] overflow-hidden">
       {/* Background Overlay */}
       <div className="absolute inset-0 bg-black opacity-50 z-10"></div>
 
       {/* Overlay Text */}
       <div className="absolute inset-0 z-20 flex flex-col justify-center items-center text-center p-4">
-        <h1 className="text-4xl md:text-5xl font-bold mb-4 text-primaryWhite">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-primaryWhite">
           Welcome to WDAR Estate
         </h1>
-        <p className="mb-6 text-primaryWhite text-lg">
+        <p className="mb-6 text-primaryWhite sm:text-lg">
           Discover the best properties to buy, rent, or sell. Your dream home awaits.
         </p>
         <Link
           to="/property-list"
-          className="text-lg bg-highlight hover:bg-highlightHover px-3 py-2 rounded text-white"
+          className="sm:text-lg bg-highlight hover:bg-highlightHover px-2 sm:px-3 py-2 rounded text-white"
         >
           Explore Now
         </Link>

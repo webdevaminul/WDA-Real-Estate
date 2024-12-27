@@ -119,8 +119,10 @@ export default function PropertyList() {
 
   if (properties.length === 0) {
     return (
-      <div className="min-h-[calc(100vh-3.8rem)] flex items-center justify-center">
-        <p>No properties found. Add new properties in the "Create Property" page.</p>
+      <div className="min-h-[calc(100vh-5.5rem)] sm:min-h-[calc(100vh-3.625rem)] flex sm:items-center justify-center">
+        <p className="p-4 text-center mt-10 sm:mt-0">
+          No properties found. Add new properties in the "Create Property" page.
+        </p>
       </div>
     );
   }
