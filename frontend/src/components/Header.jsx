@@ -88,6 +88,12 @@ export default function Header() {
           {/* Navigation Menu */}
           <ul className="hidden sm:flex gap-2 py-2">
             <NavLink
+              to="/all-properties"
+              className="border-b-2 border-transparent hover:border-highlight p-2 font-medium w-full sm:w-fit text-center sm:text-start"
+            >
+              All Properties
+            </NavLink>
+            <NavLink
               to="/about"
               className="border-b-2 border-transparent hover:border-highlight p-2 font-medium w-full sm:w-fit text-center sm:text-start"
             >
@@ -183,6 +189,13 @@ export default function Header() {
             className="p-2 font-medium w-full hover:text-highlight text-center"
           >
             About
+          </Link>
+          <Link
+            onClick={() => setMobileMenu(false)}
+            to="/all-properties"
+            className="p-2 font-medium w-full hover:text-highlight text-center"
+          >
+            All Properties
           </Link>
         </div>
       )}

@@ -1,4 +1,5 @@
 import Property from "../models/property.model.js";
+import User from "../models/user.model.js";
 import { errorHandler } from "../utilites/error.js";
 
 // Controller to create a new property
@@ -113,6 +114,72 @@ export const updateProperty = async (req, res, next) => {
       success: true,
       message: "Property updated successfully",
     });
+  } catch (error) {
+    // Pass any other errors to the error-handling middleware
+    next(error);
+  }
+};
+
+// Controller to show and filter all properties
+export const getAllProperties = async (req, res, next) => {
+  try {
+    const { categories, types, basements, features, searchQuery, sortOption, page, limit } =
+      req.body;
+
+    const filter = {};
+
+    if (categories && categories.length > 0) {
+      filter.propertyCategory = { $in: categories };
+    }
+    if (types && types.length > 0) {
+      filter.propertyType = { $in: types };
+    }
+    if (basements && basements.length > 0) {
+      filter.propertyBasement = { $in: basements };
+    }
+    if (features && features.length > 0) {
+      const featureFilters = {};
+      features.forEach((feature) => {
+        featureFilters[`propertyFeatures.${feature}`] = true;
+      });
+      Object.assign(filter, featureFilters); // Merge featureFilters into the main filter object
+    }
+    if (searchQuery) {
+      filter.$or = [
+        { propertyName: { $regex: searchQuery, $options: "i" } },
+        { propertyAddress: { $regex: searchQuery, $options: "i" } },
+      ];
+    }
+
+    // Sorting options
+    const sortOptions = {};
+    if (sortOption === "priceLowToHigh") {
+      sortOptions.regularPrice = 1; // Ascending
+    } else if (sortOption === "priceHighToLow") {
+      sortOptions.regularPrice = -1; // Descending
+    }
+
+    // Pagination options
+    const pageNumber = page || 1;
+    const itemsPerPage = limit || 8;
+    const skipItems = (pageNumber - 1) * itemsPerPage;
+
+    // Fetching properties with Mongoose
+    const totalItems = await Property.countDocuments(filter); // Get total number of properties for matching filter
+
+    const properties = await Property.find(filter)
+      .populate({
+        path: "userReference",
+        select: "userPhoto userName userEmail",
+      })
+      .sort(sortOptions)
+      .skip(skipItems)
+      .limit(itemsPerPage);
+
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+    // Respond with properties and pagination info
+    res.status(200).json({ properties, totalPages });
   } catch (error) {
     // Pass any other errors to the error-handling middleware
     next(error);
