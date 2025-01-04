@@ -82,7 +82,7 @@ export default function PropertyDetails() {
 
   if (loading) {
     return (
-      <div className="min-h-[calc(100vh-3.8rem)] flex items-center justify-center">
+      <div className="min-h-[calc(100vh-3.5rem)] sm:min-h-[calc(100vh-3.625rem)] flex items-center justify-center">
         <span className="text-primary loading loading-spinner loading-md"></span>
       </div>
     );
@@ -112,14 +112,17 @@ export default function PropertyDetails() {
           disableOnInteraction: false,
         }}
         modules={[EffectFade, Navigation, Pagination, Autoplay]}
-        className="mySwiper max-h-[calc(80vh-3.8rem)] overflow-hidden"
+        className="mySwiper"
       >
         {property?.propertyImages?.map((propertyImage, i) => (
-          <SwiperSlide key={i}>
+          <SwiperSlide
+            key={i}
+            className="aspect-video overflow-hidden max-h-[calc(100vh-3.625rem)]"
+          >
             <img
               src={propertyImage}
               alt={`Property Image ${i + 1}`}
-              className="object-center max-h-[calc(100vh-3.8rem)] w-full"
+              className="object-center object-cover w-full"
             />
           </SwiperSlide>
         ))}

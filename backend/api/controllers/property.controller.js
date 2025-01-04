@@ -1,5 +1,4 @@
 import Property from "../models/property.model.js";
-import User from "../models/user.model.js";
 import { errorHandler } from "../utilites/error.js";
 
 // Controller to create a new property
@@ -123,65 +122,132 @@ export const updateProperty = async (req, res, next) => {
 // Controller to show and filter all properties
 export const getAllProperties = async (req, res, next) => {
   try {
+    // Destructure filters, search, sorting, and pagination details from the request body
     const { categories, types, basements, features, searchQuery, sortOption, page, limit } =
       req.body;
 
-    const filter = {};
+    // Initialize the match stage for filters in the aggregation pipeline.
+    const matchStage = {}; // This will hold filter conditions dynamically.
 
+    // Filter by property categories if provided.
     if (categories && categories.length > 0) {
-      filter.propertyCategory = { $in: categories };
+      matchStage.propertyCategory = { $in: categories }; // Match any category in the provided array.
     }
+
+    // Filter by property types if provided.
     if (types && types.length > 0) {
-      filter.propertyType = { $in: types };
+      matchStage.propertyType = { $in: types }; // Match any type in the provided array
     }
+
+    // Filter by property basements if provided.
     if (basements && basements.length > 0) {
-      filter.propertyBasement = { $in: basements };
+      matchStage.propertyBasement = { $in: basements }; // Match any basement in the provided array
     }
+
+    // Filter by property features if provided.
     if (features && features.length > 0) {
-      const featureFilters = {};
       features.forEach((feature) => {
-        featureFilters[`propertyFeatures.${feature}`] = true;
+        matchStage[`propertyFeatures.${feature}`] = true; // Match specific feature fields that are true.
       });
-      Object.assign(filter, featureFilters); // Merge featureFilters into the main filter object
     }
+
+    // Add search functionality to match property names or addresses (case-insensitive).
     if (searchQuery) {
-      filter.$or = [
-        { propertyName: { $regex: searchQuery, $options: "i" } },
-        { propertyAddress: { $regex: searchQuery, $options: "i" } },
+      matchStage.$or = [
+        { propertyName: { $regex: searchQuery, $options: "i" } }, // Match propertyName using regex.
+        { propertyAddress: { $regex: searchQuery, $options: "i" } }, // Match propertyAddress using regex.
       ];
     }
 
-    // Sorting options
-    const sortOptions = {};
+    // Determine sorting logic based on the provided sortOption.
+    const sortStage = {};
     if (sortOption === "priceLowToHigh") {
-      sortOptions.regularPrice = 1; // Ascending
+      sortStage.effectivePrice = 1; // Sort by effectivePrice in ascending order.
     } else if (sortOption === "priceHighToLow") {
-      sortOptions.regularPrice = -1; // Descending
+      sortStage.effectivePrice = -1; // Sort by effectivePrice in descending order.
+    } else if (sortOption === "createdOldToNew") {
+      sortStage.updatedAt = 1; // Sort by updatedAt in ascending order.
+    } else {
+      sortStage.updatedAt = -1; // Default: Sort by updatedAt in descending order.
     }
 
-    // Pagination options
-    const pageNumber = page || 1;
-    const itemsPerPage = limit || 8;
-    const skipItems = (pageNumber - 1) * itemsPerPage;
+    // Set up pagination variables (page number and items per page).
+    const pageNumber = page || 1; // Default to page 1 if not provided.
+    const itemsPerPage = limit || 8; // Default to 8 items per page if not provided.
+    const skipItems = (pageNumber - 1) * itemsPerPage; // Calculate the number of items to skip for pagination.
 
-    // Fetching properties with Mongoose
-    const totalItems = await Property.countDocuments(filter); // Get total number of properties for matching filter
+    // aggregation refers to the process of performing operations on data to compute and transform it into more useful results.
 
-    const properties = await Property.find(filter)
-      .populate({
-        path: "userReference",
-        select: "userPhoto userName userEmail",
-      })
-      .sort(sortOptions)
-      .skip(skipItems)
-      .limit(itemsPerPage);
+    // The aggregation pipeline is a sequence of stages that process the data in a specific order,
+    // passing the output of one stage to the next. Each stage in the pipeline transforms the data,
+    // and the final result is returned at the end of the pipeline.
 
-    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    // Define the aggregation pipeline
+    const pipeline = [
+      { $match: matchStage }, // Stage 1: Apply filters.
+      {
+        $addFields: {
+          effectivePrice: {
+            $cond: {
+              // $cond is an aggregation operator used in the aggregation pipeline to perform conditional operations.
+              if: { $eq: ["isOffer", "yes"] }, // If "isOffer" is "yes",
+              then: "$offerPrice", // Use "offerPrice".
+              else: "$regularPrice", // Otherwise, use "regularPrice".
+            },
+          },
+        },
+      },
+      { $sort: sortStage }, // Stage 2: Apply sorting.
+      {
+        $facet: {
+          // $facet operator is used in the aggregation pipeline to perform multiple operations in parallel within the same stage.
+          // It allows you to create multiple sub-pipelines, each performing its own aggregation tasks, and return the results as an array of documents.
+          properties: [
+            { $skip: skipItems }, // Skip items for pagination.
+            { $limit: itemsPerPage }, // Limit the number of items returned.
+            {
+              $lookup: {
+                from: "users", // Stage 3: Populate user details from the "users" collection.
+                localField: "userReference", // Field in the "Property" model.
+                foreignField: "_id", // Field in the "users" collection.
+                as: "userDetails", // Output field for user details.
+                pipeline: [
+                  {
+                    $project: {
+                      userPhoto: 1, // Include userPhoto.
+                      userName: 1, // Include userName.
+                      userEmail: 1, // Include userEmail.
+                    },
+                  },
+                ],
+              },
+            },
+            {
+              $unwind: {
+                // $unwind operator is used in the aggregation pipeline to deconstruct an array field from the input documents
+                // and create a new document for each element in the array.
+                path: "$userDetails",
+                preserveNullAndEmptyArrays: true, // Keep properties with no matching userReference.
+              },
+            },
+          ],
+          totalCount: [{ $count: "count" }], // Calculate the total number of matching properties.
+        },
+      },
+    ];
 
-    // Respond with properties and pagination info
+    // Execute the aggregation pipeline using Mongoose.
+    const result = await Property.aggregate(pipeline);
+
+    // Extract properties and total count from the aggregation result.
+    const properties = result[0]?.properties || []; // Extract properties or default to an empty array.
+    const totalCount = result[0]?.totalCount[0]?.count || 0; // Extract total count or default to 0.
+    const totalPages = Math.ceil(totalCount / itemsPerPage); // Calculate total pages.
+
+    // Send a successful response with properties and pagination info.
     res.status(200).json({ properties, totalPages });
   } catch (error) {
-    // Pass any other errors to the error-handling middleware
+    // Pass any errors to the error-handling middleware.
     next(error);
   }
 };

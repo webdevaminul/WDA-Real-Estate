@@ -1,10 +1,11 @@
-import { FaMinus, FaPlus } from "react-icons/fa";
+import { FaMinus, FaPlus, FaSpinner } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import axiosPublic from "../api/axiosPublic";
-import { IoLocationOutline } from "react-icons/io5";
+import { IoLocationOutline, IoSearch } from "react-icons/io5";
 
 export default function AllProperties() {
   const [allPropertyList, setAllPropertyList] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [isTypeOpen, setIsTypeOpen] = useState(false);
@@ -24,6 +25,12 @@ export default function AllProperties() {
   const types = ["Sell", "Rent"];
   const basements = ["Concrete", "Wood", "Stone", "Earthen", "Hybrid"];
   const features = ["parking", "masterBed", "furnished", "swimming"];
+  const featureNameMap = {
+    parking: "Parking",
+    masterBed: "Master Bed",
+    furnished: "Furnished",
+    swimming: "Swimming Pool",
+  };
 
   useEffect(() => {
     fetchProperties();
@@ -39,6 +46,7 @@ export default function AllProperties() {
 
   const fetchProperties = async () => {
     try {
+      setLoading(true);
       const response = await axiosPublic.post("/api/property/all-properties", {
         categories: selectedCategories,
         types: selectedTypes,
@@ -53,24 +61,15 @@ export default function AllProperties() {
       setTotalPages(response.data.totalPages);
     } catch (error) {
       console.error("Error fetching properties:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleCheckboxChange = (item, list, setList) => {
     setList(list.includes(item) ? list.filter((i) => i !== item) : [...list, item]);
   };
-  // console.log({
-  //   categories: selectedCategories,
-  //   types: selectedTypes,
-  //   basements: selectedBasements,
-  //   features: selectedFeatures,
-  //   searchQuery,
-  //   sortOption,
-  //   page: currentPage,
-  //   limit: 8,
-  // });
 
-  console.log(allPropertyList);
   return (
     <main className="flex">
       {/* Sidebar Filters */}
@@ -190,7 +189,7 @@ export default function AllProperties() {
                       handleCheckboxChange(feature, selectedFeatures, setSelectedFeatures)
                     }
                   />
-                  <span>{feature}</span>
+                  <span>{featureNameMap[feature]}</span>
                 </label>
               ))}
             </div>
@@ -198,18 +197,19 @@ export default function AllProperties() {
         </div>
       </aside>
 
-      {/* Main Section */}
       <section className="sm:pl-48 md:pl-52 text-justify w-full bg-primaryBg sm:min-h-[calc(100vh-3.625rem)]">
         <div className="grid grid-cols-12 p-4 gap-5">
-          <input
-            type="text"
-            placeholder="Name or location..."
-            className="col-span-12 sm:col-span-6 lg:col-span-4 xl:col-span-3 2xl:col-span-2 p-[6.5px] border border-highlightGray/20 bg-primaryBg rounded outline-primaryBgShade2 placeholder:text-primary"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
+          <div className="col-span-12 sm:col-span-6 lg:col-span-4 xl:col-span-3 2xl:col-span-2 flex gap-1 items-center  border border-highlightGray/20 rounded overflow-hidden">
+            <IoSearch className="ml-2 text-primary text-xl" />
 
-          {/* The button to open modal */}
+            <input
+              type="text"
+              placeholder="Name or location..."
+              className="w-full p-[6.5px] bg-primaryBg outline-none placeholder:text-primary"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
 
           <label
             htmlFor="my_modal_7"
@@ -218,8 +218,8 @@ export default function AllProperties() {
             Filter
           </label>
 
-          {/* Put this part before </body> tag */}
           <input type="checkbox" id="my_modal_7" className="modal-toggle" />
+
           <div className="modal" role="dialog">
             <div className="modal-box bg-primaryBgShade1 rounded-none p-2">
               <aside className="overflow-auto scroll no-scrollbar">
@@ -377,104 +377,140 @@ export default function AllProperties() {
           </div>
 
           <div className="hidden lg:block col-span-6 lg:col-span-4 xl:col-span-6 2xl:col-span-8"></div>
+
           <select
-            className="col-span-6 lg:col-span-4 xl:col-span-3 2xl:col-span-2 p-2 border border-highlightGray/20 bg-primaryBg rounded text-primary outline-primaryBgShade2"
+            className="col-span-6 lg:col-span-4 xl:col-span-3 2xl:col-span-2 p-2 border border-highlightGray/20 bg-primaryBg rounded text-primary outline-none"
             value={sortOption}
             onChange={(e) => setSortOption(e.target.value)}
           >
-            <option value="">Sort By</option>
+            <option value="createdNewToOld">Created: New to Old</option>
+            <option value="createdOldToNew">Created: Old to New</option>
             <option value="priceLowToHigh">Price: Low to High</option>
             <option value="priceHighToLow">Price: High to Low</option>
           </select>
-          {allPropertyList.map((singleProperty) => (
-            <div
-              key={singleProperty._id}
-              className="col-span-12 sm:col-span-6 lg:col-span-4 xl:col-span-3 2xl:col-span-2"
-            >
-              <div className="">
-                <figure>
-                  <img
-                    src={singleProperty.propertyImages[0]}
-                    alt={singleProperty.propertyName}
-                    className="w-full"
-                    loading="lazy"
-                  />
-                </figure>
-                <div className="px-2 py-3 bg-primaryBgShade2 border border-highlightGray/20">
-                  <div className="flex gap-2 items-center justify-between">
-                    <p className="text-xl font-semibold">
-                      ${singleProperty.offerPrice ?? singleProperty.regularPrice}
-                      <span className="font-normal text-sm">
-                        {singleProperty.propertyType === "Rent" && "/month"}
-                      </span>
-                    </p>
-                    <p
-                      className={`px-3 py-2 rounded-full ${
-                        singleProperty.propertyType === "Sell"
-                          ? "bg-red-400 text-primaryWhite"
-                          : "bg-yellow-300 text-primaryBlack"
-                      }`}
-                    >
-                      {singleProperty.propertyType}
-                    </p>
-                  </div>
-                  <h2 className="text-lg font-semibold h-14 flex items-center text-left">
-                    {singleProperty.propertyName}
-                  </h2>
-                  <p className="my-1 flex items-center gap-1 text-highlightGray">
-                    <IoLocationOutline />
-                    {singleProperty?.propertyAddress}
-                  </p>
-                  <ul className="flex justify-between text-primary mt-1 py-3 border-y border-highlightGray/20">
-                    <li className="flex gap-1 items-center justify-center text-nowrap">
-                      {singleProperty.propertyArea}
-                      <span className="text-highlightGray">sqft</span>
-                    </li>
-                    <li className="flex gap-1 items-center justify-center text-nowrap">
-                      {singleProperty.propertyBedroom}
-                      <span className="text-highlightGray">Bed</span>
-                    </li>
-                    <li className="flex gap-1 items-center justify-center text-nowrap">
-                      {singleProperty.propertyBathroom}
-                      <span className="text-highlightGray">Bath</span>
-                    </li>
-                  </ul>
-                  <div className="flex items-center mt-3">
+          {loading ? (
+            <div className="col-span-12 min-h-[calc(100vh-18rem)] sm:min-h-[calc(100vh-14rem)] flex items-center justify-center">
+              <span className="text-primary loading loading-spinner loading-md"></span>
+            </div>
+          ) : (
+            <>
+              {allPropertyList.map((singleProperty) => (
+                <div
+                  key={singleProperty._id}
+                  className="col-span-12 sm:col-span-6 lg:col-span-4 xl:col-span-3 2xl:col-span-2 border border-highlightGray/20 rounded overflow-hidden"
+                >
+                  <figure className="overflow-hidden aspect-video">
                     <img
-                      src={singleProperty?.userReference?.userPhoto}
-                      alt={`${singleProperty?.userReference?.userName}'s profile`}
-                      className="w-12 h-12 md:w-14 md:h-14 object-cover object-center rounded-full border border-highlightGray/25"
+                      src={singleProperty.propertyImages[0]}
+                      alt={singleProperty.propertyName}
+                      className="w-full"
+                      loading="lazy"
                     />
-                    <div className="sm:ml-2 md:ml-4">
-                      <h3 className="text-lg font-semibold">
-                        {singleProperty?.userReference?.userName}
-                      </h3>
-                      <p className="text-sm break-all">
-                        {singleProperty?.userReference?.userEmail}
+                  </figure>
+                  <div className="px-2 py-3 bg-primaryBgShade2">
+                    <div className="flex gap-2 items-center justify-between">
+                      <p className="text-xl font-semibold">
+                        ${singleProperty.offerPrice ?? singleProperty.regularPrice}
+                        <span className="font-normal text-sm">
+                          {singleProperty.propertyType === "Rent" && "/month"}
+                        </span>
                       </p>
+                      <p
+                        className={`px-3 py-2 rounded-full ${
+                          singleProperty.propertyType === "Sell"
+                            ? "bg-red-400 text-primaryWhite"
+                            : "bg-yellow-300 text-primaryBlack"
+                        }`}
+                      >
+                        {singleProperty.propertyType}
+                      </p>
+                    </div>
+                    <h2 className="text-lg font-semibold h-14 flex items-center text-left">
+                      {singleProperty.propertyName}
+                    </h2>
+                    <p className="my-1 flex items-center gap-1 text-highlightGray">
+                      <IoLocationOutline />
+                      {singleProperty?.propertyAddress}
+                    </p>
+                    <ul className="flex justify-between text-primary mt-1 py-3 border-y border-highlightGray/20">
+                      <li className="flex gap-1 items-center justify-center text-nowrap">
+                        {singleProperty.propertyArea}
+                        <span className="text-highlightGray">sqft</span>
+                      </li>
+                      <li className="flex gap-1 items-center justify-center text-nowrap">
+                        {singleProperty.propertyBedroom}
+                        <span className="text-highlightGray">Bed</span>
+                      </li>
+                      <li className="flex gap-1 items-center justify-center text-nowrap">
+                        {singleProperty.propertyBathroom}
+                        <span className="text-highlightGray">Bath</span>
+                      </li>
+                    </ul>
+                    <div className="flex items-center mt-3">
+                      <img
+                        src={singleProperty?.userDetails?.userPhoto}
+                        alt={`${singleProperty?.userDetails?.userName}'s profile`}
+                        className="w-12 h-12 md:w-14 md:h-14 object-cover object-center rounded-full border border-highlightGray/25"
+                      />
+                      <div className="sm:ml-2 md:ml-4">
+                        <h3 className="text-lg font-semibold">
+                          {singleProperty?.userDetails?.userName}
+                        </h3>
+                        <p className="text-sm break-all">
+                          {singleProperty?.userDetails?.userEmail}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          ))}
-        </div>
+              ))}
 
-        {/* Pagination */}
-        <div className="flex justify-center gap-2 mt-4">
-          {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
-            <button
-              key={page}
-              onClick={() => setCurrentPage(page)}
-              className={`p-2 border ${
-                page === currentPage ? "bg-primary text-white" : "bg-white text-primary"
-              } rounded`}
-            >
-              {page}
-            </button>
-          ))}
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="col-span-12 flex justify-center items-center gap-2 my-4">
+                  {/* Previous Button */}
+                  <button
+                    onClick={() => currentPage > 1 && setCurrentPage(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className={`p-2 rounded border border-highlightGray/20 bg-primaryBgShade1 disabled:bg-primaryWhite disabled:text-primaryBlack disabled:cursor-not-allowed`}
+                  >
+                    Previous
+                  </button>
+
+                  {/* Page Numbers */}
+                  {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`p-2 ${
+                        page === currentPage
+                          ? "bg-highlight hover:bg-highlightHover text-primaryWhite border border-highlightGray/20"
+                          : "bg-primaryBgShade1 border border-highlightGray/20 text-primary"
+                      } rounded`}
+                    >
+                      {page}
+                    </button>
+                  ))}
+
+                  {/* Next Button */}
+                  <button
+                    onClick={() => currentPage < totalPages && setCurrentPage(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className={`p-2 rounded border border-highlightGray/20 bg-primaryBgShade1 disabled:bg-primaryWhite disabled:text-primaryBlack disabled:cursor-not-allowed`}
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
+            </>
+          )}
         </div>
       </section>
     </main>
   );
+}
+{
+  /* <div className="min-h-[calc(100vh-3.5rem)] sm:min-h-[calc(100vh-3.625rem)] w-full flex items-center justify-center">
+          <span className="text-primary loading loading-spinner loading-md"></span>
+        </div> */
 }
