@@ -6,6 +6,7 @@ import {
   getSpecificProperty,
   updateProperty,
   getAllProperties,
+  incrementPropertyViews,
 } from "../controllers/property.controller.js";
 import { verifyToken } from "../utilites/verifyToken.js";
 
@@ -18,5 +19,6 @@ router.delete("/delete/:propertyId", verifyToken, deleteProperty);
 router.get("/specific/:propertyId", getSpecificProperty);
 router.patch("/update/:propertyId", verifyToken, updateProperty);
 router.post("/all-properties", getAllProperties);
+router.get("/increment-views/:propertyId", incrementPropertyViews);
 
 export default router;

@@ -55,6 +55,9 @@ export default function PropertyDetails() {
         const userRes = await axiosPublic.get(`/api/user/list/${data?.property?.userReference}`);
         setProperty(data?.property);
         setPostUser(userRes.data);
+
+        // Increment property views
+        await axiosPublic.get(`/api/property/increment-views/${propertyId}`);
       } catch (error) {
         console.error("Error fetching property data:", error.response?.data || error.message);
         setErrorMessage("Failed to fetch property data. Please try again.");
@@ -69,7 +72,7 @@ export default function PropertyDetails() {
   const keySpecs = [
     { icon: IoBedOutline, label: "Bed", value: property?.propertyBedroom },
     { icon: LuBath, label: "Bath", value: property?.propertyBathroom },
-    { icon: BiArea, label: "sq ft", value: property?.propertyArea },
+    { icon: BiArea, label: "sq ft", value: new Intl.NumberFormat().format(property?.propertyArea) },
     { icon: IoHomeOutline, label: "Floor", value: property?.propertyFloor },
   ];
 
@@ -129,18 +132,19 @@ export default function PropertyDetails() {
         {/* Left Column */}
         <div className="col-span-12 lg:col-span-8 lg:border-r border-highlightGray/25 lg:pr-4">
           <h2 className="text-2xl font-semibold">{property?.propertyName}</h2>
+          <p>Views: {property?.views}</p>
           <p className="mt-1 flex items-center gap-1">
             <IoLocationOutline />
             {property?.propertyAddress}
           </p>
           <div className="flex gap-4 items-center mt-4 md:mt-5">
             <span className="text-xl font-bold text-highlight">
-              ${property.offerPrice ?? property.regularPrice}
+              $ {new Intl.NumberFormat().format(property.offerPrice ?? property.regularPrice)}
               {property.propertyType === "Rent" && "/month"}
             </span>
             {property.isOffer === "yes" && (
               <span className="text-primary line-through">
-                ${property.regularPrice}
+                $ {new Intl.NumberFormat().format(property.regularPrice)}
                 {property.propertyType === "Rent" && "/month"}
               </span>
             )}

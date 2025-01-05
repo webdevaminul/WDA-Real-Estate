@@ -166,9 +166,9 @@ export const getAllProperties = async (req, res, next) => {
     } else if (sortOption === "priceHighToLow") {
       sortStage.effectivePrice = -1; // Sort by effectivePrice in descending order.
     } else if (sortOption === "createdOldToNew") {
-      sortStage.updatedAt = 1; // Sort by updatedAt in ascending order.
+      sortStage.createdAt = 1; // Sort by createdAt in ascending order.
     } else {
-      sortStage.updatedAt = -1; // Default: Sort by updatedAt in descending order.
+      sortStage.createdAt = -1; // Default: Sort by createdAt in descending order.
     }
 
     // Set up pagination variables (page number and items per page).
@@ -248,6 +248,32 @@ export const getAllProperties = async (req, res, next) => {
     res.status(200).json({ properties, totalPages });
   } catch (error) {
     // Pass any errors to the error-handling middleware.
+    next(error);
+  }
+};
+
+export const incrementPropertyViews = async (req, res, next) => {
+  try {
+    const { propertyId } = req.params;
+
+    // Find the property by its ID
+    const property = await Property.findById(propertyId);
+
+    // If the property doesn't exist, send a 404 error
+    if (!property) {
+      return next(errorHandler(404, "Property not found"));
+    }
+
+    // Increment the views count by 1
+    property.views++;
+
+    // Save the updated property
+    await property.save();
+
+    // Respond with success message
+    res.status(200).json({ message: "View count updated successfully", views: property.views });
+  } catch (error) {
+    // Pass any other errors to the error-handling middleware
     next(error);
   }
 };

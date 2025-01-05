@@ -24,7 +24,11 @@ export default function AllProperties() {
   const [selectedFeatures, setSelectedFeatures] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOption, setSortOption] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(() => {
+    // Retrieve the currentPage from sessionStorage, if it exists, otherwise default to 1
+    const storedPage = sessionStorage.getItem("currentPage");
+    return storedPage ? parseInt(storedPage, 10) : 1;
+  });
   const [totalPages, setTotalPages] = useState(1);
 
   const categories = ["Apartment", "Condo", "Villa", "Duplex", "Townhouse"];
@@ -49,6 +53,11 @@ export default function AllProperties() {
     sortOption,
     currentPage,
   ]);
+
+  useEffect(() => {
+    // Whenever currentPage changes, save it to sessionStorage
+    sessionStorage.setItem("currentPage", currentPage);
+  }, [currentPage]);
 
   const fetchProperties = async () => {
     try {
@@ -404,6 +413,7 @@ export default function AllProperties() {
                 <Link
                   to={`/property/${singleProperty._id}`}
                   key={singleProperty._id}
+                  state={currentPage}
                   className="group col-span-12 sm:col-span-6 lg:col-span-4 xl:col-span-3 2xl:col-span-2 border border-highlightGray/20 hover:border-highlight !transition-colors !duration-300 rounded overflow-hidden cursor-pointer"
                 >
                   <figure className="overflow-hidden aspect-video relative">
@@ -427,7 +437,10 @@ export default function AllProperties() {
                   <div className="px-2 py-3 bg-primaryBgShade2 group-hover:bg-primaryBg !transition-colors !duration-300">
                     <div className="flex gap-2 items-center justify-between">
                       <p className="text-xl font-semibold">
-                        ${singleProperty.offerPrice ?? singleProperty.regularPrice}
+                        ${" "}
+                        {new Intl.NumberFormat().format(
+                          singleProperty.offerPrice ?? singleProperty.regularPrice
+                        )}
                         <span className="font-normal text-sm">
                           {singleProperty.propertyType === "Rent" && "/month"}
                         </span>
@@ -451,7 +464,7 @@ export default function AllProperties() {
                     </p>
                     <ul className="flex justify-between text-primary mt-1 py-3 border-y border-highlightGray/20">
                       <li className="flex gap-1 items-center justify-center text-nowrap">
-                        {singleProperty.propertyArea}
+                        {new Intl.NumberFormat().format(singleProperty.propertyArea)}
                         <span className="text-highlightGray">sqft</span>
                       </li>
                       <li className="flex gap-1 items-center justify-center text-nowrap">

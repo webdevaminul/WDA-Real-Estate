@@ -237,8 +237,12 @@ export default function PropertyList() {
                   </div>
                 </td>
                 <td className="p-3">{property?.propertyAddress || "N/A"}</td>
-                <td className="p-3">{property?.propertyArea || "N/A"} sqft</td>
-                <td className="p-3">${property?.regularPrice || "N/A"}</td>
+                <td className="p-3">
+                  {new Intl.NumberFormat().format(property?.propertyArea) || "N/A"} sqft
+                </td>
+                <td className="p-3">
+                  $ {new Intl.NumberFormat().format(property?.regularPrice) || "N/A"}
+                </td>
                 <td className="p-3">{property?.propertyType || "N/A"}</td>
                 <td className="p-3">{property?.propertyBedroom || "N/A"}</td>
                 <td className="p-3">{property?.propertyBathroom || "N/A"}</td>

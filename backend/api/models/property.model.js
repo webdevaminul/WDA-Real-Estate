@@ -83,6 +83,10 @@ const propertySchema = new mongoose.Schema(
         return this.isOffer === "yes";
       },
     },
+    views: {
+      type: Number,
+      default: 1,
+    },
     userReference: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
