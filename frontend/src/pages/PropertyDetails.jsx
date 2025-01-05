@@ -132,7 +132,6 @@ export default function PropertyDetails() {
         {/* Left Column */}
         <div className="col-span-12 lg:col-span-8 lg:border-r border-highlightGray/25 lg:pr-4">
           <h2 className="text-2xl font-semibold">{property?.propertyName}</h2>
-          <p>Views: {property?.views}</p>
           <p className="mt-1 flex items-center gap-1">
             <IoLocationOutline />
             {property?.propertyAddress}
@@ -199,6 +198,10 @@ export default function PropertyDetails() {
                 <tr>
                   <td className="p-2">Basement</td>
                   <td className="p-2">{property.propertyBasement}</td>
+                </tr>
+                <tr>
+                  <td className="p-2">Views</td>
+                  <td className="p-2">{property?.views} times</td>
                 </tr>
                 <tr>
                   <td className="p-2">Created</td>
@@ -286,6 +289,10 @@ export default function PropertyDetails() {
               <tr>
                 <td className="p-2">Basement</td>
                 <td className="p-2">{property.propertyBasement}</td>
+              </tr>
+              <tr>
+                <td className="p-2">Views</td>
+                <td className="p-2">{property?.views} times</td>
               </tr>
               <tr>
                 <td className="p-2">Created</td>

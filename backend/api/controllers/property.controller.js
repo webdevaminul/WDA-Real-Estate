@@ -252,6 +252,7 @@ export const getAllProperties = async (req, res, next) => {
   }
 };
 
+// Controller to increment the views count of a specific property by ID
 export const incrementPropertyViews = async (req, res, next) => {
   try {
     const { propertyId } = req.params;
@@ -274,6 +275,23 @@ export const incrementPropertyViews = async (req, res, next) => {
     res.status(200).json({ message: "View count updated successfully", views: property.views });
   } catch (error) {
     // Pass any other errors to the error-handling middleware
+    next(error);
+  }
+};
+
+// Controller to get the most popular properties based on views
+export const getPopularProperties = async (req, res, next) => {
+  try {
+    // Find the top 5 most popular properties based on views
+    const popularProperties = await Property.find({})
+      .sort({ views: -1 })
+      .limit(4)
+      .populate("userReference", "userName userEmail userPhoto");
+
+    // Send a successful response with the popular properties
+    res.status(200).json({ popularProperties });
+  } catch (error) {
+    // Pass any errors to the error-handling middleware
     next(error);
   }
 };
