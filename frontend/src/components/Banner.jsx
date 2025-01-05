@@ -36,7 +36,7 @@ export default function Banner() {
           Discover the best properties to buy, rent, or sell. Your dream home awaits.
         </p>
         <Link
-          to="/property-list"
+          to="/all-properties"
           className="sm:text-lg bg-highlight hover:bg-highlightHover px-2 sm:px-3 py-2 rounded text-white"
         >
           Explore Now

@@ -115,6 +115,10 @@ const router = createBrowserRouter([
         element: <AllProperties />,
       },
       {
+        path: "/property/:propertyId",
+        element: <PropertyDetails />,
+      },
+      {
         path: "/about",
         element: <About />,
       },

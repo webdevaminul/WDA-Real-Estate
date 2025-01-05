@@ -1,7 +1,13 @@
-import { FaMinus, FaPlus, FaSpinner } from "react-icons/fa";
+import { FaMinus, FaPlus } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import axiosPublic from "../api/axiosPublic";
-import { IoLocationOutline, IoSearch } from "react-icons/io5";
+import {
+  IoLocationOutline,
+  IoSearch,
+  IoArrowForwardCircle,
+  IoArrowBackCircleSharp,
+} from "react-icons/io5";
+import { Link } from "react-router-dom";
 
 export default function AllProperties() {
   const [allPropertyList, setAllPropertyList] = useState([]);
@@ -383,10 +389,10 @@ export default function AllProperties() {
             value={sortOption}
             onChange={(e) => setSortOption(e.target.value)}
           >
-            <option value="createdNewToOld">Created: New to Old</option>
-            <option value="createdOldToNew">Created: Old to New</option>
-            <option value="priceLowToHigh">Price: Low to High</option>
-            <option value="priceHighToLow">Price: High to Low</option>
+            <option value="createdNewToOld">New to Old</option>
+            <option value="createdOldToNew">Old to New</option>
+            <option value="priceLowToHigh">Low to High</option>
+            <option value="priceHighToLow">High to Low</option>
           </select>
           {loading ? (
             <div className="col-span-12 min-h-[calc(100vh-18rem)] sm:min-h-[calc(100vh-14rem)] flex items-center justify-center">
@@ -395,19 +401,30 @@ export default function AllProperties() {
           ) : (
             <>
               {allPropertyList.map((singleProperty) => (
-                <div
+                <Link
+                  to={`/property/${singleProperty._id}`}
                   key={singleProperty._id}
-                  className="col-span-12 sm:col-span-6 lg:col-span-4 xl:col-span-3 2xl:col-span-2 border border-highlightGray/20 rounded overflow-hidden"
+                  className="group col-span-12 sm:col-span-6 lg:col-span-4 xl:col-span-3 2xl:col-span-2 border border-highlightGray/20 hover:border-highlight !transition-colors !duration-300 rounded overflow-hidden cursor-pointer"
                 >
-                  <figure className="overflow-hidden aspect-video">
+                  <figure className="overflow-hidden aspect-video relative">
                     <img
                       src={singleProperty.propertyImages[0]}
                       alt={singleProperty.propertyName}
-                      className="w-full"
+                      className="w-full transition-transform duration-300 group-hover:scale-105"
                       loading="lazy"
                     />
+                    {singleProperty.offerPrice && singleProperty.regularPrice && (
+                      <div className="absolute top-2 left-2 bg-red-500 text-primaryWhite text-sm px-2 py-1 rounded">
+                        {Math.round(
+                          ((singleProperty.regularPrice - singleProperty.offerPrice) /
+                            singleProperty.regularPrice) *
+                            100
+                        )}
+                        % OFF
+                      </div>
+                    )}
                   </figure>
-                  <div className="px-2 py-3 bg-primaryBgShade2">
+                  <div className="px-2 py-3 bg-primaryBgShade2 group-hover:bg-primaryBg !transition-colors !duration-300">
                     <div className="flex gap-2 items-center justify-between">
                       <p className="text-xl font-semibold">
                         ${singleProperty.offerPrice ?? singleProperty.regularPrice}
@@ -462,19 +479,19 @@ export default function AllProperties() {
                       </div>
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
 
               {/* Pagination */}
               {totalPages > 1 && (
-                <div className="col-span-12 flex justify-center items-center gap-2 my-4">
+                <div className="col-span-12 flex justify-center items-center my-4">
                   {/* Previous Button */}
                   <button
                     onClick={() => currentPage > 1 && setCurrentPage(currentPage - 1)}
                     disabled={currentPage === 1}
-                    className={`p-2 rounded border border-highlightGray/20 bg-primaryBgShade1 disabled:bg-primaryWhite disabled:text-primaryBlack disabled:cursor-not-allowed`}
+                    className={`p-2 rounded-l border border-highlightGray/20 bg-primaryBgShade1 disabled:bg-primaryWhite disabled:text-primaryBlack disabled:cursor-not-allowed`}
                   >
-                    Previous
+                    <IoArrowBackCircleSharp className="text-2xl" />
                   </button>
 
                   {/* Page Numbers */}
@@ -482,11 +499,11 @@ export default function AllProperties() {
                     <button
                       key={page}
                       onClick={() => setCurrentPage(page)}
-                      className={`p-2 ${
+                      className={`py-2 px-4 ${
                         page === currentPage
                           ? "bg-highlight hover:bg-highlightHover text-primaryWhite border border-highlightGray/20"
                           : "bg-primaryBgShade1 border border-highlightGray/20 text-primary"
-                      } rounded`}
+                      } `}
                     >
                       {page}
                     </button>
@@ -496,9 +513,9 @@ export default function AllProperties() {
                   <button
                     onClick={() => currentPage < totalPages && setCurrentPage(currentPage + 1)}
                     disabled={currentPage === totalPages}
-                    className={`p-2 rounded border border-highlightGray/20 bg-primaryBgShade1 disabled:bg-primaryWhite disabled:text-primaryBlack disabled:cursor-not-allowed`}
+                    className={`p-2 rounded-r border border-highlightGray/20 bg-primaryBgShade1 disabled:bg-primaryWhite disabled:text-primaryBlack disabled:cursor-not-allowed`}
                   >
-                    Next
+                    <IoArrowForwardCircle className="text-2xl" />
                   </button>
                 </div>
               )}
@@ -508,9 +525,4 @@ export default function AllProperties() {
       </section>
     </main>
   );
-}
-{
-  /* <div className="min-h-[calc(100vh-3.5rem)] sm:min-h-[calc(100vh-3.625rem)] w-full flex items-center justify-center">
-          <span className="text-primary loading loading-spinner loading-md"></span>
-        </div> */
 }

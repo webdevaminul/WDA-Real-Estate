@@ -115,14 +115,11 @@ export default function PropertyDetails() {
         className="mySwiper"
       >
         {property?.propertyImages?.map((propertyImage, i) => (
-          <SwiperSlide
-            key={i}
-            className="aspect-video overflow-hidden max-h-[calc(100vh-3.625rem)]"
-          >
+          <SwiperSlide key={i} className="aspect-video overflow-hidden ">
             <img
               src={propertyImage}
               alt={`Property Image ${i + 1}`}
-              className="object-center object-cover w-full"
+              className="object-center object-cover w-full aspect-video"
             />
           </SwiperSlide>
         ))}
