@@ -1,4 +1,3 @@
-import React from "react";
 import Banner from "../components/Banner";
 import PopularProperty from "../components/PopularProperty";
 import WhyChooseUs from "../components/WhyChooseUs";

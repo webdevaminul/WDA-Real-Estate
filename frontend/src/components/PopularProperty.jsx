@@ -27,7 +27,7 @@ export default function PopularProperty() {
   };
 
   return (
-    <main className="sm:max-h-[calc(100vh-3.625rem)]">
+    <main className="sm:min-h-[calc(100vh-3.625rem)]">
       <Title
         title={"Discover Top Properties"}
         subTitle={"Browse our most sought-after properties, carefully selected for you"}
