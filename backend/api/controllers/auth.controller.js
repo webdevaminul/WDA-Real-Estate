@@ -131,7 +131,7 @@ export const verifyEmail = async (req, res, next) => {
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "Strict",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Strict",
       maxAge: 6 * 30 * 24 * 60 * 60 * 1000, // 6 months in milliseconds
     });
 
@@ -189,7 +189,7 @@ export const signin = async (req, res, next) => {
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "Strict",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Strict",
       maxAge: 6 * 30 * 24 * 60 * 60 * 1000, // 6 months in milliseconds
     });
 
@@ -232,7 +232,7 @@ export const googleSignIn = async (req, res, next) => {
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "Strict",
+        sameSite: process.env.NODE_ENV === "production" ? "None" : "Strict",
         maxAge: 6 * 30 * 24 * 60 * 60 * 1000, // 6 months in milliseconds
       });
 
@@ -279,7 +279,7 @@ export const googleSignIn = async (req, res, next) => {
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "Strict",
+        sameSite: process.env.NODE_ENV === "production" ? "None" : "Strict",
         maxAge: 6 * 30 * 24 * 60 * 60 * 1000, // 6 months in milliseconds
       });
 
