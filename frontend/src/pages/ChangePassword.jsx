@@ -71,7 +71,7 @@ export default function ChangePassword() {
         />
 
         {/* Sign up form */}
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col mt-5">
           {/* Verify old password input */}
           <div
             className={`flex items-center border rounded ${

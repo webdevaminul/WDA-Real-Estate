@@ -128,7 +128,7 @@ export default function PropertyList() {
   }
 
   return (
-    <main>
+    <main className="py-4 sm:py-8 md:py-10">
       <Title
         title={"Your properties"}
         subTitle={"Manage your properties here. View, update, or delete any of your listings."}

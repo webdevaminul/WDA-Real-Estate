@@ -164,7 +164,7 @@ export default function CreateProperty() {
   }, [propertyImages, isTouched]);
 
   return (
-    <section className="container mx-auto bg-primaryBg">
+    <section className="container mx-auto bg-primaryBg pt-4 pb-3 sm:pt-8">
       <Title
         title={"Add Property"}
         subTitle={"The more information you will provide, the better deal you will have"}

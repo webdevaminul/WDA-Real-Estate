@@ -21,7 +21,7 @@ export default function () {
 
   return (
     <main className="px-2 py-5 sm:p-10 flex flex-col gap-5">
-      <div className="flex flex-col justify-center items-center">
+      <div className="flex flex-col justify-center items-center gap-4">
         <figure className="w-32 h-32 border border-highlightGray rounded-full overflow-clip">
           <img
             src={user?.userInfo?.userPhoto}
@@ -35,7 +35,7 @@ export default function () {
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-4 w-full">
+      <div className="grid grid-cols-2 gap-4 w-full pt-4">
         {/* Column 1: Basic Information */}
         <div className="col-span-2 lg:col-span-1 border border-highlightGray/20 p-4 rounded-lg bg-primaryBgShade1">
           <p className="text-lg mb-2 flex items-center font-sans font-light">

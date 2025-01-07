@@ -202,7 +202,7 @@ export default function UpdateProperty() {
   });
 
   return (
-    <section className="container mx-auto bg-primaryBg">
+    <section className="container mx-auto bg-primaryBg pt-4 pb-3 sm:pt-8">
       <Title title={"Update Property"} subTitle={"Update your property details for better deals"} />
 
       <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-12 gap-5 p-5">

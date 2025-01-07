@@ -72,15 +72,10 @@ export default function DeleteAccount() {
   return (
     <main className="min-h-[calc(100vh-6rem)] sm:min-h-[calc(100vh-3.625rem)] max-w-sm mx-auto flex">
       <section className="flex flex-col gap-4 sm:justify-center p-4 w-full">
-        <Title
-          title={"Delete Account"}
-          subTitle={
-            "Deleting your account will remove all your data permanently. Please consider this action carefully"
-          }
-        />
+        <Title title={"Delete Account"} subTitle={"Please consider this action carefully"} />
 
         {/* Sign up form */}
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col mt-4">
           {/* Verify old password input */}
           {!isGoogle && (
             <div

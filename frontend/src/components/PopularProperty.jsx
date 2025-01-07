@@ -27,11 +27,13 @@ export default function PopularProperty() {
   };
 
   return (
-    <main className="sm:min-h-[calc(100vh-3.625rem)]">
-      <Title
-        title={"Discover Top Properties"}
-        subTitle={"Browse our most sought-after properties, carefully selected for you"}
-      />
+    <main className="sm:min-h-[calc(100vh-3.625rem)] py-6 sm:py-8 md:py-10">
+      <div className="pb-2">
+        <Title
+          title={"Discover Top Properties"}
+          subTitle={"Browse our most sought-after properties, carefully selected for you"}
+        />
+      </div>
 
       <div className="grid grid-cols-12 p-3 gap-4">
         {loading ? (

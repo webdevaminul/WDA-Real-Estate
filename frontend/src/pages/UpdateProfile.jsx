@@ -99,13 +99,13 @@ export default function UpdateProfile() {
 
   return (
     <main className="min-h-[calc(100vh-6rem)] max-w-sm mx-auto flex items-center justify-center">
-      <section className="flex flex-col gap-4 justify-center p-4 w-full">
+      <section className="flex flex-col gap-4 justify-center p-4 sm:py-8 w-full">
         <Title
           title={"Update Profile"}
           subTitle={"Add your information to help other users to know who you are."}
         />
 
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col mt-2">
           {/* Input field for take picture from user */}
           <input
             type="file"
