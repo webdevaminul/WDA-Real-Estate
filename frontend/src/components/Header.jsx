@@ -94,6 +94,12 @@ export default function Header() {
               All Properties
             </NavLink>
             <NavLink
+              to="/faq"
+              className="border-b-2 border-transparent hover:border-highlight p-2 font-medium w-full sm:w-fit text-center sm:text-start"
+            >
+              FAQ
+            </NavLink>
+            <NavLink
               to="/about"
               className="border-b-2 border-transparent hover:border-highlight p-2 font-medium w-full sm:w-fit text-center sm:text-start"
             >
@@ -185,17 +191,24 @@ export default function Header() {
         <div ref={mobileMenuRef} className="flex flex-col gap-1 items-center p-1">
           <Link
             onClick={() => setMobileMenu(false)}
-            to="/about"
-            className="p-2 font-medium w-full hover:text-highlight text-center"
-          >
-            About
-          </Link>
-          <Link
-            onClick={() => setMobileMenu(false)}
             to="/all-properties"
             className="p-2 font-medium w-full hover:text-highlight text-center"
           >
             All Properties
+          </Link>
+          <Link
+            onClick={() => setMobileMenu(false)}
+            to="/faq"
+            className="p-2 font-medium w-full hover:text-highlight text-center"
+          >
+            FAQ
+          </Link>
+          <Link
+            onClick={() => setMobileMenu(false)}
+            to="/about"
+            className="p-2 font-medium w-full hover:text-highlight text-center"
+          >
+            About
           </Link>
         </div>
       )}

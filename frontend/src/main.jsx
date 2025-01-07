@@ -26,6 +26,7 @@ import CreateProperty from "./pages/CreateProperty";
 import UpdateProperty from "./pages/UpdateProperty";
 import PropertyDetails from "./pages/PropertyDetails";
 import AllProperties from "./pages/AllProperties";
+import FAQ from "./pages/FAQ";
 
 const queryClient = new QueryClient();
 
@@ -117,6 +118,10 @@ const router = createBrowserRouter([
       {
         path: "/property/:propertyId",
         element: <PropertyDetails />,
+      },
+      {
+        path: "/faq",
+        element: <FAQ />,
       },
       {
         path: "/about",
