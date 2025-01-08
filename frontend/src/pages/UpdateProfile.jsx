@@ -5,13 +5,12 @@ import { FaEdit } from "react-icons/fa";
 import { BiMaleFemale } from "react-icons/bi";
 import { MdCheckCircle, MdError } from "react-icons/md";
 import { useSelector } from "react-redux";
-import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage";
-import { app } from "../../firebase.config";
 import { useDispatch } from "react-redux";
 import { useMutation } from "@tanstack/react-query";
 import axiosSecure from "../api/axiosSecure";
 import { profileUpdateSuccess, requestFailure, requestStart, resetError } from "../redux/authSlice";
 import Title from "../components/Title";
+import axios from "axios";
 
 export default function UpdateProfile() {
   const { user, loading, error } = useSelector((state) => state.auth);
@@ -24,31 +23,40 @@ export default function UpdateProfile() {
   const [successMessage, setSuccessMessage] = useState("");
   const today = new Date().toISOString().split("T")[0]; // Set today's date for validation purposes
 
-  // Function to handle the file upload process
+  // Function to upload image to Cloudinary
+  const uploadImageToCloudinary = async (file, folderName) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
+    formData.append("folder", folderName); // Organize by folder
+
+    try {
+      const response = await axios.post(import.meta.env.VITE_CLOUDINARY_UPLOAD_URL, formData, {
+        onUploadProgress: (progressEvent) => {
+          const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          setFilePercent(percent);
+        },
+      });
+      setFileUploadError(false);
+      return response.data.secure_url; // Return uploaded image URL
+    } catch (error) {
+      console.error("Image upload failed:", error);
+      setFileUploadError(true);
+      throw error;
+    }
+  };
+
+  // Upload the image when `file` is selected
   useEffect(() => {
     if (file) {
-      const storage = getStorage(app); // Initialize Firebase storage
-      const fileName = new Date().getTime() + file.name; // Generate a unique file name
-      const storageRef = ref(storage, `WDAR Estate/Profile/${fileName}`); // Create a reference to the file in storage
-      const uploadTask = uploadBytesResumable(storageRef, file); // Start the upload
-
-      // Monitor the upload progress
-      uploadTask.on(
-        "state_changed",
-        (snapshot) => {
-          const process = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          setFilePercent(Math.round(process)); // Update the upload progress
-        },
-        (error) => {
-          setFileUploadError(true); // Handle any errors during upload
-        },
-        () => {
-          // Get the download URL once the upload is complete
-          getDownloadURL(uploadTask.snapshot.ref).then((url) => {
-            setAvatarURL(url); // Save the URL to state
-          });
-        }
-      );
+      const folderName = "WDA-Real-Estate/ProfilePictures"; // Adjust this folder name per project
+      uploadImageToCloudinary(file, folderName)
+        .then((url) => {
+          setAvatarURL(url); // Save image URL
+        })
+        .catch(() => {
+          setFilePercent(0); // Reset progress on failure
+        });
     }
   }, [file]);
 
@@ -70,7 +78,7 @@ export default function UpdateProfile() {
       return res.data;
     },
     onSuccess: (data) => {
-      console.log("Update API Response:", data);
+      // console.log("Profile Update API Response:", data);
       if (!data.success) {
         dispatch(requestFailure(data.message)); // Dispatch a failure action if update fails
       } else {
@@ -92,7 +100,6 @@ export default function UpdateProfile() {
     if (avatarURL && avatarURL !== user?.userInfo?.userPhoto) {
       formData.userPhoto = avatarURL;
     }
-    console.log("formData", formData);
     // Trigger the mutation to update the user profile
     updateMutation.mutate(formData);
   };

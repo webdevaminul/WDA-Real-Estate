@@ -407,7 +407,7 @@ export default function AllProperties() {
             <div className="col-span-12 min-h-[calc(100vh-18rem)] sm:min-h-[calc(100vh-14rem)] flex items-center justify-center">
               <span className="text-primary loading loading-spinner loading-md"></span>
             </div>
-          ) : (
+          ) : allPropertyList.length > 0 ? (
             <>
               {allPropertyList.map((singleProperty) => (
                 <Link
@@ -533,6 +533,10 @@ export default function AllProperties() {
                 </div>
               )}
             </>
+          ) : (
+            <div className="col-span-12 min-h-[calc(100vh-18rem)] sm:min-h-[calc(100vh-14rem)] flex items-center justify-center">
+              <p>No Properties in Database</p>
+            </div>
           )}
         </div>
       </section>

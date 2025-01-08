@@ -5,11 +5,12 @@ import { useForm } from "react-hook-form";
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage";
 import { app } from "../../firebase.config";
 import imageCompression from "browser-image-compression";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
 import axiosPublic from "../api/axiosPublic";
 import axiosSecure from "../api/axiosSecure";
+import axios from "axios";
 
 export default function UpdateProperty() {
   const { propertyId } = useParams();
@@ -37,7 +38,6 @@ export default function UpdateProperty() {
     const fetchPropertyData = async () => {
       try {
         const res = await axiosPublic.get(`/api/property/specific/${propertyId}`);
-        console.log("API Response:", res.data);
         const { propertyType, isOffer, regularPrice, offerPrice, propertyImages, ...rest } =
           res.data.property;
 
@@ -78,11 +78,42 @@ export default function UpdateProperty() {
     }
   };
 
+  const compressImage = async (file) => {
+    const options = {
+      maxSizeMB: 2, // Limit the file size to 2MB
+      maxWidthOrHeight: 1920, // Limit the image size to 1000px on either dimension
+      useWebWorker: true, // Use a web worker to compress the image
+    };
+    try {
+      const compressedFile = await imageCompression(file, options);
+      return compressedFile;
+    } catch (error) {
+      console.error("Image compression error:", error);
+    }
+  };
+
+  const uploadImageToCloudinary = async (file) => {
+    const compressedImage = await compressImage(file);
+
+    const formData = new FormData();
+    formData.append("file", compressedImage);
+    formData.append("upload_preset", import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
+    formData.append("folder", "WDA-Real-Estate/Properties"); // Organize by folder
+
+    try {
+      const response = await axios.post(import.meta.env.VITE_CLOUDINARY_UPLOAD_URL);
+      return response.data.secure_url; // Return the URL of the uploaded image
+    } catch (error) {
+      console.error("Image Upload to Cloudinary failed:", error);
+      throw error;
+    }
+  };
+
   const onSubmit = async (formData) => {
     setLoading(true);
 
     if (errorMessage) {
-      console.log("Fix errors before submitting");
+      // console.log("Fix errors before submitting");
       setLoading(false);
       return;
     }
@@ -91,7 +122,7 @@ export default function UpdateProperty() {
       // Upload new images to Firebase
       const newImageUrls = await Promise.all(
         newImages.map(async (image) => {
-          const uploadedUrl = await uploadImageToFirebase(image.file);
+          const uploadedUrl = await uploadImageToCloudinary(image.file);
           return uploadedUrl;
         })
       );
@@ -104,7 +135,7 @@ export default function UpdateProperty() {
 
       const { images, ...formWithOutImageFiles } = formWithImageFiles;
 
-      console.log("updatedData", formWithOutImageFiles);
+      // console.log("updatedData", formWithOutImageFiles);
 
       // // Update the property using your API
       updatePropertyMutation.mutate(formWithOutImageFiles);
@@ -113,66 +144,6 @@ export default function UpdateProperty() {
       setErrorMessage("Failed to update property. Please try again.");
     } finally {
       setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (!isTouched) return; // Skip validation until the form is touched
-
-    const totalImages = [...fetchedImages, ...newImages];
-
-    if (totalImages.length > 4) {
-      setErrorMessage("You can't add more than 4 images");
-    } else if (totalImages.length < 1) {
-      setErrorMessage("You must add at least 1 image");
-    } else {
-      setErrorMessage(""); // Clear the error message if no errors
-    }
-  }, [fetchedImages, newImages, isTouched]);
-
-  const uploadImageToFirebase = async (file) => {
-    const compressedImage = await compressImage(file);
-    return new Promise((resolve, reject) => {
-      const storage = getStorage(app); // Initialize Firebase storage
-      const fileName = new Date().getTime() + compressedImage.name; // Generate a unique file name
-      const storageRef = ref(storage, `WDAR Estate/Property/${fileName}`); // Create a reference to the file in storage
-      const uploadTask = uploadBytesResumable(storageRef, compressedImage); // Start the upload
-
-      // Monitor the upload progress
-      uploadTask.on(
-        "state_changed",
-        (snapshot) => {
-          // Progress monitoring
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          console.log(`Upload is ${progress}% done`);
-        },
-        (error) => {
-          // Handle errors during upload
-          console.error("Image Upload failed:", error);
-          reject(error);
-        },
-        () => {
-          // Upload completed - get the download URL
-          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            resolve(downloadURL);
-          });
-        }
-      );
-    });
-  };
-
-  const compressImage = async (file) => {
-    const options = {
-      maxSizeMB: 2, // Limit the file size to 2MB
-      maxWidthOrHeight: 1920, // Limit the image size to 1000px on either dimension
-      useWebWorker: true, // Use a web worker to compress the image
-    };
-    try {
-      const compressedFile = await imageCompression(file, options);
-      console.log("Compressed file size:", compressedFile.size / 1024, "KB");
-      return compressedFile;
-    } catch (error) {
-      console.error("Image compression error:", error);
     }
   };
 
@@ -200,6 +171,20 @@ export default function UpdateProperty() {
       setLoading(false);
     },
   });
+
+  useEffect(() => {
+    if (!isTouched) return; // Skip validation until the form is touched
+
+    const totalImages = [...fetchedImages, ...newImages];
+
+    if (totalImages.length > 4) {
+      setErrorMessage("You can't add more than 4 images");
+    } else if (totalImages.length < 1) {
+      setErrorMessage("You must add at least 1 image");
+    } else {
+      setErrorMessage(""); // Clear the error message if no errors
+    }
+  }, [fetchedImages, newImages, isTouched]);
 
   return (
     <section className="container mx-auto bg-primaryBg pt-4 pb-3 sm:pt-8">

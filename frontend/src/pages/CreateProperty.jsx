@@ -2,13 +2,12 @@ import { useEffect, useState } from "react";
 import Title from "../components/Title";
 import { LuImagePlus } from "react-icons/lu";
 import { useForm } from "react-hook-form";
-import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage";
-import { app } from "../../firebase.config";
 import imageCompression from "browser-image-compression";
 import { useMutation } from "@tanstack/react-query";
 import axiosSecure from "../api/axiosSecure";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function CreateProperty() {
   const [propertyImages, setPropertyImages] = useState([]);
@@ -44,18 +43,48 @@ export default function CreateProperty() {
     setPropertyImages((prev) => prev.filter((image) => image.preview !== previewURL));
   };
 
+  const compressImage = async (file) => {
+    const options = {
+      maxSizeMB: 2, // Limit the file size to 2MB
+      maxWidthOrHeight: 1920, // Limit the image size to 1000px on either dimension
+      useWebWorker: true, // Use a web worker to compress the image
+    };
+    try {
+      const compressedFile = await imageCompression(file, options);
+      return compressedFile;
+    } catch (error) {
+      console.error("Image compression error:", error);
+    }
+  };
+
+  const uploadImageToCloudinary = async (file) => {
+    const compressedImage = await compressImage(file);
+
+    const formData = new FormData();
+    formData.append("file", compressedImage);
+    formData.append("upload_preset", import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
+    formData.append("folder", "WDA-Real-Estate/Properties"); // Organize by folder
+    try {
+      const response = await axios.post(import.meta.env.VITE_CLOUDINARY_UPLOAD_URL, formData);
+      return response.data.secure_url; // Return the URL of the uploaded image
+    } catch (error) {
+      console.error("Image Upload to Cloudinary failed:", error);
+      throw error;
+    }
+  };
+
   const onSubmit = async (formData) => {
     setLoading(true);
 
     if (errorMessage) {
-      console.log("Fix errors before submitting");
+      // console.log("Fix errors before submitting");
       setLoading(false);
       return;
     }
 
     const uploadedImageUrls = await Promise.all(
       propertyImages.map(async (image) => {
-        const uploadedUrl = await uploadImageToFirebase(image.file);
+        const uploadedUrl = await uploadImageToCloudinary(image.file);
         return uploadedUrl;
       })
     );
@@ -81,52 +110,6 @@ export default function CreateProperty() {
     createPropertyMutation.mutate(finalSubmissionData);
 
     setLoading(false);
-  };
-
-  const uploadImageToFirebase = async (file) => {
-    const compressedImage = await compressImage(file);
-    return new Promise((resolve, reject) => {
-      const storage = getStorage(app); // Initialize Firebase storage
-      const fileName = new Date().getTime() + compressedImage.name; // Generate a unique file name
-      const storageRef = ref(storage, `WDAR Estate/Property/${fileName}`); // Create a reference to the file in storage
-      const uploadTask = uploadBytesResumable(storageRef, compressedImage); // Start the upload
-
-      // Monitor the upload progress
-      uploadTask.on(
-        "state_changed",
-        (snapshot) => {
-          // Progress monitoring
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          console.log(`Upload is ${progress}% done`);
-        },
-        (error) => {
-          // Handle errors during upload
-          console.error("Image Upload failed:", error);
-          reject(error);
-        },
-        () => {
-          // Upload completed - get the download URL
-          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            resolve(downloadURL);
-          });
-        }
-      );
-    });
-  };
-
-  const compressImage = async (file) => {
-    const options = {
-      maxSizeMB: 2, // Limit the file size to 2MB
-      maxWidthOrHeight: 1920, // Limit the image size to 1000px on either dimension
-      useWebWorker: true, // Use a web worker to compress the image
-    };
-    try {
-      const compressedFile = await imageCompression(file, options);
-      console.log("Compressed file size:", compressedFile.size / 1024, "KB");
-      return compressedFile;
-    } catch (error) {
-      console.error("Image compression error:", error);
-    }
   };
 
   // Define the mutation for the creating property post

@@ -20,7 +20,7 @@ export default function GoogleAuth() {
       return res.data;
     },
     onSuccess: (data) => {
-      console.log("Google Auth API Response:", data);
+      // console.log("Google Auth API Response:", data);
       if (!data.success) {
         dispatch(loginFailure()); // Dispatch login failure action if login is fail
       } else {
@@ -38,8 +38,6 @@ export default function GoogleAuth() {
   const handleGoogleAuth = async () => {
     try {
       const result = await signInWithPopup(auth, provider);
-
-      console.log(result);
 
       const savedData = {
         userName: result?.user?.displayName,

@@ -43,7 +43,7 @@ export default function DeleteAccount() {
       return res.data;
     },
     onSuccess: (data) => {
-      console.log("Delete user API response", data);
+      // console.log("Delete user API response", data);
       if (!data.success) {
         dispatch(requestFailure(data.message)); // Dispatch request failure action if delete is fail
       } else {
@@ -62,7 +62,6 @@ export default function DeleteAccount() {
 
   // Handle form submission
   const onSubmit = async (formData) => {
-    console.log("formData", formData);
     // Trigger the mutation to delete the user
     isGoogle
       ? deleteAccountMutation.mutate({ isGoogle: true })

@@ -64,7 +64,7 @@ export const signup = async (req, res, next) => {
       await transporter.sendMail(mailOptions);
 
       // Log a success message if the email is sent successfully
-      console.log("Verification email sent successfully");
+      // console.log("Verification email sent successfully");
 
       // Send a success response
       return res
@@ -396,7 +396,7 @@ export const forgetPassword = async (req, res, next) => {
       await transporter.sendMail(mailOptions);
 
       // Log a success message if the email is sent successfully
-      console.log("Recovert email sent successfully");
+      // console.log("Recovert email sent successfully");
 
       // Send a success response
       return res.status(200).json({

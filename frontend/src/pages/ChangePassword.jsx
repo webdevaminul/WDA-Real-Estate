@@ -39,7 +39,7 @@ export default function ChangePassword() {
       return res.data;
     },
     onSuccess: (data) => {
-      console.log("Change Password API Response:", data);
+      // console.log("Change Password API Response:", data);
       if (!data.success) {
         dispatch(requestFailure(data.message)); // Dispatch request failure action if update if fail
       } else {
@@ -56,8 +56,6 @@ export default function ChangePassword() {
 
   // Handle form submission
   const onSubmit = async (formData) => {
-    console.log("formData", formData);
-
     // Trigger the mutation to update the user password
     changePasswordMutation.mutate(formData);
   };

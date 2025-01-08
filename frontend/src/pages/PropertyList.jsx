@@ -20,7 +20,7 @@ export default function PropertyList() {
         const res = await axiosSecure.get(
           `/api/property/list/${user?.userInfo?._id}?sortField=${sort.field}&sortOrder=${sort.order}`
         );
-        console.log("API response for property", res.data);
+        // console.log("API response for property", res.data);
         setProperties(res.data);
       } catch (err) {
         setError(err.res?.data?.message || "Failed to load properties");
@@ -98,8 +98,6 @@ export default function PropertyList() {
       }
     });
   };
-
-  console.log(properties);
 
   if (loading) {
     return (

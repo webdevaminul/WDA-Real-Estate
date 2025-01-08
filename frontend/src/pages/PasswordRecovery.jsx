@@ -43,8 +43,6 @@ export default function PasswordRecovery() {
 
   // Handle form submission
   const onSubmit = async (formData) => {
-    console.log("formData", formData);
-
     // Trigger the mutation to recover the user password
     recoverPasswordMutation.mutate(formData);
   };

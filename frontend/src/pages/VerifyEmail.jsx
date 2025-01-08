@@ -21,7 +21,7 @@ export default function VerifyEmail() {
         const res = await axiosSecure.get(`/api/auth/verify-email?token=${token}`);
         dispatch(emailLoginSuccess(res.data)); // Dispatch login success action if login is successful
         localStorage.setItem("accessToken", res.data.token); // Store the access token in localStorage
-        console.log("Sign up API Response:", res.data);
+        // console.log("Sign up API Response:", res.data);
 
         setTimeout(() => {
           navigate("/"); // Navigate to homepage

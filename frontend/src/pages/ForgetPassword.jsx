@@ -37,8 +37,6 @@ export default function ForgetPassword() {
 
   // Handle form submission
   const onSubmit = async (formData) => {
-    console.log(formData);
-
     // Trigger the mutation to send the forget password email
     forgetPasswordMutation.mutate(formData);
   };

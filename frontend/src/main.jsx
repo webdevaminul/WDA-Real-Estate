@@ -27,6 +27,7 @@ import UpdateProperty from "./pages/UpdateProperty";
 import PropertyDetails from "./pages/PropertyDetails";
 import AllProperties from "./pages/AllProperties";
 import FAQ from "./pages/FAQ";
+import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
@@ -128,6 +129,7 @@ const router = createBrowserRouter([
         element: <About />,
       },
     ],
+    errorElement: <NotFound />,
   },
 ]);
 

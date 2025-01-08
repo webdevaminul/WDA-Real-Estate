@@ -35,7 +35,7 @@ export default function SignIn() {
       return res.data;
     },
     onSuccess: (data) => {
-      console.log("Sign in API Response:", data);
+      // console.log("Sign in API Response:", data);
       if (!data.success) {
         dispatch(loginFailure(data.message)); // Dispatch login failure action if login is fail
       } else {
@@ -45,10 +45,7 @@ export default function SignIn() {
       }
     },
     onError: (error) => {
-      console.log("full error", error);
-      console.log("response error", error.response);
-      console.log("data error", error.response?.data);
-      console.log("message error", error.response?.data?.message);
+      // console.log("message error", error.response?.data?.message);
       dispatch(
         loginFailure(error.response?.data?.message || "Some thing went wrong. Please try again")
       ); // Dispatch login failure action on error

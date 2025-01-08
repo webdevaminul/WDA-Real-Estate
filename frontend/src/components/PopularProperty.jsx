@@ -40,7 +40,7 @@ export default function PopularProperty() {
           <div className="col-span-12 min-h-[calc(100vh-18rem)] sm:min-h-[calc(100vh-14rem)] flex items-center justify-center">
             <span className="text-primary loading loading-spinner loading-md"></span>
           </div>
-        ) : (
+        ) : popularProperties.length > 0 ? (
           <>
             {popularProperties.map((singleProperty) => (
               <Link
@@ -127,6 +127,10 @@ export default function PopularProperty() {
               </Link>
             ))}
           </>
+        ) : (
+          <div className="col-span-12 min-h-[calc(100vh-18rem)] sm:min-h-[calc(100vh-14rem)] flex items-center justify-center">
+            <p>No Properties in Database</p>
+          </div>
         )}
       </div>
     </main>
