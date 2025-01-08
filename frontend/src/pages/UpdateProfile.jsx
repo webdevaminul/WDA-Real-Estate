@@ -177,8 +177,8 @@ export default function UpdateProfile() {
               {...register("userName", {
                 required: "User name can not be empty",
                 maxLength: {
-                  value: 24,
-                  message: "User Name can't be more than 24 characters long",
+                  value: 40,
+                  message: "User Name can't be more than 40 characters long",
                 },
                 onChange: () => {
                   dispatch(resetError());
@@ -212,6 +212,14 @@ export default function UpdateProfile() {
                 pattern: {
                   value: /^\+?[0-9]+$/,
                   message: "Invalid phone number",
+                },
+                minLength: {
+                  value: 7,
+                  message: "Phone number can't be less than 7 characters",
+                },
+                maxLength: {
+                  value: 15,
+                  message: "Phone number can't be more than 15 characters long",
                 },
                 onChange: () => {
                   dispatch(resetError());
@@ -297,6 +305,10 @@ export default function UpdateProfile() {
               defaultValue={user?.userInfo?.userAddress || ""}
               className="w-full bg-primaryBg outline-none placeholder:text-highlightGray/75 text-primary pt-2"
               {...register("userAddress", {
+                maxLength: {
+                  value: 60,
+                  message: "Address can't be more than 60 characters long",
+                },
                 onChange: () => {
                   dispatch(resetError());
                   setSuccessMessage("");

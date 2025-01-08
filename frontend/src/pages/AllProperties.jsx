@@ -414,13 +414,13 @@ export default function AllProperties() {
                   to={`/property/${singleProperty._id}`}
                   key={singleProperty._id}
                   state={currentPage}
-                  className="group col-span-12 sm:col-span-6 lg:col-span-4 xl:col-span-3 2xl:col-span-2 border border-highlightGray/20 hover:border-highlight !transition-colors !duration-300 rounded overflow-hidden cursor-pointer"
+                  className="group col-span-12 sm:col-span-6 lg:col-span-4 xl:col-span-3 border border-highlightGray/20 hover:border-highlight !transition-colors !duration-300 rounded overflow-hidden cursor-pointer"
                 >
                   <figure className="overflow-hidden aspect-video relative">
                     <img
                       src={singleProperty.propertyImages[0]}
                       alt={singleProperty.propertyName}
-                      className="w-full transition-transform duration-300 group-hover:scale-105"
+                      className="w-full h-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
                       loading="lazy"
                     />
                     {singleProperty.offerPrice && singleProperty.regularPrice && (

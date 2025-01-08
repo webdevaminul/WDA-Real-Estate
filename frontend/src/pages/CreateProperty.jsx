@@ -228,8 +228,8 @@ export default function CreateProperty() {
             {...register("propertyName", {
               required: "Property name cannot be empty",
               maxLength: {
-                value: 30,
-                message: "Property Name can't be more than 30 characters long",
+                value: 50,
+                message: "Property Name can't be more than 50 characters long",
               },
             })}
             aria-invalid={errors.propertyName ? "true" : "false"}
@@ -252,8 +252,8 @@ export default function CreateProperty() {
             {...register("propertyAddress", {
               required: "Property location cannot be empty",
               maxLength: {
-                value: 30,
-                message: "Property location can't be more than 30 characters long",
+                value: 60,
+                message: "Property location can't be more than 60 characters long",
               },
             })}
             aria-invalid={errors.propertyAddress ? "true" : "false"}
@@ -346,6 +346,10 @@ export default function CreateProperty() {
               errors.propertyArea ? "border-red-500" : "border-highlightGray/25"
             } rounded px-3 py-2`}
             {...register("propertyArea", {
+              maxLength: {
+                value: 5,
+                message: "Area can't be more than 5 digits long",
+              },
               validate: (value) => {
                 if (!value) {
                   return "Area cannot be empty";
@@ -378,6 +382,8 @@ export default function CreateProperty() {
                   return "Floor cannot be empty";
                 } else if (value < 1) {
                   return "Floor must be greater than 0";
+                } else if (value > 1000) {
+                  return "Floor must be less than 1,000";
                 }
                 return true;
               },
@@ -405,6 +411,8 @@ export default function CreateProperty() {
                   return "Bedroom cannot be empty";
                 } else if (value < 1) {
                   return "Bedroom must be greater than 0";
+                } else if (value > 1000) {
+                  return "Bedroom must be less than 1,000";
                 }
                 return true;
               },
@@ -432,6 +440,8 @@ export default function CreateProperty() {
                   return "Bathroom cannot be empty";
                 } else if (value < 1) {
                   return "Bathroom must be greater than 0";
+                } else if (value > 1000) {
+                  return "Bathroom must be less than 1,000";
                 }
                 return true;
               },
@@ -457,7 +467,7 @@ export default function CreateProperty() {
               required: "Description can not be empty",
               maxLength: {
                 value: 2500,
-                message: "Description can't be more than 2500 characters long",
+                message: "Description can't be more than 2,500 characters long",
               },
               minLength: {
                 value: 50,
@@ -598,6 +608,8 @@ export default function CreateProperty() {
                   return "Regular price cannot be empty";
                 } else if (numericValue < 0) {
                   return "Regular price must be greater than 0";
+                } else if (numericValue > 999999999999) {
+                  return "Regular price must be less than 999,999,999,999";
                 }
                 return true;
               },

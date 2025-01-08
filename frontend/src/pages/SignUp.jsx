@@ -114,6 +114,10 @@ export default function SignUp() {
               className={`bg-transparent outline-none placeholder:text-highlightGray/75 p-2 w-full`}
               {...register("userEmail", {
                 required: "Email address is required",
+                maxLength: {
+                  value: 50,
+                  message: "Email address must be less than 50 characters",
+                },
                 pattern: {
                   value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
                   message: "Please enter a valid email address",
