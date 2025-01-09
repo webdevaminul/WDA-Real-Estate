@@ -54,6 +54,7 @@ export default function About() {
                 <li>Toastify</li>
                 <li>SweetAlert2</li>
                 <li>Swiper.js</li>
+                <li>React Helmet</li>
               </ul>
             </div>
 
