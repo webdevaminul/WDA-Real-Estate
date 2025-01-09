@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Title from "../components/Title";
+import { Helmet } from "react-helmet-async";
 
 export default function FAQ() {
   const [activeIndex, setActiveIndex] = useState(null);
@@ -52,6 +53,9 @@ export default function FAQ() {
 
   return (
     <div className="max-w-4xl mx-auto p-4 sm:p-6 md:p-10">
+      <Helmet>
+        <title>Frequently Asked Questions | WDA Real Estate</title>
+      </Helmet>
       <Title
         title={"Frequently Asked Questions"}
         subTitle={"Discover answers to the most commonly asked questions about our real estate"}

@@ -1,9 +1,13 @@
 import { FaGithub, FaEnvelope, FaPhoneAlt, FaMapMarkerAlt } from "react-icons/fa";
 import aminul_islam_img from "../assets/aminul_islam.png";
+import { Helmet } from "react-helmet-async";
 
 export default function About() {
   return (
     <section className="sm:min-h-[clac(100vh-3.625rem)] py-4 sm:py-6 md:py-10">
+      <Helmet>
+        <title>About | WDA Real Estate</title>
+      </Helmet>
       {/* Website Information, Features, and Technologies */}
       <div className="max-w-6xl mx-auto">
         <div className="p-4">

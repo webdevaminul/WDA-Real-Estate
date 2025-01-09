@@ -8,6 +8,7 @@ import { requestStart, loginFailure, emailLoginSuccess, resetError } from "../re
 import axiosSecure from "../api/axiosSecure";
 import { useEffect, useState } from "react";
 import GoogleAuth from "../components/GoogleAuth";
+import { Helmet } from "react-helmet-async";
 
 export default function SignIn() {
   const navigate = useNavigate();
@@ -59,6 +60,9 @@ export default function SignIn() {
 
   return (
     <main className="min-h-[90vh] max-w-xs mx-auto flex items-center justify-center">
+      <Helmet>
+        <title>Sign In | WDA Real Estate</title>
+      </Helmet>
       <section className="flex flex-col gap-4 justify-center p-4 w-full ">
         {/* Switch between signup and signin */}
         <div>

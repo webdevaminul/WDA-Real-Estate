@@ -11,6 +11,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import axiosPublic from "../api/axiosPublic";
 import axiosSecure from "../api/axiosSecure";
 import axios from "axios";
+import { Helmet } from "react-helmet-async";
 
 export default function UpdateProperty() {
   const { propertyId } = useParams();
@@ -188,6 +189,9 @@ export default function UpdateProperty() {
 
   return (
     <section className="container mx-auto bg-primaryBg pt-4 pb-3 sm:pt-8">
+      <Helmet>
+        <title>Property Update | WDA Real Estate</title>
+      </Helmet>
       <Title title={"Update Property"} subTitle={"Update your property details for better deals"} />
 
       <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-12 gap-5 p-5">

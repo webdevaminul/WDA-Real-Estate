@@ -9,6 +9,7 @@ import axiosSecure from "../api/axiosSecure";
 import { useNavigate } from "react-router-dom";
 import { requestFailure, requestStart, userClearSuccess, resetError } from "../redux/authSlice";
 import Title from "../components/Title";
+import { Helmet } from "react-helmet-async";
 
 export default function DeleteAccount() {
   const navigate = useNavigate();
@@ -37,10 +38,17 @@ export default function DeleteAccount() {
   const deleteAccountMutation = useMutation({
     mutationFn: async (formData) => {
       dispatch(requestStart()); // Dispatch request start action before making API call
-      const res = await axiosSecure.delete(`/api/user/delete-account/${user?.userInfo?._id}`, {
-        data: formData,
-      });
-      return res.data;
+      const deleteProperties = await axiosSecure.delete(
+        `/api/property/user/${user?.userInfo?._id}`
+      );
+      if (deleteProperties.data.success) {
+        const res = await axiosSecure.delete(`/api/user/delete-account/${user?.userInfo?._id}`, {
+          data: formData,
+        });
+        return res.data;
+      } else {
+        dispatch(requestFailure(data.message)); // Dispatch request failure action if delete is fail
+      }
     },
     onSuccess: (data) => {
       // console.log("Delete user API response", data);
@@ -70,6 +78,9 @@ export default function DeleteAccount() {
 
   return (
     <main className="min-h-[calc(100vh-6rem)] sm:min-h-[calc(100vh-3.625rem)] max-w-sm mx-auto flex">
+      <Helmet>
+        <title>Delete Account | WDA Real Estate</title>
+      </Helmet>
       <section className="flex flex-col gap-4 sm:justify-center p-4 w-full">
         <Title title={"Delete Account"} subTitle={"Please consider this action carefully"} />
 

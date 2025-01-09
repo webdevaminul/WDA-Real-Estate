@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { MdCheckCircle, MdError, MdOutlineEmail } from "react-icons/md";
 import axiosPublic from "../api/axiosPublic";
+import { Helmet } from "react-helmet-async";
 
 export default function ForgetPassword() {
   const [error, setError] = useState(null);
@@ -42,6 +43,9 @@ export default function ForgetPassword() {
   };
   return (
     <main className="min-h-[90vh] max-w-xs mx-auto flex items-center justify-center">
+      <Helmet>
+        <title>Forget Password | WDA Real Estate</title>
+      </Helmet>
       <section className="flex flex-col justify-center p-4 w-full ">
         <p className="text-center text-primary mb-4 font-medium">
           Enter your email address to get a recovery link.

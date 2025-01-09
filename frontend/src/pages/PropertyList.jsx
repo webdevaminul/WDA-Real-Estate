@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import axiosSecure from "../api/axiosSecure";
 import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
+import { Helmet } from "react-helmet-async";
 
 export default function PropertyList() {
   const [properties, setProperties] = useState([]);
@@ -127,6 +128,9 @@ export default function PropertyList() {
 
   return (
     <main className="py-4 sm:py-8 md:py-10">
+      <Helmet>
+        <title>Property List | WDA Real Estate</title>
+      </Helmet>
       <Title
         title={"Your properties"}
         subTitle={"Manage your properties here. View, update, or delete any of your listings."}

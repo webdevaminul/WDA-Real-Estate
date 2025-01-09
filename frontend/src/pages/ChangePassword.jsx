@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import axiosSecure from "../api/axiosSecure";
 import { profileUpdateSuccess, requestFailure, requestStart, resetError } from "../redux/authSlice";
 import Title from "../components/Title";
+import { Helmet } from "react-helmet-async";
 
 export default function ChangePassword() {
   const dispatch = useDispatch();
@@ -62,6 +63,9 @@ export default function ChangePassword() {
 
   return (
     <main className="min-h-[calc(100vh-6rem)] sm:min-h-[calc(100vh-3.625rem)] max-w-sm mx-auto flex">
+      <Helmet>
+        <title>Change Password | WDA Real Estate</title>
+      </Helmet>
       <section className="flex flex-col gap-4 sm:justify-center p-4 w-full">
         <Title
           title={"Change Password"}

@@ -11,6 +11,7 @@ import axiosSecure from "../api/axiosSecure";
 import { profileUpdateSuccess, requestFailure, requestStart, resetError } from "../redux/authSlice";
 import Title from "../components/Title";
 import axios from "axios";
+import { Helmet } from "react-helmet-async";
 
 export default function UpdateProfile() {
   const { user, loading, error } = useSelector((state) => state.auth);
@@ -106,6 +107,9 @@ export default function UpdateProfile() {
 
   return (
     <main className="min-h-[calc(100vh-6rem)] max-w-sm mx-auto flex items-center justify-center">
+      <Helmet>
+        <title>Profile Update | WDA Real Estate</title>
+      </Helmet>
       <section className="flex flex-col gap-4 justify-center p-4 sm:py-8 w-full">
         <Title
           title={"Update Profile"}
@@ -146,9 +150,7 @@ export default function UpdateProfile() {
 
             {/* Profile Image upload status */}
             {fileUploadError ? (
-              <p className="col-span-4 text-center text-sm text-red-500">
-                Image upload failed (image must be less than 2 MB)
-              </p>
+              <p className="col-span-4 text-center text-sm text-red-500">Image upload failed</p>
             ) : filePercent > 0 && filePercent < 100 ? (
               <p className="col-span-4 text-center text-sm text-primary">{`Uploading image ${filePercent} %`}</p>
             ) : filePercent === 100 ? (

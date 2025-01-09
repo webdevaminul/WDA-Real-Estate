@@ -1,12 +1,13 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
 import Header from "../components/Header";
-import { Flip, Slide, ToastContainer } from "react-toastify";
+import { Flip, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { HelmetProvider } from "react-helmet-async";
 
 export default function RootPage() {
   return (
-    <>
+    <HelmetProvider>
       <Header></Header>
       <main className="mt-[3.5rem] sm:mt-[3.625rem]">
         <Outlet></Outlet>
@@ -24,6 +25,6 @@ export default function RootPage() {
         theme="colored"
         transition={Flip}
       />
-    </>
+    </HelmetProvider>
   );
 }

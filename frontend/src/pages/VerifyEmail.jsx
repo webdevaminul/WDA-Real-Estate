@@ -4,6 +4,7 @@ import { MdVerified, MdError } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { emailLoginSuccess, requestStart, loginFailure } from "../redux/authSlice";
 import axiosSecure from "../api/axiosSecure";
+import { Helmet } from "react-helmet-async";
 
 export default function VerifyEmail() {
   const location = useLocation();
@@ -35,6 +36,9 @@ export default function VerifyEmail() {
 
   return (
     <main className="min-h-[calc(100vh-44px)] sm:min-h-[calc(100vh-58px)] flex flex-col items-center justify-center bg-primaryBg">
+      <Helmet>
+        <title>Email Verify | WDA Real Estate</title>
+      </Helmet>
       {loading ? (
         <>
           <h2 className="text-2xl">Verifying your email</h2>

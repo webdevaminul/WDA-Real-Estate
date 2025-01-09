@@ -8,6 +8,7 @@ import axiosSecure from "../api/axiosSecure";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { Helmet } from "react-helmet-async";
 
 export default function CreateProperty() {
   const [propertyImages, setPropertyImages] = useState([]);
@@ -148,6 +149,9 @@ export default function CreateProperty() {
 
   return (
     <section className="container mx-auto bg-primaryBg pt-4 pb-3 sm:pt-8">
+      <Helmet>
+        <title>Create Property | WDA Real Estate</title>
+      </Helmet>
       <Title
         title={"Add Property"}
         subTitle={"The more information you will provide, the better deal you will have"}

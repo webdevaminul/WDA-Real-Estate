@@ -13,6 +13,7 @@ import { IoIosCheckmarkCircle, IoIosCloseCircle } from "react-icons/io";
 import { LuBath } from "react-icons/lu";
 import { BiArea } from "react-icons/bi";
 import { useSelector } from "react-redux";
+import { Helmet } from "react-helmet-async";
 
 const formatDate = (date) =>
   date
@@ -101,6 +102,9 @@ export default function PropertyDetails() {
 
   return (
     <main className="mx-auto">
+      <Helmet>
+        <title>{`${property.propertyName}`} | WDA Real Estate</title>
+      </Helmet>
       {/* Header Slider */}
       <Swiper
         spaceBetween={0}

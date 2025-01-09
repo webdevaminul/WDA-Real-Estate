@@ -295,3 +295,21 @@ export const getPopularProperties = async (req, res, next) => {
     next(error);
   }
 };
+
+export const deleteUserProperties = async (req, res, next) => {
+  try {
+    // Validate that the authenticated user is accessing their own properties
+    if (req.user.id !== req.params.id) {
+      return next(errorHandler(401, "You can only delete your own properties"));
+    }
+
+    // Delete all properties owned by the authenticated user
+    await Property.deleteMany({ userReference: req.params.id });
+
+    // Send a successful response
+    res.status(200).json({ success: true, message: "All properties deleted successfully" });
+  } catch (error) {
+    // Pass any errors to the error-handling middleware
+    next(error);
+  }
+};

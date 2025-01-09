@@ -3,6 +3,7 @@ import { IoIosAt } from "react-icons/io";
 import { useSelector } from "react-redux";
 import Title from "../components/Title";
 import InfoField from "../components/InfoField";
+import { Helmet } from "react-helmet-async";
 
 export default function () {
   const { user } = useSelector((state) => state.auth);
@@ -21,6 +22,9 @@ export default function () {
 
   return (
     <main className="px-2 py-5 sm:p-10 flex flex-col gap-5">
+      <Helmet>
+        <title>Profile Details | WDA Real Estate</title>
+      </Helmet>
       <div className="flex flex-col justify-center items-center gap-4">
         <figure className="w-32 h-32 border border-highlightGray rounded-full overflow-clip">
           <img

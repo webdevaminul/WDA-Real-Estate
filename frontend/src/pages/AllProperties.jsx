@@ -8,6 +8,7 @@ import {
   IoArrowBackCircleSharp,
 } from "react-icons/io5";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 
 export default function AllProperties() {
   const [allPropertyList, setAllPropertyList] = useState([]);
@@ -87,6 +88,9 @@ export default function AllProperties() {
 
   return (
     <main className="flex">
+      <Helmet>
+        <title>Properties | WDA Real Estate</title>
+      </Helmet>
       {/* Sidebar Filters */}
       <aside className="hidden sm:block pb-2 sm:pb-16 bg-primaryBgShade1 fixed w-full sm:w-48 md:w-52 h-fit sm:h-full top-[3.5rem] sm:top-[3.625rem] left-0 bottom-0 z-30 shadow md:border-r border-highlightGray/10 overflow-y-auto scroll no-scrollbar">
         {/* Category Section */}

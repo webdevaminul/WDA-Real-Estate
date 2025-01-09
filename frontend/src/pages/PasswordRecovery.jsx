@@ -5,6 +5,7 @@ import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 import { MdCheckCircle, MdError, MdPassword } from "react-icons/md";
 import { useLocation } from "react-router-dom";
 import axiosSecure from "../api/axiosSecure";
+import { Helmet } from "react-helmet-async";
 
 export default function PasswordRecovery() {
   const [newPassValue, setNewPassValue] = useState("");
@@ -49,6 +50,9 @@ export default function PasswordRecovery() {
 
   return (
     <main className="min-h-[90vh] max-w-sm mx-auto flex items-center justify-center">
+      <Helmet>
+        <title>Password Recovery | WDA Real Estate</title>
+      </Helmet>
       <section className="flex flex-col gap-4 justify-center p-4 w-full">
         <div>
           <h2 className="text-xl md:text-3xl text-center md:font-light text-primary">
