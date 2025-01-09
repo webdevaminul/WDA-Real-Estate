@@ -52,7 +52,7 @@ export default function PopularProperty() {
                   <img
                     src={singleProperty.propertyImages[0]}
                     alt={singleProperty.propertyName}
-                    className="w-full transition-transform duration-300 group-hover:scale-105"
+                    className="w-full h-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
                     loading="lazy"
                   />
                   {singleProperty.offerPrice && singleProperty.regularPrice && (
